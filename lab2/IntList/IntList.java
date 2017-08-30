@@ -4,8 +4,10 @@ import java.util.Formatter;
  *  @author P. N. Hilfinger, Josh Hug, Melanie Cebula.
  */
 public class IntList {
+
     /** First element of list. */
     public int head;
+
     /** Remaining elements of list. */
     public IntList tail;
 
@@ -15,7 +17,7 @@ public class IntList {
         tail = tail0;
     }
 
-    /** A List with null tail, and head = 0. */
+    /** Constructs an IntList with null tail, and head = 0. */
     public IntList() {
         /* NOTE: public IntList () { }  would also work. */
         this(0, null);
@@ -55,31 +57,31 @@ public class IntList {
 
     /** DO NOT MODIFY ANYTHING ABOVE THIS LINE! */
 
+    /** This method is run first when IntList.java is run. */
+    public static void main(String[] args) {
+        System.out.println("Hello, " + args[0]);
+
+        // Creates an example IntList.
+        IntList L1 = list(1, 2, 3, 4, 5);
+
+        //TODO:  Print out L1 using IntelliJ's 'sout' command.
+    }
+
+    /** DO NOT MODIFY ANYTHING BELOW THIS LINE! In fact, I wouldn't even
+     * look below this line since it's likely to confuse you. Throughout the
+     * semester, you will become familiar with what is happening below. */
+
+    /** Checks if two IntLists are identical. */
     @Override
     public boolean equals(Object obj) {
         IntList otherList = (IntList) obj;
-        for (IntList L1 = this, L2 = otherList; L1 != null;
-             L1 = L1.tail, L2 = L2.tail) {
-
-            if (L1.head != L2.head) {
+        for (IntList L1 = this, L2 = otherList; L1 != null; L1 = L1.tail, L2 = L2.tail) {
+            if ((L2 == null) || (L1.head != L2.head)) {
                 return false;
             }
-
         }
         return true;
     }
-
-    /** Test .equals. */
-    public static void main(String... ignored) {
-        // Write something to test .equals here.
-        IntList L1 = list(1, 2, 3, 4, 5),
-            L2 = list(1, 2, 3);
-        System.out.println(L1.equals(L2));
-    }
-
-
-    /** DO NOT MODIFY ANYTHING BELOW THIS LINE! In fact, I wouldn't even
-     * look below this line since it's likely to confuse you. */
 
     /** Return an integer value such that if x1 and x2 represent two
      *  IntLists that represent identical sequences of ints, then
