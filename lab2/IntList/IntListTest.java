@@ -35,7 +35,13 @@ public class IntListTest {
      */
     
     //TODO:  Create testSquareListRecursive()
-
+    @Test
+    public void testSquareList() {
+        IntList L = IntList.list(1, 2, 3);
+        IntList R = IntList.squareListRecursive(L);
+        assertEquals(IntList.list(1, 2, 3), L);
+        assertEquals(IntList.list(1, 4, 9), R);
+    }
     /* Run the unit tests in this file. */
     public static void main(String... args) {
         System.exit(ucb.junit.textui.runClasses(IntListTest.class));
