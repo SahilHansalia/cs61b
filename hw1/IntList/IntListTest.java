@@ -32,7 +32,9 @@ public class IntListTest {
 
     @Test
     public void testDcatenate() {
-
+        IntList one = IntList.list(0,1);
+        IntList two = IntList.list(2,3);
+        assertEquals(IntList.dcatenate(one, two), IntList.list(0,1,2,3));
     }
 
     /** Tests that subtail works properly. Again, don't use new.
@@ -42,7 +44,9 @@ public class IntListTest {
 
     @Test
     public void testSubtail() {
-
+    IntList test = IntList.list(0,1,2,3,4,5);
+    assertEquals(IntList.subTail(test,2), IntList.list(2,3,4,5));
+    assertEquals(test,IntList.list(0,1,2,3,4,5));
     }
 
     /** Tests that sublist works properly. Again, don't use new.
@@ -52,7 +56,9 @@ public class IntListTest {
 
     @Test
     public void testSublist() {
-
+        IntList test = IntList.list(0,1,2,3,4,5);
+        assertEquals(IntList.sublist(test,2,2),IntList.list(2,3) );
+        assertEquals(test, IntList.list(0,1,2,3,4,5));
     }
 
     /** Tests that dSublist works properly. Again, don't use new.
@@ -63,6 +69,8 @@ public class IntListTest {
 
     @Test
     public void testDsublist() {
+        IntList test = IntList.list(0,1,2,3,4,5);
+        assertEquals(IntList.sublist(test,2,2),IntList.list(2,3) );
     }
 
 
