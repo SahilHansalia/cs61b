@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Formatter;
 import java.util.Observable;
 
+import static game2048.Main.BOARD_SIZE;
+
 
 /** The state of a game of 2048.
  *  @author
@@ -78,7 +80,9 @@ class Model extends Observable {
         boolean changed;
         changed = false;
 
-        // FIXME
+        /* FIXME
+         * slide-merge-slide?
+          * update score*/
 
         checkGameOver();
         if (changed) {
@@ -115,7 +119,19 @@ class Model extends Observable {
     /** Deternmine whether game is over and update _gameOver and _maxScore
      *  accordingly. */
     private void checkGameOver() {
-        if (_score == MAX_PIECE) { _gameOver = true; _maxScore = _score; }
+        //boolean full; full = false;
+//        for (int i = 0; i < BOARD_SIZE; i++) {
+//            for (int j = 0; j < BOARD_SIZE; j ++) {
+//                if (_board[i][j].value() == MAX_PIECE) {
+//                   _gameOver = true;
+//                   if (_maxScore < _score) {_maxScore = _score;}
+//                }
+//                if (_board[i][j] != null) {
+//                    _gameOver = false;
+//                }
+//            }
+//        }
+    }
         /*
         FIXME
 
@@ -125,7 +141,7 @@ class Model extends Observable {
         then update _gameOver if game is over and _MaxScore (just the game score)
         */
 
-    }
+
 
     @Override
     public String toString() {
