@@ -36,8 +36,7 @@ class Model extends Observable {
 
     /** Return the number of squares on one side of the board. */
     int size() {
-        return _board.length;
-    }
+        return _board.length; }
 
     /** Return true iff the game is over (there are no moves, or
      *  there is a tile with value 2048 on the board). */
@@ -116,7 +115,16 @@ class Model extends Observable {
     /** Deternmine whether game is over and update _gameOver and _maxScore
      *  accordingly. */
     private void checkGameOver() {
-        // FIXME
+        if (_score == MAX_PIECE) { _gameOver = true; _maxScore = _score; }
+        /*
+        FIXME
+
+        check the max score and check the number of tile slots left:
+        maybe check number of tile slots by entering something in AddNewTile
+        make sure no merges are possible--- for loop within for loop checking for all grid boxes??
+        then update _gameOver if game is over and _MaxScore (just the game score)
+        */
+
     }
 
     @Override

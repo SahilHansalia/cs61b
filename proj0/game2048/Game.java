@@ -1,6 +1,9 @@
 package game2048;
 
+import static game2048.Main.BOARD_SIZE;
+import static game2048.Main.TILE2_PROBABILITY;
 import static game2048.Side.*;
+import java.util.Random;
 
 /** The input/output and GUI controller for play of a game of 2048.
  *  @author */
@@ -76,9 +79,17 @@ public class Game {
     /** Return a valid tile, using our source's tile input until finding
      *  one that fits on the current board. Assumes there is at least one
      *  empty square on the board. */
-    private Tile getValidNewTile() {
-        return null; // FIXME
-    }
+     private Tile getValidNewTile() {
+        return _source.getNewTile(BOARD_SIZE);
+        //Random rng = new Random();
+        //int index = rng.nextInt(BOARD_SIZE);
+        //int index2 = rng.nextInt(BOARD_SIZE);
+        //if tile(index, index2) == null
+        //if (Math.random() <= TILE2_PROBABILITY) {
+          // return Tile.create(2, index, index2); }
+        //else { return Tile.create(4, index,index2);
+
+    } //}
 
     /** The playing board. */
     private Model _model;
