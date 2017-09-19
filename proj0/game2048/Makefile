@@ -1,66 +1,71 @@
-# This makefile is defined to give you the following targets:
-#
-#    default: Same as check
-#    check: For each file, F.in, use F.in as input to "java $(MAIN_CLASS)" and
-#          compare the output to the contents of the file names F.out.
-#          Report discrepencies.
-#    clean: Remove all the .class files produced by java compilation, 
-#          all Emacs backup files, and testing output files.
-#
-# You can use this file without understanding most of it, of course, but
-# I strongly recommend that you try to figure it out, and where you cannot,
-# that you ask questions.  The Lab Reader contains documentation.
+# This a Makefile, an input file for the GNU 'make' program.  For you 
+# command-line and Emacs enthusiasts, this makes it possible to build
+# this program with a single command:
+#     make 
+# You can also clean up junk files and .class files with
+#     make clean
+# To run style61b (our style enforcer) over your source files, type
+#     make style
+# Finally, you can run any tests you'd care to with
+#     make check
 
-SHELL = /bin/bash
+SHELL = bash
 
-PYTHON = python
+STYLEPROG = style61b
 
-# Flags to Java interpreter: check assertions
-JFLAGS = -ea
+PYTHON = python3
 
-# Name of class containing main procedure 
-MAIN = game2048.Main
-
-# Running the program.
-PROG = java $(JFLAGS) -cp $(CPATH) $(MAIN)
-
-TESTER_FLAGS =
-
-TESTS := $(wildcard *.in)
-
-.PHONY: default check clean outputs
-
-# First, and therefore default, target.
-default:
-	$(MAKE) -C .. 
-	$(MAKE) check
+PACKAGE = game2048
 
 # A non-standard classpath that works Linux, Mac, and Windows.
 CPATH = "..:$(CLASSPATH):;..;$(CLASSPATH)"
 
-# 'make check' will test run the tests in the testing directory.
-# For each .in file, it will "pipe" that file through your program
-# (that is, cause the .in file to be the standard input, rather as if it
-# were typed into the terminal), and compare the result with the
-# corresponding .out file.  It will report any failures.
-# The "CLASSPATH=..." clause in front of the command below temporarily 
-# changes the location in which Java searches for classes to be the directory
-# that contains your project.
+# Flags to pass to Java compilations (include debugging info and report
+# "unsafe" operations.)
+JFLAGS = -g -Xlint:unchecked -cp $(CPATH) -d .. -encoding utf8
+
+SRCS = $(wildcard *.java)
+
+CLASSES = $(SRCS:.java=.class)
+
+# Test directories
+TESTS = tests
+
+# Tell make that these are not really files.
+.PHONY: clean default compile style  \
+	check unit integration jar dist
+
+# By default, make sure all classes are present and check if any sources have
+# changed since the last build.
+default: compile
+
+compile: $(CLASSES)
+
+style:
+	$(STYLEPROG) $(SRCS) 
+
+$(CLASSES): sentinel
+
+# The sentinel file is a trick we use to accommodate Java's
+# potentially mutually recursive compilation requirements.  'sentinel'
+# is an empty file that keeps track of the time of the last
+# compilation.  Whenever this is earlier than the date of one or more
+# of the Java source files (or when the sentinel does not exist), the
+# makefile command below forces a recompilation, and, if that is
+# successful, updates the date on the sentinel file (with 'touch').
+
+sentinel: $(SRCS)
+	javac $(JFLAGS) $(SRCS)
+	touch $@
+
+# Run Tests.
 check: 
-	@echo "Testing application $(MAIN)..."
-	@CLASSPATH=$(CPATH) $(PYTHON) tester.py $(TESTER_FLAGS) $(TESTS)
+	make -C .. PYTHON=$(PYTHON) check
 
-# 'make clean' will clean up stuff you can reconstruct.
+# Find and remove all *~ and *.class files.
 clean:
-	$(RM) -r *~ OUTPUT* *.log *.diff __pycache__
+	$(RM) sentinel *.class
+	$(RM) *~
 
-# Regenerate .out files.
-outputs: 
-	$(MAKE) -C ..
-	@for inp in $(TESTS); do \
-	    out=$$(basename $$inp .in).out; \
-	    echo $$inp "=>" $$out; \
-	    $(RM) $$out; \
-	    CLASSPATH=..:$(CLASSPATH) \
-                java -ea game2048.Main --testing --no-display < $$inp > $$out; \
-	done
+# Include additions to standard Makefile, if any.
+-include Makefile.local

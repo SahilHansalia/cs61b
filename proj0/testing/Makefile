@@ -13,7 +13,7 @@
 
 SHELL = /bin/bash
 
-PYTHON = python
+PYTHON = python3
 
 # Flags to Java interpreter: check assertions
 JFLAGS = -ea
