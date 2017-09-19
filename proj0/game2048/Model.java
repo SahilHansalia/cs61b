@@ -75,14 +75,95 @@ class Model extends Observable {
         setChanged();
     }
 
+    private boolean slide(Side side) {
+        boolean slid = false;
+        for (int c = 0; c < BOARD_SIZE; c++) {
+            for (int r = BOARD_SIZE - 2; r >= 0; r--) {
+                if (vtile(c, r, side) != null)  {
+                    for (int a = BOARD_SIZE - 1; a >= 0; a--) {
+                        if (a > r) {
+                            if (vtile(c, a, side) == null) {
+                                setVtile(c, a, side, vtile(c, r, side));
+                                slid = true;
+                                break;
+
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+        return slid;
+    }
+
+    private boolean canmerge(Side side) {
+        boolean canmerge = false;
+
+        for (int c = 0; c < BOARD_SIZE; c++) {
+            Tile prev = null;
+            for (int r = BOARD_SIZE - 1; r >= 0; r--) {
+                if (prev == null) {
+                    prev = vtile(c,r,side);
+                    continue;
+                }
+                if (vtile(c,r,side).value() == prev.value()) {
+                    canmerge = true;
+
+                }
+                else {
+                    prev = vtile(c,r,side);
+                }
+
+
+
+            }
+        }
+        return canmerge;
+    }
+
+    private boolean merges(Side side) {
+        boolean merged = false;
+
+        for (int c = 0; c < BOARD_SIZE; c++) {
+            Tile prev = null;
+            for (int r = BOARD_SIZE - 1; r >= 0; r--) {
+                if (prev == null) {
+                    prev = vtile(c,r,side);
+                    continue;
+                }
+                if (vtile(c,r,side)== null) {
+                    continue;
+                }
+                if (vtile(c,r,side).value() == prev.value()) {
+                    _score += (vtile(c,r,side).value() * 2);
+                    setVtile(prev.col(), prev.row(), side, vtile(c,r,side)); //does this make Null box?
+                    prev = null; //just added.
+                    merged = true;
+
+                }
+                else {
+                    prev = vtile(c,r,side);
+                }
+
+
+
+            }
+        }
+        return merged;
+    }
+
     /** Tilt the board toward SIDE. Return true iff this changes the board. */
     boolean tilt(Side side) {
         boolean changed;
         changed = false;
+        boolean a = slide(side);
+        boolean b = merges(side);
+        slide(side);
 
-        /* FIXME
-         * slide-merge-slide?
-          * update score*/
+        if (a || b) {
+            changed = true;
+        }
 
         checkGameOver();
         if (changed) {
@@ -119,18 +200,27 @@ class Model extends Observable {
     /** Deternmine whether game is over and update _gameOver and _maxScore
      *  accordingly. */
     private void checkGameOver() {
-        //boolean full; full = false;
-//        for (int i = 0; i < BOARD_SIZE; i++) {
-//            for (int j = 0; j < BOARD_SIZE; j ++) {
-//                if (_board[i][j].value() == MAX_PIECE) {
-//                   _gameOver = true;
-//                   if (_maxScore < _score) {_maxScore = _score;}
-//                }
-//                if (_board[i][j] != null) {
-//                    _gameOver = false;
-//                }
-//            }
-//        }
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                if (_board[i][j] != null) {
+                    if (_board[i][j].value() == MAX_PIECE) {
+                        _gameOver = true;
+                        if (_maxScore < _score) {_maxScore = _score;}
+                        return;
+                    }
+                }
+                if (_board[i][j] == null) {
+                _gameOver = false;
+                return;
+                }
+            }
+        }
+
+        if (!canmerge(Side.NORTH) && !canmerge(Side.SOUTH) && !canmerge(Side.EAST) && !canmerge(Side.WEST)) {
+            _gameOver = true;
+
+            _gameOver = false;
+        }
     }
         /*
         FIXME

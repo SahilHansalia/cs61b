@@ -82,9 +82,7 @@ public class Game {
      private Tile getValidNewTile() {
 
 //        return _source.getNewTile(BOARD_SIZE);
-
         Random rng = new Random();
-
         boolean assigned; assigned = false;
         while (!assigned){
             int index = rng.nextInt(BOARD_SIZE);
