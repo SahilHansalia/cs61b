@@ -128,16 +128,19 @@ class Model extends Observable {
         for (int c = 0; c < BOARD_SIZE; c++) {
             Tile prev = null;
             for (int r = BOARD_SIZE - 1; r >= 0; r--) {
-                if (prev == null) {
-                    prev = vtile(c,r,side);
-                    continue;
-                }
                 if (vtile(c,r,side)== null) {
                     continue;
                 }
+                if (prev == null) {
+                    prev = vtile(c,r,side);
+                    continue;
+
+
+                }
                 if (vtile(c,r,side).value() == prev.value()) {
                     _score += (vtile(c,r,side).value() * 2);
-                    setVtile(prev.col(), prev.row(), side, vtile(c,r,side)); //does this make Null box?
+                    setVtile(c,r,side,prev);
+                    //setVtile(prev.col(), prev.row(), side, vtile(c,r,side)); //does this make Null box?
                     prev = null; //just added.
                     merged = true;
 

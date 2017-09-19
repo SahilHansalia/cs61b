@@ -80,9 +80,16 @@ public class Game {
      *  one that fits on the current board. Assumes there is at least one
      *  empty square on the board. */
      private Tile getValidNewTile() {
+         Tile testTile = _source.getNewTile(BOARD_SIZE);
+         if (_model.tile(testTile.col(), testTile.row()) == null) {
+             return testTile; }
+
+         return getValidNewTile();
+         }
+
 
 //        return _source.getNewTile(BOARD_SIZE);
-        Random rng = new Random();
+        /*Random rng = new Random();
         boolean assigned; assigned = false;
         while (!assigned){
             int index = rng.nextInt(BOARD_SIZE);
@@ -95,7 +102,9 @@ public class Game {
                 }
             }
         }
-        return Tile.create(2, 1, 1);}
+        return Tile.create(2, 1, 1);} */
+
+
 
 
     /** The playing board. */
