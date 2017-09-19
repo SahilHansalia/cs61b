@@ -211,6 +211,10 @@ class Model extends Observable {
                         return;
                     }
                 }
+            }
+        }
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
                 if (_board[i][j] == null) {
                     _gameOver = false;
                     return;
