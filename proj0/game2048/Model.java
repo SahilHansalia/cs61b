@@ -114,6 +114,7 @@ class Model extends Observable {
                 }
                 if (vtile(c, r, side).value() == prev.value()) {
                     canmerge = true;
+                    return canmerge;
                 } else {
                     prev = vtile(c, r, side);
                 }
@@ -223,6 +224,7 @@ class Model extends Observable {
                 _maxScore = _score;
             }
             _gameOver = true;
+            return;
         }
 
         _gameOver = false;
