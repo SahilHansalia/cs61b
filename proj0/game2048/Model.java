@@ -211,8 +211,13 @@ class Model extends Observable {
                         return;
                     }
                 }
+                if (_board[i][j] == null) {
+                    _gameOver = false;
+                    return;
+                }
             }
         }
+
         if (!canmerge(Side.NORTH) && !canmerge(Side.SOUTH)
             && !canmerge(Side.EAST) && !canmerge(Side.WEST)) {
             if (_maxScore < _score) {
