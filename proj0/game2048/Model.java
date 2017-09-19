@@ -8,7 +8,7 @@ import static game2048.Main.BOARD_SIZE;
 
 
 /** The state of a game of 2048.
- *  @author
+ *  @author sahil and 61b staff
  */
 class Model extends Observable {
 
@@ -38,7 +38,8 @@ class Model extends Observable {
 
     /** Return the number of squares on one side of the board. */
     int size() {
-        return _board.length; }
+        return _board.length;
+    }
 
     /** Return true iff the game is over (there are no moves, or
      *  there is a tile with value 2048 on the board). */
@@ -75,6 +76,8 @@ class Model extends Observable {
         setChanged();
     }
 
+    /** Slide tiles without merging. @return true if slides.
+     * take in @param side var*/
     private boolean slide(Side side) {
         boolean slid = false;
         for (int c = 0; c < BOARD_SIZE; c++) {
@@ -97,6 +100,8 @@ class Model extends Observable {
         return slid;
     }
 
+    /** @return true iff tiles can be merged.
+     * take in @param side var */
     private boolean canmerge(Side side) {
         boolean canmerge = false;
 
@@ -104,49 +109,41 @@ class Model extends Observable {
             Tile prev = null;
             for (int r = BOARD_SIZE - 1; r >= 0; r--) {
                 if (prev == null) {
-                    prev = vtile(c,r,side);
+                    prev = vtile(c, r, side);
                     continue;
                 }
-                if (vtile(c,r,side).value() == prev.value()) {
+                if (vtile(c, r, side).value() == prev.value()) {
                     canmerge = true;
-
+                } else {
+                    prev = vtile(c, r, side);
                 }
-                else {
-                    prev = vtile(c,r,side);
-                }
-
-
-
             }
         }
         return canmerge;
     }
 
+    /** Returns true if tiles can be merged and merges tiles.
+     * take in @param side var */
     private boolean merges(Side side) {
         boolean merged = false;
 
         for (int c = 0; c < BOARD_SIZE; c++) {
             Tile prev = null;
             for (int r = BOARD_SIZE - 1; r >= 0; r--) {
-                if (vtile(c,r,side)== null) {
+                if (vtile(c, r, side) == null) {
                     continue;
                 }
                 if (prev == null) {
-                    prev = vtile(c,r,side);
+                    prev = vtile(c, r, side);
                     continue;
-
-
                 }
-                if (vtile(c,r,side).value() == prev.value()) {
-                    _score += (vtile(c,r,side).value() * 2);
-                    setVtile(c,r,side,prev);
-                    //setVtile(prev.col(), prev.row(), side, vtile(c,r,side)); //does this make Null box?
-                    prev = null; //just added.
+                if (vtile(c, r, side).value() == prev.value()) {
+                    _score += (vtile(c, r, side).value() * 2);
+                    setVtile(c, r, side, prev);
+                    prev = null;
                     merged = true;
-
-                }
-                else {
-                    prev = vtile(c,r,side);
+                } else {
+                    prev = vtile(c, r, side);
                 }
 
 
@@ -208,33 +205,26 @@ class Model extends Observable {
                 if (_board[i][j] != null) {
                     if (_board[i][j].value() == MAX_PIECE) {
                         _gameOver = true;
-                        if (_maxScore < _score) {_maxScore = _score;}
+                        if (_maxScore < _score) {
+                            _maxScore = _score;
+                        }
                         return;
                     }
                 }
                 if (_board[i][j] == null) {
-                _gameOver = false;
-                return;
+                    _gameOver = false;
+                    return;
                 }
             }
         }
 
-        if (!canmerge(Side.NORTH) && !canmerge(Side.SOUTH) && !canmerge(Side.EAST) && !canmerge(Side.WEST)) {
+        if (!canmerge(Side.NORTH) && !canmerge(Side.SOUTH)
+            && !canmerge(Side.EAST) && !canmerge(Side.WEST)) {
             _gameOver = true;
 
             _gameOver = false;
         }
     }
-        /*
-        FIXME
-
-        check the max score and check the number of tile slots left:
-        maybe check number of tile slots by entering something in AddNewTile
-        make sure no merges are possible--- for loop within for loop checking for all grid boxes??
-        then update _gameOver if game is over and _MaxScore (just the game score)
-        */
-
-
 
     @Override
     public String toString() {

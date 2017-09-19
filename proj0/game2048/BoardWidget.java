@@ -92,7 +92,7 @@ class BoardWidget extends Pad {
 
     /** A graphical representation of a 2048 board with SIZE rows and
      *  columns. */
-    public BoardWidget(int size) {
+    BoardWidget(int size) {
         _size = size;
         _boardSide = size * TILE_SIDE_SEP + TILE_SEP;
         _tiles = new ArrayList<>();

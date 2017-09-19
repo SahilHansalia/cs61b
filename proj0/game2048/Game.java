@@ -1,12 +1,10 @@
 package game2048;
 
 import static game2048.Main.BOARD_SIZE;
-import static game2048.Main.TILE2_PROBABILITY;
 import static game2048.Side.*;
-import java.util.Random;
 
 /** The input/output and GUI controller for play of a game of 2048.
- *  @author */
+ *  @author sahil and cs61b people */
 public class Game {
 
     /** Controller for a game represented by MODEL, using SOURCE as the
@@ -39,20 +37,20 @@ public class Game {
             while (!moved) {
                 String cmnd = _source.getKey();
                 switch (cmnd) {
-                case "Quit":
-                    _playing = false;
-                    return;
-                case "New Game":
-                    return;
-                case "Up": case "Down": case "Left": case "Right":
-                case "\u2190": case "\u2191": case "\u2192": case "\u2193":
-                    if (!_model.gameOver() && _model.tilt(keyToSide(cmnd))) {
-                        _model.notifyObservers();
-                        moved = true;
-                    }
-                    break;
-                default:
-                    break;
+                    case "Quit":
+                        _playing = false;
+                        return;
+                    case "New Game":
+                        return;
+                    case "Up": case "Down": case "Left": case "Right":
+                    case "\u2190": case "\u2191": case "\u2192": case "\u2193":
+                        if (!_model.gameOver() && _model.tilt(keyToSide(cmnd))) {
+                            _model.notifyObservers();
+                            moved = true;
+                        }
+                        break;
+                    default:
+                        break;
                 }
 
             }
@@ -63,49 +61,30 @@ public class Game {
      *  or "Right"). */
     private Side keyToSide(String key) {
         switch (key) {
-        case "Up": case "\u2191":
-            return NORTH;
-        case "Down": case "\u2193":
-            return SOUTH;
-        case "Left": case "\u2190":
-            return WEST;
-        case "Right": case "\u2192":
-            return EAST;
-        default:
-            throw new IllegalArgumentException("unknown key designation");
+            case "Up": case "\u2191":
+                return NORTH;
+            case "Down": case "\u2193":
+                return SOUTH;
+            case "Left": case "\u2190":
+                return WEST;
+            case "Right": case "\u2192":
+                return EAST;
+            default:
+                throw new IllegalArgumentException("unknown key designation");
         }
     }
 
     /** Return a valid tile, using our source's tile input until finding
      *  one that fits on the current board. Assumes there is at least one
      *  empty square on the board. */
-     private Tile getValidNewTile() {
-         Tile testTile = _source.getNewTile(BOARD_SIZE);
-         if (_model.tile(testTile.col(), testTile.row()) == null) {
-             return testTile; }
-
-         return getValidNewTile();
-         }
-
-
-//        return _source.getNewTile(BOARD_SIZE);
-        /*Random rng = new Random();
-        boolean assigned; assigned = false;
-        while (!assigned){
-            int index = rng.nextInt(BOARD_SIZE);
-            int index2 = rng.nextInt(BOARD_SIZE);
-            if (_model.tile(index, index2) == null){
-                assigned = true;
-                if (Math.random() <= TILE2_PROBABILITY) {
-                    return Tile.create(2, index, index2); }
-                else { return Tile.create(4, index,index2);
-                }
-            }
+    private Tile getValidNewTile() {
+        Tile testTile = _source.getNewTile(BOARD_SIZE);
+        if (_model.tile(testTile.col(), testTile.row()) == null) {
+            return testTile;
         }
-        return Tile.create(2, 1, 1);} */
 
-
-
+        return getValidNewTile();
+    }
 
     /** The playing board. */
     private Model _model;
