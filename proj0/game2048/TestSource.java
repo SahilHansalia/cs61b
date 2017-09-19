@@ -59,13 +59,13 @@ class TestSource implements InputSource {
         while (_source.hasNext()) {
             String c = _source.next();
             switch (c) {
-                case "K": case "T":
-                    return c;
-                case "#":
-                    _source.nextLine();
-                    break;
-                default:
-                    throw new IllegalStateException("bad test input file: " + c);
+            case "K": case "T":
+                return c;
+            case "#":
+                _source.nextLine();
+                break;
+            default:
+                throw new IllegalStateException("bad test input file: " + c);
             }
         }
         return null;

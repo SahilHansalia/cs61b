@@ -29,7 +29,7 @@ default:
 	$(MAKE) -C $(PACKAGE) default
 
 check: default
-	$(MAKE) -C testing PYTHON=$(PYTHON) check
+	$(MAKE) -C testing check
 
 style:
 	$(MAKE) -C $(PACKAGE) STYLEPROG=$(STYLEPROG) style

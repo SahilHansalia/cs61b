@@ -147,7 +147,6 @@ class Model extends Observable {
                 }
 
 
-
             }
         }
         return merged;
@@ -220,10 +219,14 @@ class Model extends Observable {
 
         if (!canmerge(Side.NORTH) && !canmerge(Side.SOUTH)
             && !canmerge(Side.EAST) && !canmerge(Side.WEST)) {
+            if (_maxScore < _score) {
+                _maxScore = _score;
+            }
             _gameOver = true;
-
-            _gameOver = false;
         }
+
+        _gameOver = false;
+
     }
 
     @Override
