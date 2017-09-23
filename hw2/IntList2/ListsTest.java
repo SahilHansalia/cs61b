@@ -1,14 +1,22 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/** FIXME
+/** Tests Methods written in hw2
  *
- *  @author FIXME
+ *  @author Sahil H
  */
 
 public class ListsTest {
-    /** FIXME
-     */
+    @Test
+   public void NaturalRunsNormalTest() {
+       IntList test = IntList.list(5,8,3,6,7,4,9,6,54);
+       assertEquals(IntList2.list(new int[][]{{5, 8}, {3, 6, 7}, {4, 9}, {6, 54}}), Lists.naturalRuns(test));
+   }
+
+
+
+
+
 
     // It might initially seem daunting to try to set up
     // Intlist2 expected.

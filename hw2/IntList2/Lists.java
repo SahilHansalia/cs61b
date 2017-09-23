@@ -15,7 +15,16 @@ class Lists {
      *  Destructive: creates no new IntList items, and may modify the
      *  original list pointed to by L. */
     static IntList2 naturalRuns(IntList L) {
-        /* *Replace this body with the solution. */
-        return null;
+        IntList A = L;
+        if (L == null) {
+            return null;
+        }
+        while (L.tail != null && L.head < L.tail.head) {
+            L = L.tail;
+        }
+        IntList2 tail = naturalRuns(L.tail);
+        L.tail = null;
+        return new IntList2(A, tail);
+
     }
 }

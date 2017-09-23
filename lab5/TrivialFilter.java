@@ -10,11 +10,11 @@ class TrivialFilter<Value> extends Filter<Value> {
     /** A filter of values from INPUT that simply delivers all of them. */
     TrivialFilter(Iterator<Value> input) {
         super(input);
-        // FIXME?
+        // FIXME? No
     }
 
     @Override
     protected boolean keep() {
-        return false;    // FIXME
+        return true;    // FIXME
     }
 }

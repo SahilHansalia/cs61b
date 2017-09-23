@@ -52,9 +52,25 @@ public class MatrixUtils {
      *
      */
 
-    public static double[][] accumulateVertical(double[][] m) {
-        return null; //your code here
+    private static double Helper(double[][] m, int c, int r) {
+        if (r >= 0 && c >= 0 && r <= m.length && c <= m[r].length) {
+            return m[r][c];
+        }
+        return Double.POSITIVE_INFINITY;
     }
+
+
+
+    public static double[][] accumulateVertical(double[][] m) {
+        m = copy(m);
+        for (int i = 1; i < m.length; i++) {
+            for (int j = 0; j < m[0].length; j++) {
+                double minVal = java.lang.Math.min(Helper(m,j-1,i-1), java.lang.Math.min(Helper(m,j,i-1), Helper(m,j,i-1) ));
+                m[j][i] += minVal;
+    } }  return m;
+    }
+
+
 
     /** Non-destructively accumulates a matrix M along the specified
      *  ORIENTATION.
@@ -79,9 +95,29 @@ public class MatrixUtils {
      *
      */
 
-    public static double[][] accumulate(double[][] m, Orientation orientation) {
-        return null; //your code here
+
+    private static double[][] transpose(double[][] m) {
+        double[][] Transpose = new double[m[0].length][m.length];
+        for (int c= 0; c< m[0].length; c+=1)  {
+            for (int r= 0; r< m.length; r+=1){
+                Transpose[r][c]= m[c][r];
+            }
+        }
+        return Transpose;
     }
+
+    public static double[][] accumulate(double[][] m, Orientation orientation) {
+        if (orientation== Orientation.HORIZONTAL)
+        {
+            m = transpose(m);
+        }
+        return transpose(accumulateVertical(m));
+    }
+
+
+
+
+
 
     /** Finds the vertical seam VERTSEAM of the given matrix M.
      *
