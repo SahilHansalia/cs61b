@@ -2,17 +2,18 @@
  * @author
  */
 public class WeirdList {
+    private int head;
+    private WeirdList tail;
     /** The empty sequence of integers. */
-    public static final WeirdList EMPTY =
-        null;  // REPLACE THIS LINE WITH THE RIGHT ANSWER.
+    public static final WeirdList EMPTY = new WeirdListHelper();  // REPLACE THIS LINE WITH THE RIGHT ANSWER.
 
     /** A new WeirdList whose head is HEAD and tail is TAIL. */
-    public WeirdList(int head, WeirdList tail) { /* FILL IN */ }
+    public WeirdList(int head, WeirdList tail) { this.head = head; this.tail = tail; }
 
     /** Returns the number of elements in the sequence that
      *  starts with THIS. */
     public int length() {
-        return 0;  // REPLACE THIS LINE WITH THE RIGHT ANSWER.
+        return tail.length() + 1;  // REPLACE THIS LINE WITH THE RIGHT ANSWER.
     }
 
     /** Return a string containing my contents as a sequence of numerals
@@ -20,13 +21,13 @@ public class WeirdList {
      *  5, 4, and 2, this returns " 5 4 2". */
     @Override
     public String toString() {
-        return ""; // REPLACE THIS LINE WITH THE RIGHT ANSWER.
+        return " " + head + tail.toString(); // REPLACE THIS LINE WITH THE RIGHT ANSWER.
     }
 
     /** Part 3b: Apply FUNC.apply to every element of THIS WeirdList in
      *  sequence, and return a WeirdList of the resulting values. */
     public WeirdList map(IntUnaryFunction func) {
-        return null;  // REPLACE THIS LINE WITH THE RIGHT ANSWER.
+        return new WeirdList(func.apply(head), tail.map(func));  // REPLACE THIS LINE WITH THE RIGHT ANSWER.
     }
 
     /*
