@@ -269,8 +269,8 @@ class CommandInterpreter {
 
     /** Parse and execute a select clause from the token stream, returning the
      *  resulting table. */
-    Table selectClause() {
-        return null;         // REPLACE WITH SOLUTION
+    Table selectClause() {     // REPLACE WITH SOLUTION
+        return null;
 
     }
 
@@ -307,14 +307,27 @@ class CommandInterpreter {
     /** Parse and return a list of Conditions that apply to TABLES from the
      *  token stream.  This denotes the conjunction (`and') of zero
      *  or more Conditions. */
-    ArrayList<Condition> conditionClause(Table... tables) {
-        return null;        // REPLACE WITH SOLUTION
+    ArrayList<Condition> conditionClause(Table... tables) {      // wrote method
+        ArrayList<Condition> conditions = new ArrayList<>();
+        conditions.add(condition(tables));  //is condition list always of form (condition and condition and condition)???
+        while (_input.nextIf("and")) {
+            conditions.add(condition(tables));
+        }
+        return conditions;
     }
 
     /** Parse and return a Condition that applies to TABLES from the
      *  token stream. */
-    Condition condition(Table... tables) {
-        return null;        // REPLACE WITH SOLUTION
+    Condition condition(Table... tables) {  // REPLACE WITH SOLUTION
+        String name1 = name();
+        String relation = _input.next();
+        if (_input.nextIs(LITERAL)) {
+            return new Condition(new Column(name1, tables), relation, literal());
+        }
+        else {
+            String name2 = name();
+            return new Condition(new Column(name1, tables), relation, new Column(name2, tables));
+        }
     }
 
     /** Advance the input past the next semicolon. */
