@@ -10,7 +10,7 @@ package db61b;
 // FILL IN (WITH IMPORTS)?
 
 /** A collection of Tables, indexed by name.
- *  @author */
+ *  @author Sahil and 61b staff*/
 class Database {
     /** An empty database. */
     public Database() {

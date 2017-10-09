@@ -18,7 +18,7 @@ import static db61b.Tokenizer.*;
 
 /** An object that reads and interprets a sequence of commands from an
  *  input source.
- *  @author */
+ *  @author Sahil and 61b staff */
 class CommandInterpreter {
 
     /* STRATEGY.
@@ -166,9 +166,11 @@ class CommandInterpreter {
         _input.next("table");
         String name = name();
         Table table = tableDefinition();
-        // FILL IN CODE TO EXECUTE THE STATEMENT
+         _database.put(name, table); //added
         _input.next(";");
-    }
+        }
+
+
 
     /** Parse and execute an exit or quit statement. Actually does nothing
      *  except check syntax, since statement() handles the actual exiting. */
@@ -190,9 +192,13 @@ class CommandInterpreter {
         String[] values = new String[cols];
 
         while (true) {
-            int k;
+            int k = 0; //added
             _input.next("(");
-            // FILL THIS IN
+            while (k < cols - 1) {    //added
+            values[k] = literal();    //added
+            _input.next(",");    //added
+            k ++;   }    //added
+            values[k] = literal();   //added
             _input.next(")");
             table.add(values);
             if (!_input.nextIf(",")) {
@@ -204,7 +210,12 @@ class CommandInterpreter {
 
     /** Parse and execute a load statement from the token stream. */
     void loadStatement() {
-        // FILL THIS IN
+        _input.next("load");    //added entire method
+        String Name = name();
+        _input.next(";");
+        _database.put(Name, Table.readTable(Name));
+        System.out.printf("Loaded %s.db%n", Name);
+
     }
 
     /** Parse and execute a store statement from the token stream. */
