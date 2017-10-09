@@ -11,6 +11,7 @@ package db61b;
 import java.io.PrintStream;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import static db61b.Utils.*;
@@ -223,14 +224,20 @@ class CommandInterpreter {
         _input.next("store");
         String name = _input.peek();
         Table table = tableName();
-        // FILL THIS IN
+        table.writeTable(name); //added
         System.out.printf("Stored %s.db%n", name);
         _input.next(";");
     }
 
     /** Parse and execute a print statement from the token stream. */
-    void printStatement() {
-        // FILL THIS IN
+    void printStatement() {    //wrote method
+        _input.next("print");
+        String name = _input.peek();
+        Table table = tableName();
+        table.print();
+        System.out.println("Contents of " + name+":");   //does this work?
+        _input.next(";");
+
     }
 
     /** Parse and execute a select statement from the token stream. */
@@ -246,12 +253,17 @@ class CommandInterpreter {
     Table tableDefinition() {
         Table table;
         if (_input.nextIf("(")) {
-            // REPLACE WITH SOLUTION
-            table = null;
+            List<String> cols = new ArrayList<String>();        //added
+            cols.add(columnName());          //added
+            while (_input.nextIf(",")) {        //added
+                cols.add(columnName());          //added
+          }
+            table = new Table(cols);
         } else {
-            // REPLACE WITH SOLUTION
-            table = null;
+            _input.next("as");
+            table = selectClause();
         }
+        _input.next(";");   //added
         return table;
     }
 

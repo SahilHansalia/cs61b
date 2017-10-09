@@ -1,3 +1,4 @@
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.List;
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public class ReadInts {
         Scanner s = new Scanner(input);
         while (s.hasNext()) {
             int nextInt = s.nextInt();
-            // FIXME
+            L.add(nextInt);
         }
         return L;
     }
@@ -44,7 +45,15 @@ public class ReadInts {
      *  Use the hasNext(), next(), nextInt() and hasNextInt() methods
      *  on Scanners. */
     public static List<Integer> smartReadInts(String input) {
-        // FIXME
-        return null;
+        ArrayList<Integer> L = new ArrayList<Integer>();
+
+        Scanner s = new Scanner(input);
+        while (s.hasNext()) {
+            try {L.add(s.nextInt()); }
+            catch (InputMismatchException e) {
+                s.next();
+            }
+        }
+        return L;
     }
 }

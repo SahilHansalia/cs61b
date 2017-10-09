@@ -4,5 +4,6 @@
 
 public class P2Pattern {
     /** Pattern to match 61b notation for literal IntLists. */
-    public static final String P2 = "";
+    public static final String P2 = "\\(([0-9]+, +)+[0-9]+\\)";
+
 }
