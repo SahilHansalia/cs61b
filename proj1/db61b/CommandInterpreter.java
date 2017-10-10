@@ -269,7 +269,7 @@ class CommandInterpreter {
 
     /** Parse and execute a select clause from the token stream, returning the
      *  resulting table. */
-    Table selectClause() {     // REPLACE WITH SOLUTION  //select Firstname, Lastname, Grade from students, enrolled where CCN = '21001';
+    Table selectClause() {     //wrote method  //select Firstname, Lastname, Grade from students, enrolled where CCN = '21001';
         _input.next("select");
         ArrayList<String> cols = new ArrayList<>();
         cols.add(columnName());
@@ -281,25 +281,22 @@ class CommandInterpreter {
         tableList[0] = tableName();
         if (_input.nextIf(",")) {
             tableList[1] = tableName();
+            if (_input.nextIf("where")) {
+                return tableList[0].select(tableList[1], cols, conditionClause(tableList));
+            }
+            else {
+                return tableList[0].select(tableList[1], cols, null);
+            }
         }
-        else { tableList[1] = null;
+        else {
+            tableList[1] = null;
+            if (_input.nextIf("where")) {
+               return tableList[0].select(cols, conditionClause(tableList));
+            }
+            else {
+                return tableList[0].select(cols, null);
+            }
         }
-
-
-
-
-
-
-        if (_input.nextIf(",")) {
-
-
-        }
-
-        while (_input.nextIf(",")) {
-            cols.add(columnName());
-        }
-
-
 
 
     }
