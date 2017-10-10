@@ -54,18 +54,23 @@ class Table {
 
     /** Return the number of columns in this table. */
     public int columns() {
-        return 0;  // REPLACE WITH SOLUTION
+        return _rowSize;  //replaced
     }
 
     /** Return the title of the Kth column.  Requires 0 <= K < columns(). */
     public String getTitle(int k) {
-        return null;  // REPLACE WITH SOLUTION
+        return _titles[k];  //replaced
     }
 
     /** Return the number of the column whose title is TITLE, or -1 if
      *  there isn't one. */
     public int findColumn(String title) {
-        return -1;  // REPLACE WITH SOLUTION
+        for (int i = 0; i < _rowSize; i++) {
+            if (_titles[i].equals(title)) {
+                return i;        //or is it i + 1?
+            }
+        }
+        return -1;
     }
 
     /** Return the number of rows in this table. */
@@ -77,7 +82,7 @@ class Table {
      *  of record number ROW (0 <= ROW < size()). */
     public String get(int row, int col) {
         try {
-            return null; // REPLACE WITH SOLUTION
+            return _columns[col].get(_index.get(row));
         } catch (IndexOutOfBoundsException excp) {
             throw error("invalid row or column");
         }
@@ -162,7 +167,7 @@ class Table {
                     b ++;
                 }
                 output.println();
-                a ++;
+                a ++;           //does this shit even work????????????????????????????
             }
 
         } catch (IOException e) {
@@ -221,7 +226,13 @@ class Table {
      *  into those tables. */
     private static boolean equijoin(List<Column> common1, List<Column> common2,
                                     int row1, int row2) {
-        return true; // REPLACE WITH SOLUTION
+        boolean same = true; //added method
+        for (int i = 0; i < common1.size(); i++ ) {
+            if (common1.get(i).getFrom(row1) != common2.get(i).getFrom(row2)) {
+                same = false;
+            }
+        }
+        return same;
     }
 
     /** A class that is essentially ArrayList<String>.  For technical reasons,
