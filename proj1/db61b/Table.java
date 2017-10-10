@@ -40,7 +40,8 @@ class Table {
         }
 
         // FIXME
-        _titles = null;
+        //wtf
+        _titles = columnTitles;
         _columns = null;
     }
 
@@ -89,7 +90,7 @@ class Table {
 
     /** Add a new row whose column values are extracted by COLUMNS from
      *  the rows indexed by ROWS, if no equal row already exists.
-     *  Return true if anything was added, false otherwise. See
+     *  Return true if anything was added   , false otherwise. See
      *  Column.getFrom(Integer...) for a description of how Columns
      *  extract values. */
     public boolean add(List<Column> columns, Integer... rows) {
@@ -102,7 +103,7 @@ class Table {
         BufferedReader input;
         Table table;
         input = null;
-        table = null;
+        //table = null; --remove?
         try {
             input = new BufferedReader(new FileReader(name + ".db"));
             String header = input.readLine();
@@ -110,7 +111,13 @@ class Table {
                 throw error("missing header in DB file");
             }
             String[] columnNames = header.split(",");
-            // FILL IN
+
+            table = new Table(columnNames);  //added
+            String line = input.readLine();
+            while (line != null) {
+                //
+            }
+
         } catch (FileNotFoundException e) {
             throw error("could not find %s.db", name);
         } catch (IOException e) {
