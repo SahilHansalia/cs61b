@@ -12,7 +12,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static db61b.Utils.*;
@@ -103,7 +105,7 @@ class Table {
         BufferedReader input;
         Table table;
         input = null;
-        //table = null; --remove?
+        table = null;
         try {
             input = new BufferedReader(new FileReader(name + ".db"));
             String header = input.readLine();
@@ -114,8 +116,11 @@ class Table {
 
             table = new Table(columnNames);  //added
             String line = input.readLine();
+            String[] parsed;
             while (line != null) {
-                //
+                parsed = line.split(",");
+                table.add(parsed);
+                line = input.readLine();   // added to here
             }
 
         } catch (FileNotFoundException e) {
@@ -144,6 +149,22 @@ class Table {
             sep = "";
             output = new PrintStream(name + ".db");
             // FILL THIS IN
+            int i = 0;
+            while (i < _rowSize - 1) {
+                output.print(getTitle(i) + ",");
+            }
+            output.println(getTitle(i));
+            int a = 0;
+            int b = 0;
+            while (a < _size) {
+                while (b < _rowSize) {
+                    output.print(get(a,b) + ",");
+                    b ++;
+                }
+                output.println();
+                a ++;
+            }
+
         } catch (IOException e) {
             throw error("trouble writing to %s.db", name);
         } finally {
