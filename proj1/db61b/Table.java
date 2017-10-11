@@ -41,10 +41,10 @@ class Table {
             }
         }
 
-        // FIXME
-        //wtf
+        // added
+
         _titles = columnTitles;
-        _columns = null;
+        _columns = new ValueList[_rowSize];
     }
 
     /** A new Table whose columns are give by COLUMNTITLES. */
@@ -75,7 +75,7 @@ class Table {
 
     /** Return the number of rows in this table. */
     public int size() {
-        return 0;  // REPLACE WITH SOLUTION
+        return _size;  // is this right?
     }
 
     /** Return the value of column number COL (0 <= COL < columns())
@@ -91,17 +91,58 @@ class Table {
     /** Add a new row whose column values are VALUES to me if no equal
      *  row already exists.  Return true if anything was added,
      *  false otherwise. */
-    public boolean add(String[] values) {
-        return false;   // REPLACE WITH SOLUTION
+    /** My columns. Row i consists of _columns[k].get(i) for all k. */
+    public boolean add(String[] values) {   // REPLACE WITH SOLUTION
+        boolean added = true;
+        int count = 0;
+        int test = columns();
+        for (int j = 0; j < size(); j++) {
+            for (int i = 0; i < columns(); i++) {
+                if (_columns[i].get(j).equals(values[i])) {
+                    count += 1;
+                }
+            }
+            if (count == test) {
+                added = false;
+                break;
+            }
+            count = 0;
+        }
+        if (added == true) {
+            for (int i = 0; i < columns(); i++) {
+                _columns[i].add(size(), values[i]);
+            }
+            _size += 1;
+            int index = 0;
+            for (int i = 0; i < size(); i++) {
+                if (compareRows(size() - 1, i) == 1) {
+                    index += 1;
+                }
+
+            }
+            _index.add(index, size() -1);
+
+        }
+        return added;
     }
+
+//        boolean added = true;
+//        for (int i = 0; i < size(); i++) {
+//            if compareRows()
+//        }
+//    }
 
     /** Add a new row whose column values are extracted by COLUMNS from
      *  the rows indexed by ROWS, if no equal row already exists.
      *  Return true if anything was added   , false otherwise. See
      *  Column.getFrom(Integer...) for a description of how Columns
      *  extract values. */
-    public boolean add(List<Column> columns, Integer... rows) {
-        return false;   // REPLACE WITH SOLUTION
+    public boolean add(List<Column> columns, Integer... rows) { // REPLACE WITH SOLUTION
+        String[] vals = new String[columns()];
+        for (int i = 0; i < columns(); i++) {
+            vals[i] = (columns.get(i)).getFrom(rows);
+        }
+        return add(vals);
     }
 
     /** Read the contents of the file NAME.db, and return as a Table.
@@ -110,7 +151,7 @@ class Table {
         BufferedReader input;
         Table table;
         input = null;
-        table = null;
+        //table = null;
         try {
             input = new BufferedReader(new FileReader(name + ".db"));
             String header = input.readLine();
@@ -150,8 +191,8 @@ class Table {
         PrintStream output;
         output = null;
         try {
-            String sep;
-            sep = "";
+//            String sep;
+//            sep = "";
             output = new PrintStream(name + ".db");
             // FILL THIS IN
             int i = 0;
@@ -181,8 +222,15 @@ class Table {
 
     /** Print my contents on the standard output, separated by spaces
      *  and indented by two spaces. */
-    void print() {
-        // FILL IN
+    void print() {     //fix to make it lexicographical using _index
+        for (int i =0; i < size(); i++) {
+            System.out.println("  " + _index.get(i));
+        }
+
+
+//        for (int i = 0; i < size(); i++) {
+//            System.out.println("  " + _columns[i].toString());
+//        }
     }
 
     /** Return a new Table whose columns are COLUMNNAMES, selected from

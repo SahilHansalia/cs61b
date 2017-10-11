@@ -188,24 +188,31 @@ class CommandInterpreter {
         _input.next("into");
         Table table = tableName();
         _input.next("values");
-        int cols = table.columns();
 
-        String[] values = new String[cols];
-
-        while (true) {
-            int k = 0; //added
-            _input.next("(");
-            while (k < cols - 1) {    //added
-            values[k] = literal();    //added
-            _input.next(",");    //added
-            k ++;   }    //added
-            values[k] = literal();   //added
-            _input.next(")");
-            table.add(values);
-            if (!_input.nextIf(",")) {
-                break;
-            }
+        ArrayList<String> vals = new ArrayList<>();
+        vals.add(literal());
+        while (_input.nextIf(",")) {
+            vals.add(literal());
         }
+        table.add(vals.toArray(new String[vals.size()]));
+        //int cols = table.columns();
+
+        //String[] values = new String[cols];
+
+//        while (true) {
+//            int k = 0; //added
+//            _input.next("(");
+//            while (k < cols - 1) {    //added
+//            values[k] = literal();    //added
+//            _input.next(",");    //added
+//            k ++;   }    //added
+//            values[k] = literal();   //added
+//            _input.next(")");
+//            table.add(values);
+//            if (!_input.nextIf(",")) {
+////                break;
+//            }
+//        }
         _input.next(";");
     }
 
