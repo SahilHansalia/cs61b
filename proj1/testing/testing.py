@@ -39,7 +39,7 @@ the following steps:
        b. Check that the exit status is 0 (normal Unix exit), the standard
           output is equal to the contents of B.out (if that file exists),
           and the standard error output compares equal to B.err (if that
-          file exists).  
+          file exists).
        c. If part b fails, print a report containing the contents of
           B.in, B.out, and B.err (the parameter report_limit optionally allows
           limiting the number of erroneous tests that get this full report).
@@ -104,7 +104,7 @@ P.output_filter (the identity function by default, and P.stderr and
 P.standard_error_file(T) through P.error_filter (the identity by
 default).  You can override the standard_output_file,
 standard_error_file, output_filter, and error_filter methods.
-                                                              
+
 The cleanup method is provided in case a test produces output files
 that should be removed.  By default, it does nothing.
 
@@ -186,7 +186,7 @@ DEFAULT_PARAMS = {
          'heap_size_limit' : 500000, # KB
          'report_limit' : None,
          'report_char_limit' : 1000,
-}        
+}
 
 class Tester:
 
@@ -263,7 +263,7 @@ class Tester:
     # of a test program.  <short name> is used to identify the file on a
     # report.  <file name> is the full pathname of the contents of the file.
     # Alternatively, if <file name> is None, <contents> is the actual contents
-    # of the file (it is otherwise ignored). 
+    # of the file (it is otherwise ignored).
 
     def input_files(self, id):
         """The inputs reportable for test ID. By default, this contains
@@ -324,7 +324,7 @@ class Tester:
         in SELF.rc.  Overridings may set .stdout or .stderr to None, indicating
         that they are irrelevant."""
         proc = Popen(self._command_line(id),
-                     shell=True, universal_newlines=True, 
+                     shell=True, universal_newlines=True,
                      stdout=PIPE, stderr=PIPE, stdin=PIPE)
         self.stdout, self.stderr = proc.communicate('')
         self.rc = proc.returncode
@@ -349,9 +349,7 @@ class Tester:
         return " <" + self.standard_input_file(testid) + " "
 
     def _command_line(self, id):
-        return "ulimit -St {timeout}; ulimit -f {filesize}; \
-                ulimit -d {memsize}; \
-                {command} {args}" \
+        return "{command} {args}" \
              .format(command=self.tested_program,
                      args=self.command_args(id),
                      timeout=self.time_limit, filesize=self.file_size_limit,
@@ -364,7 +362,7 @@ class Tester:
         output and standard error, respectively.  RC is the return code
         returned by the process.
 
-        Sets .reason to True iff 
+        Sets .reason to True iff
         (1) RC is 0; and
         (2) .stdout compares equal against the contents of file
             .standard_output_file(TESTID), after first converting both
@@ -389,7 +387,7 @@ class Tester:
             self.reason = "Error output does not match expected output."
         else:
             self.reason = True
-    
+
     def output_filter(self, id, content):
         """A filter applied to the standard output before comparing with
         expected output for test ID."""
@@ -407,11 +405,11 @@ class Tester:
 
     def _report_pass(self, id):
         print("** {id} PASSED.".format(id=self.base_id(id)))
-        
+
     def _report_fail(self, id):
         base = self.base_id(id)
         print("** {id} FAILED ({reason})".format(id=base, reason=self.reason))
-        suppress = (self.report_limit is not None and 
+        suppress = (self.report_limit is not None and
                     self.count - self.passed > self.report_limit)
         if suppress and self.count - self.passed == self.report_limit + 1:
             print()
@@ -421,7 +419,7 @@ class Tester:
             print()
         if not suppress:
             for title, name_pairs in (
-                ("**** INPUT FILES:", self.input_files(id)), 
+                ("**** INPUT FILES:", self.input_files(id)),
                 ("**** OUTPUTS FROM TEST PROGRAM:", self.output_files(id)),
                 ("**** EXPECTED OUTPUTS:", self.standard_output_files(id)),
                 ("**** ERROR OUTPUTS FROM TEST PROGRAM:", self.error_files(id)),

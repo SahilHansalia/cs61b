@@ -45,6 +45,9 @@ class Table {
 
         _titles = columnTitles;
         _columns = new ValueList[_rowSize];
+        for (int i = 0; i < _rowSize; i++ ) {
+            _columns[i] = new ValueList();
+        }
     }
 
     /** A new Table whose columns are give by COLUMNTITLES. */
@@ -237,6 +240,11 @@ class Table {
      *  rows of this table that satisfy CONDITIONS. */
     Table select(List<String> columnNames, List<Condition> conditions) {
         Table result = new Table(columnNames);
+            List<Integer> indicies = new ArrayList<>();
+            for (String name : columnNames) {
+                indicies.add(findColumn(name));
+            }
+
         // FILL IN
         return result;
     }

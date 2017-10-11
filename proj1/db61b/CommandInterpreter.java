@@ -188,6 +188,7 @@ class CommandInterpreter {
         _input.next("into");
         Table table = tableName();
         _input.next("values");
+        _input.next("(");
 
         ArrayList<String> vals = new ArrayList<>();
         vals.add(literal());
@@ -213,6 +214,7 @@ class CommandInterpreter {
 ////                break;
 //            }
 //        }
+        _input.next(")");
         _input.next(";");
     }
 
