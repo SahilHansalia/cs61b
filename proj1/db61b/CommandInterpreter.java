@@ -267,7 +267,7 @@ class CommandInterpreter {
     /** Parse and execute a select statement from the token stream. */
     void selectStatement() {
         Table table = selectClause();
-        System.out.println("Search results:");
+        System.out.println("Search results: ");
         table.print();
         if (_input.nextIs(";")) {
             _input.next(";");
