@@ -306,8 +306,6 @@ class CommandInterpreter {
                 return tableList[0].select(cols, null);
             }
         }
-
-
     }
 
     /** Parse and return a valid name (identifier) from the token stream. */

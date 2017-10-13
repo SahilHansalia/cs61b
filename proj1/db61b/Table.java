@@ -111,7 +111,7 @@ class Table {
             }
             count = 0;
         }
-        if (added == true) {
+        if (added) {
             for (int i = 0; i < columns(); i++) {
                 _columns[i].add(size(), values[i]);
             }
@@ -226,25 +226,49 @@ class Table {
     /** Print my contents on the standard output, separated by spaces
      *  and indented by two spaces. */
     void print() {     //fix to make it lexicographical using _index
-        for (int i =0; i < size(); i++) {
-            System.out.println("  " + _index.get(i));
-        }
+//        for (int i =0; i < size(); i++) {
+//            System.out.println("  " + _index.get(i));
+//        }
 
 
 //        for (int i = 0; i < size(); i++) {
 //            System.out.println("  " + _columns[i].toString());
 //        }
+        for (int i = 0; i < size(); i++) {
+            System.out.print("  ");
+            for (int j = 0; j < columns(); j++) {
+                System.out.print(_columns[j].get(_index.get(i)) + " ");
+            }
+            System.out.println();
+        }
     }
 
     /** Return a new Table whose columns are COLUMNNAMES, selected from
      *  rows of this table that satisfy CONDITIONS. */
     Table select(List<String> columnNames, List<Condition> conditions) {
         Table result = new Table(columnNames);
-            List<Integer> indicies = new ArrayList<>();
-            for (String name : columnNames) {
-                indicies.add(findColumn(name));
+        List<Column> columns = new ArrayList<>();
+        for (String name : columnNames) {
+            columns.add(new Column(name, this));      //no way this works
+        }
+        for (int i = 0; i < size(); i++) {
+            if (conditions == null || Condition.test(conditions, i)) {
+                result.add(columns, i);
             }
+        }
 
+
+
+
+
+//        List<Integer> indicies = new ArrayList<>();
+//        for (String name : columnNames) {
+//            indicies.add(findColumn(name));
+//        }
+//        int[] rows = new int[size()];
+//        for (int i = 0; i < size(); i++) {
+//            rows[i] = i;
+//        }
         // FILL IN
         return result;
     }
@@ -284,7 +308,7 @@ class Table {
                                     int row1, int row2) {
         boolean same = true; //added method
         for (int i = 0; i < common1.size(); i++ ) {
-            if (common1.get(i).getFrom(row1) != common2.get(i).getFrom(row2)) {
+            if (!(common1.get(i).getFrom(row1).equals(common2.get(i).getFrom(row2)))) {
                 same = false;
             }
         }
