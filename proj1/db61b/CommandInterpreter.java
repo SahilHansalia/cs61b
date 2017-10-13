@@ -161,11 +161,12 @@ class CommandInterpreter {
         String name = name();
         Table table = tableDefinition();
         _database.put(name, table); //added
-        if (_input.nextIs(";")) {
-            _input.next(";");
-        } else {
-            throw error("missing ending semi-colon");
-        }
+        _input.next(";");
+//        if (_input.nextIs(";")) {
+//            _input.next(";");
+//        } else {
+//            throw error("missing ending semi-colon");
+//        }
     }
 
 
@@ -213,23 +214,25 @@ class CommandInterpreter {
 //            }
 //        }
         _input.next(")");
-        if (_input.nextIs(";")) {
-            _input.next(";");
-        } else {
-            throw error("missing ending semi-colon");
-        }
+        _input.next(";");
+//        if (_input.nextIs(";")) {
+//            _input.next(";");
+//        } else {
+//            throw error("missing ending semi-colon");
+//        }
     }
 
     /** Parse and execute a load statement from the token stream. */
     void loadStatement() {
         _input.next("load");    //added entire method
         String Name = name();
+        _input.next(";");
         //_input.next(";");
-        if (_input.nextIs(";")) {
-            _input.next(";");
-        } else {
-            throw error("missing ending semi-colon");
-        }
+//        if (_input.nextIs(";")) {
+//            _input.next(";");
+//        } else {
+//            throw error("missing ending semi-colon");
+//        }
         _database.put(Name, Table.readTable(Name));
         System.out.printf("Loaded %s.db%n", Name);
 
@@ -242,11 +245,12 @@ class CommandInterpreter {
         Table table = tableName();
         table.writeTable(name); //added
         System.out.printf("Stored %s.db%n", name);
-        if (_input.nextIs(";")) {
-            _input.next(";");
-        } else {
-            throw error("missing ending semi-colon");
-        }
+        _input.next(";");
+//        if (_input.nextIs(";")) {
+//            _input.next(";");
+//        } else {
+//            throw error("missing ending semi-colon");
+//        }
     }
 
     /** Parse and execute a print statement from the token stream. */
@@ -254,26 +258,29 @@ class CommandInterpreter {
         _input.next("print");
         String name = _input.peek();
         Table table = tableName();
-        table.print();
+        _input.next(";");
         System.out.println("Contents of " + name + ":");   //does this work?
-        if (_input.nextIs(";")) {
-            _input.next(";");
-        } else {
-            throw error("missing ending semi-colon");
-        }
+        table.print();
+
+//        if (_input.nextIs(";")) {
+//            _input.next(";");
+//        } else {
+//            throw error("missing ending semi-colon");
+//        }
 
     }
 
     /** Parse and execute a select statement from the token stream. */
     void selectStatement() {
         Table table = selectClause();
-        System.out.println("Search results: ");
+        System.out.println("Search results:");
         table.print();
-        if (_input.nextIs(";")) {
-            _input.next(";");
-        } else {
-            throw error("missing ending semi-colon");
-        }
+        _input.next(";");
+//        if (_input.nextIs(";")) {
+//            _input.next(";");
+//        } else {
+//            throw error("missing ending semi-colon");
+//        }
     }
 
     /** Parse and execute a table definition, returning the specified
