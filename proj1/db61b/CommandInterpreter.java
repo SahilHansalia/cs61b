@@ -160,7 +160,8 @@ class CommandInterpreter {
         _input.next("table");
         String name = name();
         Table table = tableDefinition();
-        _database.put(name, table); //added
+        _database.put(name, table);
+        //_input.next(")"); //added todays
         _input.next(";");
 //        if (_input.nextIs(";")) {
 //            _input.next(";");
@@ -186,14 +187,30 @@ class CommandInterpreter {
         _input.next("into");
         Table table = tableName();
         _input.next("values");
-        _input.next("(");
-
-        ArrayList<String> vals = new ArrayList<>();
-        vals.add(literal());
-        while (_input.nextIf(",")) {
+        boolean count = true;
+        while (count) {
+            _input.next("(");
+            ArrayList<String> vals = new ArrayList<>();
             vals.add(literal());
+            while (_input.nextIf(",")) {
+                vals.add(literal());
+            }
+            _input.next(")");
+            table.add(vals.toArray(new String[vals.size()]));
+            if (_input.nextIf(";")) {
+                count = false; }
+            if (_input.nextIf(",")) {
+                continue;
         }
-        table.add(vals.toArray(new String[vals.size()]));
+//        ArrayList<String> vals = new ArrayList<>();
+//        vals.add(literal());
+//        while (_input.nextIf(",")) {
+//            vals.add(literal());
+        //table.add(vals.toArray(new String[vals.size()]));
+//        _input.next(")");
+//        _input.next(";");
+        }
+
 
         //int cols = table.columns();
 
@@ -213,8 +230,6 @@ class CommandInterpreter {
 ////                break;
 //            }
 //        }
-        _input.next(")");
-        _input.next(";");
 //        if (_input.nextIs(";")) {
 //            _input.next(";");
 //        } else {
@@ -293,6 +308,7 @@ class CommandInterpreter {
             while (_input.nextIf(",")) {
                 cols.add(columnName());
             }
+            _input.next(")");
             table = new Table(cols);
         } else {
             _input.next("as");
