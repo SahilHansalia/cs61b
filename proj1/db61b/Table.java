@@ -8,23 +8,57 @@
 package db61b;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import static db61b.Utils.*;
+import static db61b.Utils.error;
 
-/** A single table in a database.
- *  @author P. N. Hilfinger
+/**
+ * A single table in a database.
+ *
+ * @author P. N. Hilfinger
  */
 class Table {
-    /** A new Table whose columns are given by COLUMNTITLES, which may
-     *  not contain duplicate names. */
+    /**
+     * My column titles.
+     */
+    private final String[] _titles;
+    /**
+     * My columns. Row i consists of _columns[k].get(i) for all k.
+     */
+    private final ValueList[] _columns;
+    /**
+     * Rows in the database are supposed to be sorted. To do so, we
+     * have a list whose kth element is the index in each column
+     * of the value of that column for the kth row in lexicographic order.
+     * That is, the first row (smallest in lexicographic order)
+     * is at position _index.get(0) in _columns[0], _columns[1], ...
+     * and the kth row in lexicographic order in at position _index.get(k).
+     * When a new row is inserted, insert its index at the appropriate
+     * place in this list.
+     * (Alternatively, we could simply keep each column in the proper order
+     * so that we would not need _index.  But that would mean that inserting
+     * a new row would require rearranging _rowSize lists (each list in
+     * _columns) rather than just one.
+     */
+    private final ArrayList<Integer> _index = new ArrayList<>();
+    /**
+     * My number of columns (redundant, but convenient).
+     */
+    private final int _rowSize;
+    /**
+     * My number of rows (redundant, but convenient).
+     */
+    private int _size;
+
+    /**
+     * A new Table whose columns are given by COLUMNTITLES, which may
+     * not contain duplicate names.
+     */
     Table(String[] columnTitles) {
         if (columnTitles.length == 0) {
             throw error("table must have at least one column");
@@ -36,37 +70,110 @@ class Table {
             for (int j = i - 1; j >= 0; j -= 1) {
                 if (columnTitles[i].equals(columnTitles[j])) {
                     throw error("duplicate column name: %s",
-                                columnTitles[i]);
+                            columnTitles[i]);
                 }
             }
         }
 
         // added
-
         _titles = columnTitles;
         _columns = new ValueList[_rowSize];
-        for (int i = 0; i < _rowSize; i++ ) {
+        for (int i = 0; i < _rowSize; i++) {
             _columns[i] = new ValueList();
         }
     }
 
-    /** A new Table whose columns are give by COLUMNTITLES. */
+    /**
+     * A new Table whose columns are give by COLUMNTITLES.
+     */
     Table(List<String> columnTitles) {
         this(columnTitles.toArray(new String[columnTitles.size()]));
     }
 
-    /** Return the number of columns in this table. */
+    /**
+     * Read the contents of the file NAME.db, and return as a Table.
+     * Format errors in the .db file cause a DBException.
+     */
+    static Table readTable(String name) {
+        BufferedReader input;
+        Table table;
+        input = null;
+        table = null;
+        try {
+            input = new BufferedReader(new FileReader(name + ".db"));
+            String header = input.readLine();
+            if (header == null) {
+                throw error("missing header in DB file");
+            }
+            String[] columnNames = header.split(",");
+
+            table = new Table(columnNames);  //added
+            String line = input.readLine();
+
+            while (line != null) {
+                table.add(line.split(","));
+                line = input.readLine();   // added to here
+            }
+
+        } catch (FileNotFoundException e) {
+            throw error("could not find %s.db", name);
+        } catch (IOException e) {
+            throw error("problem reading from %s.db", name);
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    /* Ignore IOException */
+                }
+            }
+        }
+        return table;
+    }
+
+//        boolean added = true;
+//        for (int i = 0; i < size(); i++) {
+//            if compareRows()
+//        }
+//    }
+
+    /**
+     * Return true if the columns COMMON1 from ROW1 and COMMON2 from
+     * ROW2 all have identical values.  Assumes that COMMON1 and
+     * COMMON2 have the same number of elements and the same names,
+     * that the columns in COMMON1 apply to this table, those in
+     * COMMON2 to another, and that ROW1 and ROW2 are indices, respectively,
+     * into those tables.
+     */
+    private static boolean equijoin(List<Column> common1, List<Column> common2,
+                                    int row1, int row2) {
+        boolean same = true; //added method
+        for (int i = 0; i < common1.size(); i++) {
+            if (!(common1.get(i).getFrom(row1).equals(common2.get(i).getFrom(row2)))) {
+                same = false;
+            }
+        }
+        return same;
+    }
+
+    /**
+     * Return the number of columns in this table.
+     */
     public int columns() {
         return _rowSize;  //replaced
     }
 
-    /** Return the title of the Kth column.  Requires 0 <= K < columns(). */
+    /**
+     * Return the title of the Kth column.  Requires 0 <= K < columns().
+     */
     public String getTitle(int k) {
         return _titles[k];  //replaced
     }
 
-    /** Return the number of the column whose title is TITLE, or -1 if
-     *  there isn't one. */
+    /**
+     * Return the number of the column whose title is TITLE, or -1 if
+     * there isn't one.
+     */
     public int findColumn(String title) {
         for (int i = 0; i < _rowSize; i++) {
             if (_titles[i].equals(title)) {
@@ -76,13 +183,17 @@ class Table {
         return -1;
     }
 
-    /** Return the number of rows in this table. */
+    /**
+     * Return the number of rows in this table.
+     */
     public int size() {
         return _size;  // is this right?
     }
 
-    /** Return the value of column number COL (0 <= COL < columns())
-     *  of record number ROW (0 <= ROW < size()). */
+    /**
+     * Return the value of column number COL (0 <= COL < columns())
+     * of record number ROW (0 <= ROW < size()).
+     */
     public String get(int row, int col) {
         try {
             return _columns[col].get(_index.get(row));
@@ -91,10 +202,11 @@ class Table {
         }
     }
 
-    /** Add a new row whose column values are VALUES to me if no equal
-     *  row already exists.  Return true if anything was added,
-     *  false otherwise. */
-    /** My columns. Row i consists of _columns[k].get(i) for all k. */
+    /**
+     * Add a new row whose column values are VALUES to me if no equal
+     * row already exists.  Return true if anything was added,
+     * false otherwise.
+     */
     public boolean add(String[] values) {   // REPLACE WITH SOLUTION
         boolean added = true;
         int count = 0;
@@ -119,29 +231,25 @@ class Table {
             _size += 1;
             int index = 0;
             for (int i = 0; i < size(); i++) {
-                if (compareRows(size()-1, i) >= 1) {
+                if (compareRows(size() - 1, i) >= 1) {
                     index += 1;
                 }
 
             }
-            _index.add(index, size() -1);
+            _index.add(index, size() - 1);
 
         }
         return added;
     }
 
-//        boolean added = true;
-//        for (int i = 0; i < size(); i++) {
-//            if compareRows()
-//        }
-//    }
-
-    /** Add a new row whose column values are extracted by COLUMNS from
-     *  the rows indexed by ROWS, if no equal row already exists.
-     *  Return true if anything was added   , false otherwise. See
-     *  Column.getFrom(Integer...) for a description of how Columns
-     *  extract values. */
-    public boolean add(List<Column> columns, Integer... rows) { // REPLACE WITH SOLUTION
+    /**
+     * Add a new row whose column values are extracted by COLUMNS from
+     * the rows indexed by ROWS, if no equal row already exists.
+     * Return true if anything was added   , false otherwise. See
+     * Column.getFrom(Integer...) for a description of how Columns
+     * extract values.
+     */
+    public boolean add(List<Column> columns, Integer... rows) {
         String[] vals = new String[columns()];
         for (int i = 0; i < columns(); i++) {
             vals[i] = (columns.get(i)).getFrom(rows);
@@ -149,53 +257,14 @@ class Table {
         return add(vals);
     }
 
-    /** Read the contents of the file NAME.db, and return as a Table.
-     *  Format errors in the .db file cause a DBException. */
-    static Table readTable(String name) {
-        BufferedReader input;
-        Table table;
-        input = null;
-        //table = null;
-        try {
-            input = new BufferedReader(new FileReader(name + ".db"));
-            String header = input.readLine();
-            if (header == null) {
-                throw error("missing header in DB file");
-            }
-            String[] columnNames = header.split(",");
-
-            table = new Table(columnNames);  //added
-            String line = input.readLine();
-            String[] parsed;
-            while (line != null) {
-                table.add(parsed = line.split(","));
-                line = input.readLine();   // added to here
-            }
-
-        } catch (FileNotFoundException e) {
-            throw error("could not find %s.db", name);
-        } catch (IOException e) {
-            throw error("problem reading from %s.db", name);
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException e) {
-                    /* Ignore IOException */
-                }
-            }
-        }
-        return table;
-    }
-
-    /** Write the contents of TABLE into the file NAME.db. Any I/O errors
-     *  cause a DBException. */
+    /**
+     * Write the contents of TABLE into the file NAME.db. Any I/O errors
+     * cause a DBException.
+     */
     void writeTable(String name) {
         PrintStream output;
         output = null;
         try {
-//            String sep;
-//            sep = "";
             output = new PrintStream(name + ".db");
             // FILL THIS IN
             int i = 0;
@@ -207,11 +276,11 @@ class Table {
             int b = 0;
             while (a < _size) {
                 while (b < _rowSize) {
-                    output.print(get(a,b) + ",");
-                    b ++;
+                    output.print(get(a, b) + ",");
+                    b++;
                 }
                 output.println();
-                a ++;           //does this shit even work????????????????????????????
+                a++;           //does this shit even work????
             }
 
         } catch (IOException e) {
@@ -223,8 +292,10 @@ class Table {
         }
     }
 
-    /** Print my contents on the standard output, separated by spaces
-     *  and indented by two spaces. */
+    /**
+     * Print my contents on the standard output, separated by spaces
+     * and indented by two spaces.
+     */
     void print() {     //fix to make it lexicographical using _index
 //        for (int i =0; i < size(); i++) {
 //            System.out.println("  " + _index.get(i));
@@ -244,14 +315,15 @@ class Table {
                 //System.out.print(_size);
 
 
-
             }
             System.out.println();
         }
     }
 
-    /** Return a new Table whose columns are COLUMNNAMES, selected from
-     *  rows of this table that satisfy CONDITIONS. */
+    /**
+     * Return a new Table whose columns are COLUMNNAMES, selected from
+     * rows of this table that satisfy CONDITIONS.
+     */
     Table select(List<String> columnNames, List<Condition> conditions) {
         Table result = new Table(columnNames);
         List<Column> columns = new ArrayList<>();
@@ -263,9 +335,6 @@ class Table {
                 result.add(columns, i);
             }
         }
-
-
-
 
 
 //        List<Integer> indicies = new ArrayList<>();
@@ -280,9 +349,11 @@ class Table {
         return result;
     }
 
-    /** Return a new Table whose columns are COLUMNNAMES, selected
-     *  from pairs of rows from this table and from TABLE2 that match
-     *  on all columns with identical names and satisfy CONDITIONS. */
+    /**
+     * Return a new Table whose columns are COLUMNNAMES, selected
+     * from pairs of rows from this table and from TABLE2 that match
+     * on all columns with identical names and satisfy CONDITIONS.
+     */
     Table select(Table table2, List<String> columnNames,
                  List<Condition> conditions) {
         Table result = new Table(columnNames);
@@ -291,7 +362,7 @@ class Table {
             columns.add(new Column(name, this, table2));
         }
         ArrayList<String> mutualcols = new ArrayList<>();
-        for (int i = 0; i < columns(); i++){
+        for (int i = 0; i < columns(); i++) {
             for (int j = 0; j < table2.columns(); j++) {
                 if (_titles[i].equals(table2._titles[j])) {
                     mutualcols.add(_titles[i]);
@@ -300,12 +371,12 @@ class Table {
         }
         List<Column> common1 = new ArrayList<>();
         List<Column> common2 = new ArrayList<>();
-        for (String col: mutualcols) {
+        for (String col : mutualcols) {
             common1.add(new Column(col, this));
             common2.add(new Column(col, table2));
         }
         for (int i = 0; i < size(); i++) {
-            for (int j =0; j < table2.size(); j++) {
+            for (int j = 0; j < table2.size(); j++) {
                 if (equijoin(common1, common2, i, j)) {
                     if (conditions == null || Condition.test(conditions, i, j)) {
                         result.add(columns, i, j);
@@ -315,17 +386,16 @@ class Table {
         }
 
 
-
-
-
-            return result;
+        return result;
     }
 
-    /** Return <0, 0, or >0 depending on whether the row formed from
-     *  the elements _columns[0].get(K0), _columns[1].get(K0), ...
-     *  is less than, equal to, or greater than that formed from elememts
-     *  _columns[0].get(K1), _columns[1].get(K1), ....  This method ignores
-     *  the _index. */
+    /**
+     * Return <0, 0, or >0 depending on whether the row formed from
+     * the elements _columns[0].get(K0), _columns[1].get(K0), ...
+     * is less than, equal to, or greater than that formed from elememts
+     * _columns[0].get(K1), _columns[1].get(K1), ....  This method ignores
+     * the _index.
+     */
     private int compareRows(int k0, int k1) {
         for (int i = 0; i < _columns.length; i += 1) {
             int c = _columns[i].get(k0).compareTo(_columns[i].get(k1));
@@ -336,56 +406,17 @@ class Table {
         return 0;
     }
 
-    /** Return true if the columns COMMON1 from ROW1 and COMMON2 from
-     *  ROW2 all have identical values.  Assumes that COMMON1 and
-     *  COMMON2 have the same number of elements and the same names,
-     *  that the columns in COMMON1 apply to this table, those in
-     *  COMMON2 to another, and that ROW1 and ROW2 are indices, respectively,
-     *  into those tables. */
-    private static boolean equijoin(List<Column> common1, List<Column> common2,
-                                    int row1, int row2) {
-        boolean same = true; //added method
-        for (int i = 0; i < common1.size(); i++ ) {
-            if (!(common1.get(i).getFrom(row1).equals(common2.get(i).getFrom(row2)))) {
-                same = false;
-            }
-        }
-        return same;
-    }
-
-    /** A class that is essentially ArrayList<String>.  For technical reasons,
-     *  we need to encapsulate ArrayList<String> like this because the
-     *  underlying design of Java does not properly distinguish between
-     *  different kinds of ArrayList at runtime (e.g., if you have a
-     *  variable of type Object that was created from an ArrayList, there is
-     *  no way to determine in general whether it is an ArrayList<String>,
-     *  ArrayList<Integer>, or ArrayList<Object>).  This leads to annoying
-     *  compiler warnings.  The trick of defining a new type avoids this
-     *  issue. */
+    /**
+     * A class that is essentially ArrayList<String>.  For technical reasons,
+     * we need to encapsulate ArrayList<String> like this because the
+     * underlying design of Java does not properly distinguish between
+     * different kinds of ArrayList at runtime (e.g., if you have a
+     * variable of type Object that was created from an ArrayList, there is
+     * no way to determine in general whether it is an ArrayList<String>,
+     * ArrayList<Integer>, or ArrayList<Object>).  This leads to annoying
+     * compiler warnings.  The trick of defining a new type avoids this
+     * issue.
+     */
     private static class ValueList extends ArrayList<String> {
     }
-
-    /** My column titles. */
-    private final String[] _titles;
-    /** My columns. Row i consists of _columns[k].get(i) for all k. */
-    private final ValueList[] _columns;
-
-    /** Rows in the database are supposed to be sorted. To do so, we
-     *  have a list whose kth element is the index in each column
-     *  of the value of that column for the kth row in lexicographic order.
-     *  That is, the first row (smallest in lexicographic order)
-     *  is at position _index.get(0) in _columns[0], _columns[1], ...
-     *  and the kth row in lexicographic order in at position _index.get(k).
-     *  When a new row is inserted, insert its index at the appropriate
-     *  place in this list.
-     *  (Alternatively, we could simply keep each column in the proper order
-     *  so that we would not need _index.  But that would mean that inserting
-     *  a new row would require rearranging _rowSize lists (each list in
-     *  _columns) rather than just one. */
-    private final ArrayList<Integer> _index = new ArrayList<>();
-
-    /** My number of rows (redundant, but convenient). */
-    private int _size;
-    /** My number of columns (redundant, but convenient). */
-    private final int _rowSize;
 }

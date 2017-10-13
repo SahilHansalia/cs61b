@@ -1,10 +1,4 @@
-// This is a SUGGESTED skeleton for a class that describes a single
-// Condition (such as CCN = '99776').  You can throw this away if you
-// want,  but it is a good idea to try to understand it first.
-// Our solution changes or adds about 30 lines in this skeleton.
 
-// Comments that start with "//" are intended to be removed from your
-// solutions.
 package db61b;
 
 import java.util.List;
@@ -37,11 +31,10 @@ class Condition {
         int comparator;
         if (_col2 == null) {
             comparator = _col1.getFrom(rows).compareTo(_val2);
-        }
-        else {
+        } else {
             comparator = _col1.getFrom(rows).compareTo(_col2.getFrom(rows));
         }
-        if (_condition.equals("=")){
+        if (_condition.equals("=")) {
             return comparator == 0;
         }
         if (_condition.equals("!=")) {

@@ -1,11 +1,4 @@
-// This is a SUGGESTED skeleton for a class that parses and executes database
-// statements.  Be sure to read the STRATEGY section, and ask us if you have any
-// questions about it.  You can throw this away if you want, but it is a good
-// idea to try to understand it first.  Our solution adds or changes about 50
-// lines in this skeleton.
 
-// Comments that start with "//" are intended to be removed from your
-// solutions.
 package db61b;
 
 import java.io.PrintStream;
@@ -168,8 +161,12 @@ class CommandInterpreter {
         String name = name();
         Table table = tableDefinition();
         _database.put(name, table); //added
-        _input.next(";");
+        if (_input.nextIs(";")) {
+            _input.next(";");
+        } else {
+            throw error("missing ending semi-colon");
         }
+    }
 
 
 
@@ -196,6 +193,7 @@ class CommandInterpreter {
             vals.add(literal());
         }
         table.add(vals.toArray(new String[vals.size()]));
+
         //int cols = table.columns();
 
         //String[] values = new String[cols];
@@ -215,14 +213,23 @@ class CommandInterpreter {
 //            }
 //        }
         _input.next(")");
-        _input.next(";");
+        if (_input.nextIs(";")) {
+            _input.next(";");
+        } else {
+            throw error("missing ending semi-colon");
+        }
     }
 
     /** Parse and execute a load statement from the token stream. */
     void loadStatement() {
         _input.next("load");    //added entire method
         String Name = name();
-        _input.next(";");
+        //_input.next(";");
+        if (_input.nextIs(";")) {
+            _input.next(";");
+        } else {
+            throw error("missing ending semi-colon");
+        }
         _database.put(Name, Table.readTable(Name));
         System.out.printf("Loaded %s.db%n", Name);
 
@@ -235,7 +242,11 @@ class CommandInterpreter {
         Table table = tableName();
         table.writeTable(name); //added
         System.out.printf("Stored %s.db%n", name);
-        _input.next(";");
+        if (_input.nextIs(";")) {
+            _input.next(";");
+        } else {
+            throw error("missing ending semi-colon");
+        }
     }
 
     /** Parse and execute a print statement from the token stream. */
@@ -244,8 +255,12 @@ class CommandInterpreter {
         String name = _input.peek();
         Table table = tableName();
         table.print();
-        System.out.println("Contents of " + name+":");   //does this work?
-        _input.next(";");
+        System.out.println("Contents of " + name + ":");   //does this work?
+        if (_input.nextIs(";")) {
+            _input.next(";");
+        } else {
+            throw error("missing ending semi-colon");
+        }
 
     }
 
@@ -254,7 +269,11 @@ class CommandInterpreter {
         Table table = selectClause();
         System.out.println("Search results:");
         table.print();
-        _input.next(";");
+        if (_input.nextIs(";")) {
+            _input.next(";");
+        } else {
+            throw error("missing ending semi-colon");
+        }
     }
 
     /** Parse and execute a table definition, returning the specified
@@ -277,7 +296,7 @@ class CommandInterpreter {
 
     /** Parse and execute a select clause from the token stream, returning the
      *  resulting table. */
-    Table selectClause() {     //wrote method  //select Firstname, Lastname, Grade from students, enrolled where CCN = '21001';
+    Table selectClause() {
         _input.next("select");
         ArrayList<String> cols = new ArrayList<>();
         cols.add(columnName());
@@ -290,18 +309,16 @@ class CommandInterpreter {
         if (_input.nextIf(",")) {
             tableList[1] = tableName();
             if (_input.nextIf("where")) {
-                return tableList[0].select(tableList[1], cols, conditionClause(tableList));
-            }
-            else {
+                return tableList[0].select(tableList[1],
+                        cols, conditionClause(tableList));
+            } else {
                 return tableList[0].select(tableList[1], cols, null);
             }
-        }
-        else {
+        } else {
             tableList[1] = null;
             if (_input.nextIf("where")) {
-               return tableList[0].select(cols, conditionClause(tableList));
-            }
-            else {
+                return tableList[0].select(cols, conditionClause(tableList));
+            } else {
                 return tableList[0].select(cols, null);
             }
         }
@@ -342,7 +359,7 @@ class CommandInterpreter {
      *  or more Conditions. */
     ArrayList<Condition> conditionClause(Table... tables) {      // wrote method
         ArrayList<Condition> conditions = new ArrayList<>();
-        conditions.add(condition(tables));  //is condition list always of form (condition and condition and condition)???
+        conditions.add(condition(tables));
         while (_input.nextIf("and")) {
             conditions.add(condition(tables));
         }
@@ -355,11 +372,12 @@ class CommandInterpreter {
         String name1 = name();
         String relation = _input.next();
         if (_input.nextIs(LITERAL)) {
-            return new Condition(new Column(name1, tables), relation, literal());
-        }
-        else {
+            return new Condition(new Column(name1, tables),
+                    relation, literal());
+        } else {
             String name2 = name();
-            return new Condition(new Column(name1, tables), relation, new Column(name2, tables));
+            return new Condition(new Column(name1, tables),
+                    relation, new Column(name2, tables));
         }
     }
 
