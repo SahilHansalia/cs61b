@@ -168,8 +168,7 @@ class Table {
             String line = input.readLine();
             String[] parsed;
             while (line != null) {
-                parsed = line.split(",");
-                table.add(parsed);
+                table.add(parsed = line.split(","));
                 line = input.readLine();   // added to here
             }
 
@@ -291,7 +290,31 @@ class Table {
         for (String name : columnNames) {
             columns.add(new Column(name, this, table2));
         }
-        
+        ArrayList<String> mutualcols = new ArrayList<>();
+        for (int i = 0; i < columns(); i++){
+            for (int j = 0; j < table2.columns(); j++) {
+                if (_titles[i].equals(table2._titles[j])) {
+                    mutualcols.add(_titles[i]);
+                }
+            }
+        }
+        List<Column> common1 = new ArrayList<>();
+        List<Column> common2 = new ArrayList<>();
+        for (String col: mutualcols) {
+            common1.add(new Column(col, this));
+            common2.add(new Column(col, table2));
+        }
+        for (int i = 0; i < size(); i++) {
+            for (int j =0; j < table2.size(); j++) {
+                if (equijoin(common1, common2, i, j)) {
+                    if (conditions == null || Condition.test(conditions, i, j)) {
+                        result.add(columns, i, j);
+                    }
+                }
+            }
+        }
+
+
 
 
 

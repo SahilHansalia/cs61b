@@ -59,9 +59,7 @@ class Condition {
         if (_condition.equals("<=")) {
             return comparator <= 0;
         }
-        else {
-            //throw exception?
-        }
+
         return false;
     }
 

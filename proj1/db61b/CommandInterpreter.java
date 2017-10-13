@@ -262,17 +262,16 @@ class CommandInterpreter {
     Table tableDefinition() {
         Table table;
         if (_input.nextIf("(")) {
-            List<String> cols = new ArrayList<String>();        //added
-            cols.add(columnName());          //added
-            while (_input.nextIf(",")) {        //added
-                cols.add(columnName());          //added
+            List<String> cols = new ArrayList<String>();
+            cols.add(columnName());
+            while (_input.nextIf(",")) {
+                cols.add(columnName());
             }
             table = new Table(cols);
         } else {
             _input.next("as");
             table = selectClause();
         }
-        _input.next(";");   //added
         return table;
     }
 

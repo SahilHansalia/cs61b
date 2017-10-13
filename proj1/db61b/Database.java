@@ -35,7 +35,7 @@ class Database {
             _tabledata.put(name, table);
             //System.out.print(name);
         }
-        System.out.println(_tabledata.keySet());
+        //System.out.println(_tabledata.keySet());
     }
 
     private HashMap<String, Table> _tabledata;
