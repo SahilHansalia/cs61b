@@ -115,10 +115,11 @@ class Table {
             for (int i = 0; i < columns(); i++) {
                 _columns[i].add(size(), values[i]);
             }
+            //System.out.print(_size);
             _size += 1;
             int index = 0;
             for (int i = 0; i < size(); i++) {
-                if (compareRows(size() - 1, i) == 1) {
+                if (compareRows(size()-1, i) >= 1) {
                     index += 1;
                 }
 
@@ -234,10 +235,17 @@ class Table {
 //        for (int i = 0; i < size(); i++) {
 //            System.out.println("  " + _columns[i].toString());
 //        }
+
         for (int i = 0; i < size(); i++) {
             System.out.print("  ");
             for (int j = 0; j < columns(); j++) {
                 System.out.print(_columns[j].get(_index.get(i)) + " ");
+//                System.out.print(_index.get(i) + " ");
+//                System.out.print(_columns[j]+" ");
+                //System.out.print(_size);
+
+
+
             }
             System.out.println();
         }
@@ -279,8 +287,15 @@ class Table {
     Table select(Table table2, List<String> columnNames,
                  List<Condition> conditions) {
         Table result = new Table(columnNames);
-        // FILL IN
-        return result;
+        List<Column> columns = new ArrayList<>();
+        for (String name : columnNames) {
+            columns.add(new Column(name, this, table2));
+        }
+        
+
+
+
+            return result;
     }
 
     /** Return <0, 0, or >0 depending on whether the row formed from

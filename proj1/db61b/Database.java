@@ -28,9 +28,14 @@ class Database {
         if (name == null || table == null) {
             throw new IllegalArgumentException("null argument");
         }
+        if (_tabledata.containsKey(name)) {
+            _tabledata.replace(name, table);
+        }
         else {
             _tabledata.put(name, table);
+            //System.out.print(name);
         }
+        System.out.println(_tabledata.keySet());
     }
 
     private HashMap<String, Table> _tabledata;

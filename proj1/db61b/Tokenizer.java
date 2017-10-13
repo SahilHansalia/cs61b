@@ -22,7 +22,7 @@ class Tokenizer {
     /** Matches potential tokens, including valid or unterminated
      *  literals, valid or unterminated comments, identifiers,
      *  relation symbols (=, <, <=, >=, and !=), end-of-line
-     *  sequences, or other single characters.  The pattern matches a
+     *  sequences, or other single characters.  The p  attern matches a
      *  prefix of any string. */
     private static final Pattern
         TOKEN_PATN = mkPatn("(?s)[<>!]?=|%s|%s|%s|\r?\n|\\S",

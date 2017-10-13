@@ -167,7 +167,7 @@ class CommandInterpreter {
         _input.next("table");
         String name = name();
         Table table = tableDefinition();
-         _database.put(name, table); //added
+        _database.put(name, table); //added
         _input.next(";");
         }
 
@@ -266,7 +266,7 @@ class CommandInterpreter {
             cols.add(columnName());          //added
             while (_input.nextIf(",")) {        //added
                 cols.add(columnName());          //added
-          }
+            }
             table = new Table(cols);
         } else {
             _input.next("as");
