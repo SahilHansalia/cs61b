@@ -35,7 +35,12 @@ class Column {
         _tableIndex = 0;
         _name = name;
         for (Table table : tables) {
-            _column = table.findColumn(name);
+            try {
+                _column = table.findColumn(name);
+            } catch (Exception e) {
+                throw error("unknown column: %s", name);
+            }
+            //_column = table.findColumn(name);
             if (_column != -1) {
                 _table = table;
                 return;
