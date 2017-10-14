@@ -268,21 +268,33 @@ class Table {
             output = new PrintStream(name + ".db");
             // FILL THIS IN
             int i = 0;
-            while (i < _rowSize - 1) {
+            while (i < columns() - 1) {
                 output.print(getTitle(i) + ",");
                 i++;
             }
             output.println(getTitle(i));
-            int a = 0;
-            int b = 0;
-            while (a < size()) {
-                while (b < columns()) {
-                    output.print(get(a, b) + ",");
-                    b++;
+            for (int a = 0; a < size(); a++) {
+                for (int b = 0; b < columns(); b++) {
+                    output.print(get(a,b));
+                    if (b != columns() -1) {
+                        output.print(",");
+                    }
                 }
                 output.println();
-                a++;           //does this shit even work????
             }
+
+
+//            int a = 0;
+//            int b = 0;
+//            while (a < size()) {
+//                while (b < columns()) {
+//                    output.print(get(a, b) + ",");
+//                    output.print("P");
+//                    b++;
+//                }
+//                output.println();
+//                a++;           //does this shit even work????
+//            }
 
         } catch (IOException e) {
             throw error("trouble writing to %s.db", name);
