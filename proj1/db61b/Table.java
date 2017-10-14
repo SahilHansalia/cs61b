@@ -175,7 +175,7 @@ class Table {
      * there isn't one.
      */
     public int findColumn(String title) {
-        for (int i = 0; i < _rowSize; i++) {
+        for (int i = 0; i < columns(); i++) {
             if (_titles[i].equals(title)) {
                 return i;        //or is it i + 1?
             }
@@ -270,12 +270,13 @@ class Table {
             int i = 0;
             while (i < _rowSize - 1) {
                 output.print(getTitle(i) + ",");
+                i++;
             }
             output.println(getTitle(i));
             int a = 0;
             int b = 0;
-            while (a < _size) {
-                while (b < _rowSize) {
+            while (a < size()) {
+                while (b < columns()) {
                     output.print(get(a, b) + ",");
                     b++;
                 }
@@ -335,17 +336,6 @@ class Table {
                 result.add(columns, i);
             }
         }
-
-
-//        List<Integer> indicies = new ArrayList<>();
-//        for (String name : columnNames) {
-//            indicies.add(findColumn(name));
-//        }
-//        int[] rows = new int[size()];
-//        for (int i = 0; i < size(); i++) {
-//            rows[i] = i;
-//        }
-        // FILL IN
         return result;
     }
 
