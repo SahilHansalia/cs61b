@@ -40,7 +40,6 @@ class Column {
             } catch (NullPointerException e) {
                 throw error("unknown column: %s", name);
             }
-            //_column = table.findColumn(name);
             if (_column != -1) {
                 _table = table;
                 return;

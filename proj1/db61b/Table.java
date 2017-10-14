@@ -1,10 +1,4 @@
-// This is a SUGGESTED skeleton for a class that represents a single
-// Table.  You can throw this away if you want, but it is a good
-// idea to try to understand it first.  Our solution changes or adds
-// about 100 lines in this skeleton.
 
-// Comments that start with "//" are intended to be removed from your
-// solutions.
 package db61b;
 
 import java.io.BufferedReader;
@@ -75,7 +69,6 @@ class Table {
             }
         }
 
-        // added
         _titles = columnTitles;
         _columns = new ValueList[_rowSize];
         for (int i = 0; i < _rowSize; i++) {
@@ -107,12 +100,12 @@ class Table {
             }
             String[] columnNames = header.split(",");
 
-            table = new Table(columnNames);  //added
+            table = new Table(columnNames);
             String line = input.readLine();
 
             while (line != null) {
                 table.add(line.split(","));
-                line = input.readLine();   // added to here
+                line = input.readLine();
             }
 
         } catch (FileNotFoundException e) {
@@ -131,11 +124,6 @@ class Table {
         return table;
     }
 
-//        boolean added = true;
-//        for (int i = 0; i < size(); i++) {
-//            if compareRows()
-//        }
-//    }
 
     /**
      * Return true if the columns COMMON1 from ROW1 and COMMON2 from
@@ -147,9 +135,10 @@ class Table {
      */
     private static boolean equijoin(List<Column> common1, List<Column> common2,
                                     int row1, int row2) {
-        boolean same = true; //added method
+        boolean same = true;
         for (int i = 0; i < common1.size(); i++) {
-            if (!(common1.get(i).getFrom(row1).equals(common2.get(i).getFrom(row2)))) {
+            if (!(common1.get(i).getFrom(row1)
+                    .equals(common2.get(i).getFrom(row2)))) {
                 same = false;
             }
         }
@@ -160,14 +149,14 @@ class Table {
      * Return the number of columns in this table.
      */
     public int columns() {
-        return _rowSize;  //replaced
+        return _rowSize;
     }
 
     /**
      * Return the title of the Kth column.  Requires 0 <= K < columns().
      */
     public String getTitle(int k) {
-        return _titles[k];  //replaced
+        return _titles[k];
     }
 
     /**
@@ -177,7 +166,7 @@ class Table {
     public int findColumn(String title) {
         for (int i = 0; i < columns(); i++) {
             if (_titles[i].equals(title)) {
-                return i;        //or is it i + 1?
+                return i;
             }
         }
         return -1;
@@ -187,7 +176,7 @@ class Table {
      * Return the number of rows in this table.
      */
     public int size() {
-        return _size;  // is this right?
+        return _size;
     }
 
     /**
@@ -207,7 +196,7 @@ class Table {
      * row already exists.  Return true if anything was added,
      * false otherwise.
      */
-    public boolean add(String[] values) {   // REPLACE WITH SOLUTION
+    public boolean add(String[] values) {
         boolean added = true;
         int count = 0;
         int test = columns();
@@ -227,7 +216,6 @@ class Table {
             for (int i = 0; i < columns(); i++) {
                 _columns[i].add(size(), values[i]);
             }
-            //System.out.print(_size);
             _size += 1;
             int index = 0;
             for (int i = 0; i < size(); i++) {
@@ -266,7 +254,6 @@ class Table {
         output = null;
         try {
             output = new PrintStream(name + ".db");
-            // FILL THIS IN
             int i = 0;
             while (i < columns() - 1) {
                 output.print(getTitle(i) + ",");
@@ -275,27 +262,13 @@ class Table {
             output.println(getTitle(i));
             for (int a = 0; a < size(); a++) {
                 for (int b = 0; b < columns(); b++) {
-                    output.print(get(a,b));
-                    if (b != columns() -1) {
+                    output.print(get(a, b));
+                    if (b != columns() - 1) {
                         output.print(",");
                     }
                 }
                 output.println();
             }
-
-
-//            int a = 0;
-//            int b = 0;
-//            while (a < size()) {
-//                while (b < columns()) {
-//                    output.print(get(a, b) + ",");
-//                    output.print("P");
-//                    b++;
-//                }
-//                output.println();
-//                a++;           //does this shit even work????
-//            }
-
         } catch (IOException e) {
             throw error("trouble writing to %s.db", name);
         } finally {
@@ -309,25 +282,11 @@ class Table {
      * Print my contents on the standard output, separated by spaces
      * and indented by two spaces.
      */
-    void print() {     //fix to make it lexicographical using _index
-//        for (int i =0; i < size(); i++) {
-//            System.out.println("  " + _index.get(i));
-//        }
-
-
-//        for (int i = 0; i < size(); i++) {
-//            System.out.println("  " + _columns[i].toString());
-//        }
-
+    void print() {
         for (int i = 0; i < size(); i++) {
             System.out.print("  ");
             for (int j = 0; j < columns(); j++) {
                 System.out.print(_columns[j].get(_index.get(i)) + " ");
-//                System.out.print(_index.get(i) + " ");
-//                System.out.print(_columns[j]+" ");
-                //System.out.print(_size);
-
-
             }
             System.out.println();
         }
@@ -341,7 +300,7 @@ class Table {
         Table result = new Table(columnNames);
         List<Column> columns = new ArrayList<>();
         for (String name : columnNames) {
-            columns.add(new Column(name, this));      //no way this works
+            columns.add(new Column(name, this));
         }
         for (int i = 0; i < size(); i++) {
             if (conditions == null || Condition.test(conditions, i)) {
@@ -380,7 +339,8 @@ class Table {
         for (int i = 0; i < size(); i++) {
             for (int j = 0; j < table2.size(); j++) {
                 if (equijoin(common1, common2, i, j)) {
-                    if (conditions == null || Condition.test(conditions, i, j)) {
+                    if (conditions == null
+                            || Condition.test(conditions, i, j)) {
                         result.add(columns, i, j);
                     }
                 }

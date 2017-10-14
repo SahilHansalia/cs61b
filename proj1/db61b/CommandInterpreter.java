@@ -161,13 +161,7 @@ class CommandInterpreter {
         String name = name();
         Table table = tableDefinition();
         _database.put(name, table);
-        //_input.next(")"); //added todays
         _input.next(";");
-//        if (_input.nextIs(";")) {
-//            _input.next(";");
-//        } else {
-//            throw error("missing ending semi-colon");
-//        }
     }
 
 
@@ -198,58 +192,21 @@ class CommandInterpreter {
             _input.next(")");
             table.add(vals.toArray(new String[vals.size()]));
             if (_input.nextIf(";")) {
-                count = false; }
+                count = false;
+            }
             if (_input.nextIf(",")) {
                 continue;
+            }
         }
-//        ArrayList<String> vals = new ArrayList<>();
-//        vals.add(literal());
-//        while (_input.nextIf(",")) {
-//            vals.add(literal());
-        //table.add(vals.toArray(new String[vals.size()]));
-//        _input.next(")");
-//        _input.next(";");
-        }
-
-
-        //int cols = table.columns();
-
-        //String[] values = new String[cols];
-
-//        while (true) {
-//            int k = 0; //added
-//            _input.next("(");
-//            while (k < cols - 1) {    //added
-//            values[k] = literal();    //added
-//            _input.next(",");    //added
-//            k ++;   }    //added
-//            values[k] = literal();   //added
-//            _input.next(")");
-//            table.add(values);
-//            if (!_input.nextIf(",")) {
-////                break;
-//            }
-//        }
-//        if (_input.nextIs(";")) {
-//            _input.next(";");
-//        } else {
-//            throw error("missing ending semi-colon");
-//        }
     }
 
     /** Parse and execute a load statement from the token stream. */
     void loadStatement() {
-        _input.next("load");    //added entire method
-        String Name = name();
+        _input.next("load");
+        String name = name();
         _input.next(";");
-        //_input.next(";");
-//        if (_input.nextIs(";")) {
-//            _input.next(";");
-//        } else {
-//            throw error("missing ending semi-colon");
-//        }
-        _database.put(Name, Table.readTable(Name));
-        System.out.printf("Loaded %s.db%n", Name);
+        _database.put(name, Table.readTable(name));
+        System.out.printf("Loaded %s.db%n", name);
 
     }
 
@@ -258,31 +215,19 @@ class CommandInterpreter {
         _input.next("store");
         String name = _input.peek();
         Table table = tableName();
-        table.writeTable(name); //added
+        table.writeTable(name);
         System.out.printf("Stored %s.db%n", name);
         _input.next(";");
-//        if (_input.nextIs(";")) {
-//            _input.next(";");
-//        } else {
-//            throw error("missing ending semi-colon");
-//        }
     }
 
     /** Parse and execute a print statement from the token stream. */
-    void printStatement() {    //wrote method
+    void printStatement() {
         _input.next("print");
         String name = _input.peek();
         Table table = tableName();
         _input.next(";");
-        System.out.println("Contents of " + name + ":");   //does this work?
+        System.out.println("Contents of " + name + ":");
         table.print();
-
-//        if (_input.nextIs(";")) {
-//            _input.next(";");
-//        } else {
-//            throw error("missing ending semi-colon");
-//        }
-
     }
 
     /** Parse and execute a select statement from the token stream. */
@@ -291,11 +236,6 @@ class CommandInterpreter {
         System.out.println("Search results:");
         table.print();
         _input.next(";");
-//        if (_input.nextIs(";")) {
-//            _input.next(";");
-//        } else {
-//            throw error("missing ending semi-colon");
-//        }
     }
 
     /** Parse and execute a table definition, returning the specified
@@ -380,7 +320,7 @@ class CommandInterpreter {
     /** Parse and return a list of Conditions that apply to TABLES from the
      *  token stream.  This denotes the conjunction (`and') of zero
      *  or more Conditions. */
-    ArrayList<Condition> conditionClause(Table... tables) {      // wrote method
+    ArrayList<Condition> conditionClause(Table... tables) {
         ArrayList<Condition> conditions = new ArrayList<>();
         conditions.add(condition(tables));
         while (_input.nextIf("and")) {
@@ -391,7 +331,7 @@ class CommandInterpreter {
 
     /** Parse and return a Condition that applies to TABLES from the
      *  token stream. */
-    Condition condition(Table... tables) {  // REPLACE WITH SOLUTION
+    Condition condition(Table... tables) {
         String name1 = name();
         String relation = _input.next();
         if (_input.nextIs(LITERAL)) {
