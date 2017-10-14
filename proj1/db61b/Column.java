@@ -37,7 +37,7 @@ class Column {
         for (Table table : tables) {
             try {
                 _column = table.findColumn(name);
-            } catch (Exception e) {
+            } catch (NullPointerException e) {
                 throw error("unknown column: %s", name);
             }
             //_column = table.findColumn(name);
