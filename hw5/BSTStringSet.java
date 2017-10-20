@@ -2,7 +2,7 @@ import java.util.List;
 
 /**
  * Implementation of a BST based String Set.
- * @author
+ * @author sahil
  */
 public class BSTStringSet implements StringSet {
     /** Creates a new empty set. */
@@ -10,17 +10,46 @@ public class BSTStringSet implements StringSet {
         root = null;
     }
 
+
+    private Node put(String s, Node node) {
+        if (node == null) {
+            return new Node(s);
+        }
+        if (s.compareTo(node.s) == 1) {
+            node.right = put(s, node.right);
+        }
+        if (s.compareTo(node.s) == -1) {
+            node.left = put(s, node.left);
+        }
+
+        return node;
+    }
+
     @Override
     public void put(String s) {
-        // FIXME
+        root = put(s, root);
+
     }
+
+    private boolean contains(String s, Node node) {
+        if (node == null) {
+            return false;
+        }
+        if (s.compareTo(node.s) == 1) {
+            return contains(s, node.right);
+        }
+        return (s.compareTo(node.s) == -1 || contains(s, node.left));
+        //return true;
+    }
+
 
     @Override
     public boolean contains(String s) {
-        return false; // FIXME
+        return contains(s, root); // FIXME
     }
 
     @Override
+
     public List<String> asList() {
         return null; // FIXME
     }

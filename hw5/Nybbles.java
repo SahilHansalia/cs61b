@@ -25,6 +25,9 @@ public class Nybbles {
         if (k < 0 || k >= _n) {
             throw new IndexOutOfBoundsException();
         } else {
+            int position = _data[k/ 8];
+
+
             return 0; // REPLACE WITH SOLUTION
         }
     }
@@ -37,6 +40,8 @@ public class Nybbles {
         } else if (val < (-MAX_VALUE - 1) || val > MAX_VALUE) {
             throw new IllegalArgumentException();
         } else {
+            int position = _data[k/8];
+            position =
             _data[0] = 0; // REPLACE WITH SOLUTION
         }
     }
