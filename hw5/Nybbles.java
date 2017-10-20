@@ -26,9 +26,8 @@ public class Nybbles {
             throw new IndexOutOfBoundsException();
         } else {
             int position = _data[k/ 8];
-
-
-            return 0; // REPLACE WITH SOLUTION
+            int reset_left = position << (28 -4*(k%8));
+            return reset_left >> 28; // REPLACE WITH SOLUTION
         }
     }
 
@@ -41,8 +40,10 @@ public class Nybbles {
             throw new IllegalArgumentException();
         } else {
             int position = _data[k/8];
-            position =
-            _data[0] = 0; // REPLACE WITH SOLUTION
+            position = position & ~(15 << 4*(k%8));
+            int place = (15 & val) << 4*(k%8);
+            _data[k/8] = position | place;
+            // REPLACE WITH SOLUTION
         }
     }
 

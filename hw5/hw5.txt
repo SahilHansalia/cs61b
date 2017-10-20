@@ -3,25 +3,36 @@ HW #5.
 
 Question D.
 
-1.
+1. Θ(x^2)
 
 
-2.
+2. Θ(log(x))
 
 
-3.
+3. Θ(x^2)
 
 
-4.
+4. Θ(N + M)
 
 
-5.
+5. Θ(nlog(n))
 
 
-6.
+6. let p(x) = log_b(f(x))
+b^p(x) = b ^ (log_b(f(x))) = f(x)
+log_10(b^p(x)) = log_10(f(x))
+p(x) * log(10(b)) = log_10(f(x))
+since p(x) = log_b(f(x)), this statement shows that log_b(f(x)) and log_10(f(x))...
+...differ by only the constant factor log(10(b))
+
+7. Consider only the highest degree term, a*x^n. This is acceptable since in theta bound we only consider the term with the greatest contribution.
+log(a*x^n) = log(a) + log(x^n) = log(a) + nlog(x)
+This is equivalent to O(log(x)) by definition since log(a) and n are constants.
 
 
-7.
-
-
-8.
+8. We are given that f(n) is positive and non-decreasing.
+ceiling[f(n)] <= f(n) + 1
+for any value x > n, f(x) >= f(n) since f(n) is non-decreasing.
+Thus, ceiling[f(n)] <= f(n) + f(n)/f(x)
+ceiling[f(n)] <= f(n)(1 + 1/f(x)) where (1 + 1/f(x)) is a constant.
+By definition of O, ceiling[f(n)] is in O(f(n))
