@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,7 +28,7 @@ public class BSTStringSet implements StringSet {
 
     @Override
     public void put(String s) {
-        root = put(s, root);
+        put(s, root);
 
     }
 
@@ -45,15 +46,23 @@ public class BSTStringSet implements StringSet {
 
     @Override
     public boolean contains(String s) {
-        return contains(s, root); // FIXME
+        return contains(s, root);
     }
 
     @Override
 
     public List<String> asList() {
-        return null; // FIXME
+        listHelper(root);
+        return a;
+
     }
 
+    public void listHelper(Node node) {
+        a.add(node.s);
+        listHelper(node.left);
+        listHelper(node.right);
+    }
+    ArrayList<String> a = new ArrayList<>();
     /** Represents a single Node of the tree. */
     private static class Node {
         /** String stored in this Node. */
