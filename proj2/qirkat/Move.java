@@ -11,7 +11,7 @@ import java.util.regex.Matcher;
  *  each distinct Move.  A "vestigial" move represents a single board
  *  position, as opposed to a move (its starting and ending rows are
  *  equal, likewise columns).
- *  @author
+ *  @author sahil
  */
 class Move {
 
@@ -160,13 +160,13 @@ class Move {
      *  the left. */
     boolean isLeftMove() {
         return false; // FIXME
-    }
+    } //this is trivial
 
     /** Return true iff this is a horizontal, non-capturing move
      *  to the right. */
     boolean isRightMove() {
         return false; // FIXME
-    }
+    } //this is trivial
 
     /** Returns the source column. */
     char col0() {
@@ -192,13 +192,13 @@ class Move {
      *  first leg of the jump.  For a non-capturing move, same as row1(). */
     char jumpedRow() {
         return '1';  // FIXME
-    }
+    }  //trivial... check if rows are same
 
     /** For a jump, returns the column of the jumped-over square for the
      *  first leg of the jump.  For a non-capturing move, same as col1(). */
     char jumpedCol() {
         return 'a'; // FIXME
-    }
+    }  //trivial.. ceck if cols are the same
 
     /** Return the linearized index of my source square. */
     int fromIndex() {
@@ -272,7 +272,7 @@ class Move {
     /** Write my string representation into OUT. */
     private void toString(Formatter out) {
         out.format("???"); // FIXME
-    }
+    }  //trivial... use recursion and next jump
 
     /** Set me to COL0 ROW0 - COL1 ROW1 - NEXTJUMP. */
     private void set(char col0, char row0, char col1, char row1,
