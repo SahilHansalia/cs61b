@@ -53,6 +53,12 @@ public class BoardTest {
         makeMoves(b0, GAME1);
         assertEquals("second pass failed to reach same position", b2, b0);
     }
+    @Test
+    public void testString() {
+        Board b0 = new Board();
+        b0.setPieces("w w w w w  w w w w w w w - b b b b b b b  b b b b b", PieceColor.BLACK);
+        assertEquals(INIT_BOARD, b0.toString(false));
+    }
 
 
 }

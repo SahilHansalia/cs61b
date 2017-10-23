@@ -158,6 +158,8 @@ class Game {
     void doLoad(String[] operands) {
         try {
             FileReader reader = new FileReader(operands[0]);
+//            ReaderSource source = new ReaderSource(reader, true);
+//            _inputs.addSource(source);
             // FIXME
         } catch (IOException e) {
             throw error("Cannot open file %s", operands[0]);

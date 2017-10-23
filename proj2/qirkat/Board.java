@@ -2,10 +2,7 @@ package qirkat;
 
 import com.sun.tools.javac.util.Assert;
 
-import java.util.ArrayList;
-import java.util.Formatter;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
 
 import static qirkat.PieceColor.*;
 import static qirkat.Move.*;
@@ -24,6 +21,7 @@ import static qirkat.Move.*;
 class Board extends Observable {
 
     PieceColor[] board = new PieceColor[25];
+    PieceColor[] printing = new PieceColor[25];
 
     /** A new, cleared board at the start of the game. */
     Board() {
@@ -81,6 +79,12 @@ class Board extends Observable {
 
     }
 
+    private void newBoard(Board a) {
+        a._gameOver = _gameOver;
+        a._whoseMove = _whoseMove;
+        a.board = board;
+    }
+
     /** Set my contents as defined by STR.  STR consists of 25 characters,
      *  each of which is b, w, or -, optionally interspersed with whitespace.
      *  These give the contents of the Board in row-major order, starting
@@ -96,9 +100,9 @@ class Board extends Observable {
         if (!str.matches("[bw-]{25}")) {
             throw new IllegalArgumentException("bad board description");
         }
+        _gameOver = false;
 
         // FIXME
-        _whoseMove = nextMove;
         //find out when its called?
         //whosemove = nextmove
         //gameover = false if no legal moves?
@@ -118,8 +122,18 @@ class Board extends Observable {
                 break;
             }
         }
+        _whoseMove = nextMove;
+        boolean pieces = false;
+        for (int i = 0; i < 25; i++) {
+            if (board[i] == whoseMove()) {
+                pieces = true;
+            }
+        }
+        if (!isMove() | !pieces) {
+            _gameOver = true;
+        }
 
-        // FIXME
+        // FIXME ///whats left?
 
         setChanged();
         notifyObservers();
@@ -155,7 +169,24 @@ class Board extends Observable {
     private void set(int k, PieceColor v) {
         assert validSquare(k);
         // FIXME  fixed?
+//        if (k < 5) {
+//            board[k + 20] = v;
+//        }
+//        if (5 <= k && k < 10) {
+//            board[k + 10] = v;
+//        }
+//        if (10 <= k && k < 15) {
+//            board[k] = v;
+//        }
+//        if (15 <= k && k < 20) {
+//            board[k - 10] = v;
+//        }
+//        if (20 <= k && k < 25) {
+//            board[k - 20] = v;
+//        }
         board[k] = v;
+        //System.out.println(board[2]);
+        //board[k] = v;
     }
 
     /** Return true iff MOV is legal on the current board. */
@@ -168,19 +199,20 @@ class Board extends Observable {
         if (board[index(mov.col1(), mov.row1())] != EMPTY) {
             return false; //check if ending square is empty
         }
+
         if (whoseMove() == WHITE) {
             if (get(mov.col0(), mov.row0()) != WHITE | ((mov.row1() < mov.row0() && !mov.isJump())))
             //if ((mov.row1() < mov.row0() && !mov.isJump())) {
                 return false;
             }
 
-        if (whoseMove() == BLACK && !mov.isJump()) {
-            if ((mov.row1() > mov.row0()) | get(mov.col0(), mov.row0()) != BLACK) {
+        if (whoseMove() == BLACK) {
+            if (((mov.row1() > mov.row0()) && !mov.isJump())| get(mov.col0(), mov.row0()) != BLACK) {
                 return false;
             }
         }
 
-        return false;
+        return true;
         }
 
 
@@ -349,15 +381,56 @@ class Board extends Observable {
      *  MOV must be a jump or null.  If ALLOWPARTIAL, allow jumps that
      *  could be continued and are valid as far as they go.  */
     boolean checkJump(Move mov, boolean allowPartial) {
-        if (!legalMove(mov)) {
-            return false;
-        }
+        Board a = new Board();
+        newBoard(a);
+        return checkJumpHelper(mov, allowPartial, a);
 
-        return false; // FIXME
+        //fixme
         //check color of jumped over
         // check move? --- done
         //check that the sequence is a valid jump- check that it is a jump, check that its allowed
         //deal with recursion of jumps if allowed partial
+    }
+
+    boolean checkJumpHelper(Move mov, boolean allowPartial, Board a) {
+        if (!validSquare(mov.col0(), mov.row0()) | !validSquare(mov.col1(), mov.row1())) {    //recycled from legalmove
+            return false; //check if starting and final is valid square
+        }
+        if (whoseMove() == WHITE) {
+            if (get(mov.col0(), mov.row0()) != WHITE | ((mov.row1() < mov.row0() && !mov.isJump())))
+                //if ((mov.row1() < mov.row0() && !mov.isJump())) {
+                return false;
+        }
+
+        if (whoseMove() == BLACK) {
+            if (((mov.row1() > mov.row0()) && !mov.isJump())| get(mov.col0(), mov.row0()) != BLACK) {
+                return false;
+            }
+        }                               //recycled from legal move
+        if (!mov.isJump()) {
+            return false;
+        }
+        if (a.board[mov.jumpedIndex()] != whoseMove().opposite()) {
+            return false;
+        }
+        if (a.board[index(mov.col1(), mov.row1())] != EMPTY) {
+            return false; //check if ending square is empty
+        }
+        a.board[mov.jumpedIndex()] = EMPTY;
+        if (mov.jumpTail() != null) {
+            checkJumpHelper(mov.jumpTail(), allowPartial, a); //recurse for tails
+        }
+            return true;
+    }
+
+    boolean singleJumpChecker(Move mov) {
+        if (!legalMove(mov)) {
+            return false;
+        }
+        if (!mov.isJump()) {
+            return false;
+        }
+        return board[mov.jumpedIndex()] == whoseMove().opposite();
     }
 
     /** Return true iff a jump is possible for a piece at position C R. */
@@ -370,10 +443,8 @@ class Board extends Observable {
     boolean jumpPossible(int k) {
         ArrayList<Move> jumps = new ArrayList<>();
         getJumps(jumps, k);
-        if (jumps.size() > 0) {
-            return true;
-        }
-        return false; // FIXME  fixed
+        return (jumps.size() > 0);
+            // FIXME  fixed
 
         // if getJumps adds anything then true else false
         //maybe run and create array
@@ -421,16 +492,18 @@ class Board extends Observable {
         }
         _whoseMove = turn.opposite();
         moves.add(mov);
-
-        //if not legal move or legal jump then dont do anything
-        //else Board.set???
-        //remove current piece by accessing array?
-        //jumping? ---use move jumped index to find where you jumped over and remove
-        //multiple jumps?
-        //set game over??
-        //change whosemove
+        boolean pieces = false;
+        for (int i = 0; i < 25; i++) {
+            if (board[i] == whoseMove()) {
+                pieces = true;
+            }
+        }
+        if (!isMove() | !pieces) {
+            _gameOver = true;
+        }
 
         // FIXME
+        //fixed???
 
         setChanged();
         notifyObservers();
@@ -438,10 +511,32 @@ class Board extends Observable {
 
     /** Undo the last move, if any. */
     void undo() {
+        if (moves.size() == 0) {
+            return;
+        }
+        Move mov = moves.get(moves.size() - 1);
+        moves.remove(moves.size() - 1);
+        assert legalMove(mov);
+        PieceColor prevTurn = whoseMove().opposite();
+        board[mov.toIndex()] = EMPTY;
+        board[mov.fromIndex()] = prevTurn;
+        if (mov.isJump()) {
+            board[mov.jumpedIndex()] = prevTurn.opposite();
+        }
+        if (mov.jumpTail() != null) {
+            makeMove(mov.jumpTail()); //create undo helper if needed that looks like
+        }
+
+        _whoseMove = prevTurn;
+        _gameOver = false;
+
+//        if (mov.jumpTail() != null) {
+//            undo(mov.jumpTail());
+//        }
 
         // FIXME
         //????????????????? find previous move
-        //to backtrack, find mov, flip cols and add to prev locaton
+        //to backtrack, find mov, flip cols and add to prev location
         //if jumped add tile jumped over
         //switch whose move it is
         //switch game over??
@@ -460,22 +555,31 @@ class Board extends Observable {
      *  column numbers around the edges. */
     String toString(boolean legend) {
         Formatter out = new Formatter();
+        StringBuilder output = new StringBuilder(100);
         // FIXME
-        for (int i = 25; i >= 0; i-- ) {
-            System.out.print(board[i].toString() + " ");
+        for (int i = 24; i >= 0; i--) {
+
+            output.append(board[i].shortName() + " ");
             if (legend){
-                if (i % 5 == 1) {
-                    System.out.println((i-1)/4);
+                if (i % 5 == 0) {
+                    output.append((i-1)/4 + 1); //is legend supposed to be on other side?
+                    output.append("\n");
+                }
+            }
+            else {
+                if (i % 5 == 0 && i != 0) {
+                    output.append("\n");
                 }
             }
         }
         if (legend) {
-            System.out.print("1 2 3 4 5");
+            output.append("1 2 3 4 5");
         }
+//        System.out.println(output.toString());
 
         //Board.get for Piececolor. Iterate through i and j and if col % 5 = 0, tag on new line. if legend, add i/j value
         //if legend at bottom,
-        return out.toString();
+        return output.toString();
     }
 
     /** Return true iff there is a move for the current player. */
