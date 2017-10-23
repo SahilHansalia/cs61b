@@ -54,4 +54,5 @@ public class BoardTest {
         assertEquals("second pass failed to reach same position", b2, b0);
     }
 
+
 }

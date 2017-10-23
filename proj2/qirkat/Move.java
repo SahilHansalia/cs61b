@@ -201,9 +201,14 @@ class Move {
     /** For a jump, returns the column of the jumped-over square for the
      *  first leg of the jump.  For a non-capturing move, same as col1(). */
     char jumpedCol() {
+        //System.out.println(Character.getNumericValue((char) Move.row(0)));
         if (Math.abs(alp.indexOf(col1())- alp.indexOf(col0())) == 2) {
             int i = (alp.indexOf(col1()) + alp.indexOf(col0()))/2;
-            return (char) i;
+            //System.out.println( alp.charAt(Move.alp.indexOf((char) Move.col(0)) + 1));
+            System.out.println(Move.row(0));
+//            System.out.println(alp.charAt(-1));
+            return alp.charAt(i);
+
         }
         return col1();  // FIXME //fixed
     }  //trivial.. ceck if cols are the same
@@ -279,6 +284,8 @@ class Move {
 
     /** Write my string representation into OUT. */
     private void toString(Formatter out) {
+//        char a = '3';
+//        Character.getN
         if (_nextJump == null) {
             out.format(String.valueOf(col0())+ String.valueOf(row0()) + "-" + col1() + row1());
         }
@@ -333,6 +340,7 @@ class Move {
     static final Function<Move, Move> IDENTITY = k -> k;
 
     /** Convert cols to numbers */
-    final private String alp = "abcde";
+    static final String alp = "abcde";
+
 
 }

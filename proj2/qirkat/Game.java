@@ -188,6 +188,10 @@ class Game {
 
     /** Perform the command 'clear'. */
     void doClear(String[] unused) {
+        //abandons game
+        //person whose turn it is resigns
+        //valid in any state- do they resign in setup?
+        board().clear();
         // FIXME
     }
 

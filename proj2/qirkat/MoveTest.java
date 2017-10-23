@@ -41,4 +41,10 @@ public class MoveTest {
         assertEquals("a3-a5-c3", parseMove("a3-a5-c3").toString());
         assertEquals("a3-a5-c3-e1", parseMove("a3-a5-c3-e1").toString());
     }
+    @Test
+    public void jumpedColTest() {
+        Move m = move('a', '3', 'a', '5');
+        assertNotNull(m);
+        assertEquals('4', m.jumpedCol());
+    }
 }
