@@ -2,6 +2,8 @@ package qirkat;
 
 /* Author: P. N. Hilfinger */
 
+import com.sun.tools.doclets.formats.html.SourceToHTMLConverter;
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
@@ -13,6 +15,7 @@ import java.util.function.Consumer;
 
 import static qirkat.PieceColor.*;
 import static qirkat.Game.State.*;
+import static qirkat.Board.*;
 import static qirkat.Command.Type.*;
 import static qirkat.GameException.error;
 
@@ -127,7 +130,14 @@ class Game {
     /** Perform the command 'auto OPERANDS[0]'. */
     void doAuto(String[] operands) {
         _state = SETUP;
-        // FIXME
+        String op = operands[0];
+        if (op.equals("White") | op.equals("white") | op.equals("WHITE")) {
+            _whiteIsManual = false;
+        }
+        if (op.equals("Black") | op.equals("black") | op.equals("BLACK")) {
+            _blackIsManual = false;
+        }
+        // FIXME //fixed
     }
 
     /** Perform a 'help' command. */
@@ -158,9 +168,9 @@ class Game {
     void doLoad(String[] operands) {
         try {
             FileReader reader = new FileReader(operands[0]);
-//            ReaderSource source = new ReaderSource(reader, true);
-//            _inputs.addSource(source);
-            // FIXME
+            ReaderSource source = new ReaderSource(reader, true);
+            _inputs.addSource(source);
+            // FIXME //fixed
         } catch (IOException e) {
             throw error("Cannot open file %s", operands[0]);
         }
@@ -169,7 +179,15 @@ class Game {
     /** Perform the command 'manual OPERANDS[0]'. */
     void doManual(String[] operands) {
         _state = SETUP;
-        // FIXME
+        String op = operands[0];
+        if (op.equals("White") | op.equals("white") | op.equals("WHITE")) {
+            _whiteIsManual = true;
+        }
+        if (op.equals("Black") | op.equals("black") | op.equals("BLACK")) {
+            _blackIsManual = true;
+        }
+
+        // FIXME //fixed
     }
 
     /** Exit the program. */
@@ -185,6 +203,16 @@ class Game {
 
     /** Perform the move OPERANDS[0]. */
     void doMove(String[] operands) {
+        if ((operands.length - 5) % 3 != 0) {
+            reportError("invalid move syntax", operands);
+        }
+        Move make = Move.move(operands[0].charAt(0), operands[1].charAt(0), operands[3].charAt(0), operands[4].charAt(0)); //not completed
+        if (!_board.legalMove(make)) {
+            reportError("Illegal move", make);
+        }
+        else {
+            _board.makeMove(make);
+        }
         // FIXME
     }
 
@@ -192,19 +220,39 @@ class Game {
     void doClear(String[] unused) {
         //abandons game
         //person whose turn it is resigns
-        //valid in any state- do they resign in setup?
         board().clear();
-        // FIXME
+        _state = SETUP;
+        //"initially and after a clear command white is manual and black is AI"
+        //valid in any state- do they resign in setup?
+        //if they resign do we output winner message?
+        // FIXME //ask about resigning?
     }
 
     /** Perform the command 'set OPERANDS[0] OPERANDS[1]'. */
     void doSet(String[] operands) {
-        // FIXME
+        _state = SETUP;
+        PieceColor color;
+        String piece = operands[0];
+        if (piece.equals("WHITE") | piece.equals("White") | piece.equals("white")) {
+            color = WHITE;
+            _board.setPieces(operands[1], color);
+            return; //brick?
+        }
+        if (piece.equals("BLACK") | piece.equals("Black") | piece.equals("black")) {
+            color = BLACK;
+            _board.setPieces(operands[1], color);
+        } else {
+            reportError("Illegal player color", piece);
+        }
+        // FIXME //fixed?
     }
 
     /** Perform the command 'dump'. */
     void doDump(String[] unused) {
-        // FIXME
+        System.out.println("===");
+        System.out.print(_board);
+        System.out.println("===");
+        // FIXME //fixed?
     }
 
     /** Execute 'seed OPERANDS[0]' command, where the operand is a string
@@ -225,9 +273,21 @@ class Game {
 
     /** Report the outcome of the current game. */
     void reportWinner() {
-        String msg;
-        msg = "Game over."; // FIXME
-        _reporter.outcomeMsg(msg);
+        String msg = "";
+        if (_board.gameOver()) {
+            if (_board.whoseMove() == WHITE) {
+                msg = "Black wins.";
+            }
+            if (_board.whoseMove() == BLACK) {
+                msg = "White wins.";
+            }
+            _reporter.outcomeMsg(msg);
+        }
+
+        // FIXME //fixed????
+
+       // _reporter.outcomeMsg(msg);
+        //_state = SETUP;
     }
 
     /** Mapping of command types to methods that process them. */
@@ -256,7 +316,7 @@ class Game {
     /** My board and its read-only view. */
     private Board _board, _constBoard;
     /** Indicate which players are manual players (as opposed to AIs). */
-    private boolean _whiteIsManual, _blackIsManual;
+    private boolean _whiteIsManual = true, _blackIsManual = false;
     /** Current game state. */
     private State _state;
     /** Used to send messages to the user. */

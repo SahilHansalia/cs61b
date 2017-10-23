@@ -1,11 +1,13 @@
 package qirkat;
 
+import A.A.G;
 import com.sun.tools.javac.util.Assert;
 
 import java.util.*;
 
 import static qirkat.PieceColor.*;
 import static qirkat.Move.*;
+import static qirkat.Game.*;
 
 /** A Qirkat board.   The squares are labeled by column (a char value between
  *  'a' and 'e') and row (a char value between '1' and '5'.
@@ -500,6 +502,8 @@ class Board extends Observable {
         }
         if (!isMove() | !pieces) {
             _gameOver = true;
+            //report winner????
+
         }
 
         // FIXME
