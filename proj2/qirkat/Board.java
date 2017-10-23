@@ -1,5 +1,7 @@
 package qirkat;
 
+import com.sun.tools.javac.util.Assert;
+
 import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.Observable;
@@ -161,16 +163,32 @@ class Board extends Observable {
     boolean legalMove(Move mov) {
         //return false; // FIXME
         if (!validSquare(mov.col0(), mov.row0()) | !validSquare(mov.col1(), mov.row1())) {
-            return false;
+            return false; //check if starting and final is valid square
         }
-        if ()
-        return true;
-    }
+        if (board[index(mov.col1(), mov.row1())] != EMPTY) {
+            return false; //check if ending square is empty
+        }
+        if (whoseMove() == WHITE) {
+            if (get(mov.col0(), mov.row0()) != WHITE | ((mov.row1() < mov.row0() && !mov.isJump())))
+            //if ((mov.row1() < mov.row0() && !mov.isJump())) {
+                return false;
+            }
+
+        if (whoseMove() == BLACK && !mov.isJump()) {
+            if ((mov.row1() > mov.row0()) | get(mov.col0(), mov.row0()) != BLACK) {
+                return false;
+            }
+        }
+
+        return false;
+        }
+
+
     ///if move.nextjump, recuse legalMove on next jump? -- 400 IQ
-    //check whose move
-    //move.index(col0/col1) to put into array to check if its a valid color piece
-    //based on this- check if move is right direction (not down) & not to occupied square
-    //check if there is a valid jump
+    //check whose move-- done
+    //move.index(col0/col1) to put into array to check if its a valid color piece-- done
+    //based on this- check if move is right direction (not down) & not to occupied square-- done
+    //check if there is a valid jump?? where will i do this???
 
 
 
@@ -200,27 +218,123 @@ class Board extends Observable {
     /** Add all legal non-capturing moves from the position
      *  with linearized index K to MOVES. */
     private void getMoves(ArrayList<Move> moves, int k) {
-        // FIXME
+        // FIXME //fixed
+        if (k % 2 == 0) {
+            for (int i = -1; i < 2; i++) {
+                for (int j = -1; j < 2; j++) {
+                    if (i == 0 && j == 0) {
+                        continue;
+                    }
+                    try {
+                        Move currentMove = move((char) Move.col(k), (char) Move.row(k),
+                                (char) Move.col(k + i), (char) Move.row(k + j));
+                        if (legalMove(currentMove)) {// try Integer.toString(a).charAt(0)
+                            moves.add(currentMove);
+                        }
+                        }
+                    catch (AssertionError a) {continue; }
+
+                }
+
+                }
+            }
+        if (k % 2 == 1) {
+            for (int i = -1; i <2; i++) {
+                if (i == 0) {
+                    continue;
+                }
+                try {
+                    Move current = move((char) Move.col(k), (char) Move.row(k),
+                            (char) Move.col(k + i), (char) Move.row(k));
+                    if (legalMove(current)) {
+                        moves.add(current);
+                    }
+                }
+                catch (AssertionError a) {
+                    continue;
+                }
+                try {
+                    Move current2 = move((char) Move.col(k), (char) Move.row(k),
+                            (char) Move.col(k), (char) Move.row(k + i));
+                    if (legalMove(current2)) {
+                        moves.add(current2); }
+                    }
+                catch (AssertionError a) {
+                    continue;
+                }
+            }
+        }
+        }
         //create all 8 possible not capturing moves pass into legal moves and add if legal?
-    }
+
 
     /** Add all legal captures from the position with linearized index K
      *  to MOVES. */
     private void getJumps(ArrayList<Move> moves, int k) {
         //generate jumps, pass checkJump, add to array
-        //do we have to add future jumps?? --not for now
-        // FIXME
+        // FIXME //fixed?
+        if (k % 2 == 0) {
+            for (int i = -2; i < 3; i++) {
+                for (int j = -2; j < 3; j++) {
+                    if ((i == 0 && j == 0) | i == 1 | j == 1) {
+                        continue;
+                    }
+                    try {
+                        Move currentMove = move((char) Move.col(k), (char) Move.row(k),
+                                (char) Move.col(k + i), (char) Move.row(k + j));
+                        if (checkJump(currentMove, true)) {// try Integer.toString(a).charAt(0)
+                            moves.add(currentMove);
+                        }
+                    }
+                    catch (AssertionError a) {
+                        continue;
+                    }
+                }
+
+            }
+        }
+        if (k % 2 == 1) {
+            for (int i = -2; i <3; i++) {
+                if (i == 0 | i == -1 | i ==1) {
+                    continue;
+                }
+                try {
+                    Move current = move((char) Move.col(k), (char) Move.row(k),
+                            (char) Move.col(k + i), (char) Move.row(k));
+                    if (checkJump(current, true)) {
+                        moves.add(current);
+                    }
+                }
+                catch (AssertionError a) {
+                    continue;
+                }
+                try{
+                    Move current2 = move((char) Move.col(k), (char) Move.row(k),
+                            (char) Move.col(k), (char) Move.row(k + i));
+                    if (checkJump(current2, true)) {
+                        moves.add(current2);
+                    }
+                }
+                catch (AssertionError a) {
+                    continue;
+                }
+            }
+        }
     }
+
+
 
     /** Return true iff MOV is a valid jump sequence on the current board.
      *  MOV must be a jump or null.  If ALLOWPARTIAL, allow jumps that
      *  could be continued and are valid as far as they go.  */
     boolean checkJump(Move mov, boolean allowPartial) {
-        if (mov == null) {
-            return true;
+        if (!legalMove(mov)) {
+            return false;
         }
+
         return false; // FIXME
-        //check color and move?
+        //check color of jumped over
+        // check move? --- done
         //check that the sequence is a valid jump- check that it is a jump, check that its allowed
         //deal with recursion of jumps if allowed partial
     }
