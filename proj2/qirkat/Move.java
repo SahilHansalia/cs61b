@@ -159,13 +159,13 @@ class Move {
     /** Return true iff this is a horizontal, non-capturing move to
      *  the left. */
     boolean isLeftMove() {
-        return false; // FIXME
+        return alp.indexOf(col1()) == alp.indexOf(col0()) - 1; // FIXME //fixed
     } //this is trivial
 
     /** Return true iff this is a horizontal, non-capturing move
      *  to the right. */
     boolean isRightMove() {
-        return false; // FIXME
+        return alp.indexOf(col1()) == alp.indexOf(col0()) + 1; // FIXME //fixed
     } //this is trivial
 
     /** Returns the source column. */
@@ -191,13 +191,21 @@ class Move {
     /** For a jump, returns the row of the jumped-over square for the
      *  first leg of the jump.  For a non-capturing move, same as row1(). */
     char jumpedRow() {
-        return '1';  // FIXME
+        if (Math.abs(row1()- row0()) == 2) {
+            int i = (row1() + row0())/2;
+            return (char) i;
+        }
+        return row1();  // FIXME //fixed
     }  //trivial... check if rows are same
 
     /** For a jump, returns the column of the jumped-over square for the
      *  first leg of the jump.  For a non-capturing move, same as col1(). */
     char jumpedCol() {
-        return 'a'; // FIXME
+        if (Math.abs(alp.indexOf(col1())- alp.indexOf(col0())) == 2) {
+            int i = (alp.indexOf(col1()) + alp.indexOf(col0()))/2;
+            return (char) i;
+        }
+        return col1();  // FIXME //fixed
     }  //trivial.. ceck if cols are the same
 
     /** Return the linearized index of my source square. */
@@ -271,7 +279,10 @@ class Move {
 
     /** Write my string representation into OUT. */
     private void toString(Formatter out) {
-        out.format("???"); // FIXME
+        if (_nextJump == null) {
+            out.format(String.valueOf(col0())+ String.valueOf(row0()) + "-" + col1() + row1());
+        }
+        else {out.format(String.valueOf(col0())+ String.valueOf(row0()) + "-" + _nextJump.toString());} // FIXME
     }  //trivial... use recursion and next jump
 
     /** Set me to COL0 ROW0 - COL1 ROW1 - NEXTJUMP. */
@@ -320,5 +331,8 @@ class Move {
 
     /** The identity function on Moves. */
     static final Function<Move, Move> IDENTITY = k -> k;
+
+    /** Convert cols to numbers */
+    final private String alp = "abcde";
 
 }

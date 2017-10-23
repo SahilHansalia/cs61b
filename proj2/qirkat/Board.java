@@ -21,12 +21,11 @@ import static qirkat.Move.*;
  */
 class Board extends Observable {
 
-    ArrayList<PieceColor> board = new ArrayList<>(); //// what about array
-
+    PieceColor[] board = new PieceColor[25];
 
     /** A new, cleared board at the start of the game. */
     Board() {
-        // FIXME?
+        // FIXME? //nah
         clear();
     }
 
@@ -47,7 +46,18 @@ class Board extends Observable {
         _whoseMove = WHITE;
         _gameOver = false;
 
-        // FIXME
+        // FIXME  fixed?
+        for (int i = 0; i < 10 ; i++) {
+            board[i] = WHITE;
+        }
+        board[13] = WHITE;
+        board[14] = WHITE;
+        for (int j = 15; j < 25; j++ ) {
+            board[j] = BLACK;
+        }
+        board[10] = BLACK;
+        board[11] = BLACK;
+        board[12] = EMPTY;
         //populate board with right color (do we have to reset? or can we get away with adding color where it should be)
         //what add does is it adds specified piece... if already piece it shift others.
         setChanged();
@@ -61,7 +71,10 @@ class Board extends Observable {
 
     /** Copy B into me. */
     private void internalCopy(Board b) {
-        // FIXME
+        // FIXME //fixed?
+        _gameOver = b._gameOver;
+        _whoseMove = b._whoseMove;
+        board = b.board;
         // copy array elements, copy whosemove, and copy gameover
 
     }
@@ -83,9 +96,10 @@ class Board extends Observable {
         }
 
         // FIXME
+        _whoseMove = nextMove;
         //find out when its called?
         //whosemove = nextmove
-        //gameover = false????
+        //gameover = false if no legal moves?
 
         for (int k = 0; k < str.length(); k += 1) {
             switch (str.charAt(k)) {
@@ -125,7 +139,7 @@ class Board extends Observable {
     /** Return the current contents of the square at linearized index K. */
     PieceColor get(int k) {
         assert validSquare(k);
-        return null; // FIXME  //return index of list
+        return board[k]; // FIXME  //fixed?
     }
 
     /** Set get(C, R) to V, where 'a' <= C <= 'e', and
@@ -138,14 +152,21 @@ class Board extends Observable {
     /** Set get(K) to V, where K is the linearized index of a square. */
     private void set(int k, PieceColor v) {
         assert validSquare(k);
-        // FIXME  set index
+        // FIXME  fixed?
+        board[k] = v;
     }
 
     /** Return true iff MOV is legal on the current board. */
     //what is legal move?- no piece on the square. square has to be on grid.
     boolean legalMove(Move mov) {
-        return false; // FIXME
+        //return false; // FIXME
+        if (!validSquare(mov.col0(), mov.row0()) | !validSquare(mov.col1(), mov.row1())) {
+            return false;
+        }
+        if ()
+        return true;
     }
+    ///if move.nextjump, recuse legalMove on next jump? -- 400 IQ
     //check whose move
     //move.index(col0/col1) to put into array to check if its a valid color piece
     //based on this- check if move is right direction (not down) & not to occupied square
@@ -186,7 +207,8 @@ class Board extends Observable {
     /** Add all legal captures from the position with linearized index K
      *  to MOVES. */
     private void getJumps(ArrayList<Move> moves, int k) {
-        //
+        //generate jumps, pass checkJump, add to array
+        //do we have to add future jumps?? --not for now
         // FIXME
     }
 
@@ -198,6 +220,9 @@ class Board extends Observable {
             return true;
         }
         return false; // FIXME
+        //check color and move?
+        //check that the sequence is a valid jump- check that it is a jump, check that its allowed
+        //deal with recursion of jumps if allowed partial
     }
 
     /** Return true iff a jump is possible for a piece at position C R. */
@@ -209,6 +234,7 @@ class Board extends Observable {
      *  linearized index K. */
     boolean jumpPossible(int k) {
         return false; // FIXME
+        // if getJumps adds anything then true else false
     }
 
     /** Return true iff a jump is possible from the current board. */
@@ -242,6 +268,11 @@ class Board extends Observable {
     /** Make the Move MOV on this Board, assuming it is legal. */
     void makeMove(Move mov) {
         assert legalMove(mov);
+        //if not legal move or legal jump then dont do anything
+        //else Board.set
+        //remove current piece by accessing array?
+        //jumping? ---use move jumped index to find where you jumped over and remove
+        //multiple jumps?
 
         // FIXME
 
@@ -252,6 +283,11 @@ class Board extends Observable {
     /** Undo the last move, if any. */
     void undo() {
         // FIXME
+        //????????????????? find previous move
+        //to backtrack, find mov, flip cols and add to prev locaton
+        //if jumped add tile jumped over
+        //switch whose move it is
+        //switch game over??
 
         setChanged();
         notifyObservers();
@@ -267,6 +303,8 @@ class Board extends Observable {
     String toString(boolean legend) {
         Formatter out = new Formatter();
         // FIXME
+        //Board.get for Piececolor. Iterate through i and j and if col % 5 = 0, tag on new line. if legend, add i/j value
+        //if legend at bottom,
         return out.toString();
     }
 
