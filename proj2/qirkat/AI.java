@@ -1,5 +1,7 @@
 package qirkat;
 
+import graph.B;
+
 import static qirkat.PieceColor.*;
 
 /** A Player that computes its own moves.
@@ -25,8 +27,16 @@ class AI extends Player {
         Main.startTiming();
         Move move = findMove();
         Main.endTiming();
+        String col = "";
+        if (myColor() == WHITE) {
+            col = "White";
+        }
+        if (myColor() == BLACK) {
+            col = "Black";
+        }
+        System.out.println(col + " moves " + move.toString() + ".");
 
-        // FIXME
+        // FIXME //fixed?
         return move;
     }
 
@@ -54,6 +64,9 @@ class AI extends Player {
      *  of the board value and does not set _lastMoveFound. */
     private int findMove(Board board, int depth, boolean saveMove, int sense,
                          int alpha, int beta) {
+        // mind simple max if depth = 0 or gameover(board)
+
+        ///
         Move best;
         best = null;
 
@@ -66,8 +79,46 @@ class AI extends Player {
         return 0; // FIXME
     }
 
+
+
+
+
+    private int simpleMax(Board board, int alpha, int beta) {
+        if (board.gameOver() && board.whoseMove() == WHITE) {
+
+        }
+        return 0;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
     /** Return a heuristic value for BOARD. */
     private int staticScore(Board board) {
-        return 0; // FIXME
+        int whiteCount = 0;
+        int blackCount = 0;
+        for (int i = 0; i < 25; i++) {
+            if (board.board[i] == WHITE) {
+                whiteCount ++;
+            }
+            if (board.board[i] == BLACK) {
+                blackCount ++;
+            }
+        }
+//        if (myColor() == WHITE) {
+//            return (whiteCount - blackCount);
+//        }
+//        if (myColor() == BLACK) {
+//            return (blackCount - whiteCount);
+//        }
+        return whiteCount - blackCount; // FIXME //fixed?
     }
 }

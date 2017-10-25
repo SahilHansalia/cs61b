@@ -137,6 +137,16 @@ class Move {
         assert 0 <= k && k <= MAX_INDEX;
         return k;
     }
+    static char colConverter(int k, int i) {
+        return alp.charAt(Move.alp.indexOf(Move.col(k)) + i);
+    }
+    static char rowConverter(int k, int j) {
+        return Integer.toString(Character.getNumericValue( Move.row(k)) + j).charAt(0);
+    }
+
+    static int kPacker (char col, char row) {
+        return ((5 *(Character.getNumericValue(row) - 1))+ alp.indexOf(col));
+    }
 
     /** Return the column letter of linearized index K. */
     static char col(int k) {

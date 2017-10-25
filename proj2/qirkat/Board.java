@@ -262,16 +262,16 @@ class Board extends Observable {
                     //alp.charAt(Move.alp.indexOf((char) Move.col(k)) + i);
                     //
                     try {
-                        Move currentMove = move((char) Move.col(k), (char) Move.row(k),
-                                alp.charAt(Move.alp.indexOf((char) Move.col(k)) + i), Integer.toString(Character.getNumericValue((char) Move.row(k)) + j).charAt(0));
+                        Move currentMove = move( Move.col(k), Move.row(k),
+                                colConverter(k, i), rowConverter(k, j));
                         if (legalMove(currentMove)) {// try Integer.toString(a).charAt(0)
                             moves.add(currentMove);
                         }
                         }
-                    catch (AssertionError a) {continue; }
-                    catch (StringIndexOutOfBoundsException s) {
-                        continue;
+                    catch (AssertionError | StringIndexOutOfBoundsException s ) {
+                        //continue;
                     }
+
 
                 }
 
@@ -283,30 +283,25 @@ class Board extends Observable {
                     continue;
                 }
                 try {
-                    Move current = move((char) Move.col(k), (char) Move.row(k),
-                            alp.charAt(Move.alp.indexOf((char) Move.col(k)) + i), (char) Move.row(k));
+                    Move current = move(Move.col(k), Move.row(k),
+                            colConverter(k, i), Move.row(k));
                     if (legalMove(current)) {
                         moves.add(current);
                     }
                 }
-                catch (AssertionError a) {
-                    continue;
-                }
-                catch (StringIndexOutOfBoundsException s) {
-                    continue;
+                catch (AssertionError | StringIndexOutOfBoundsException s) {
+                    //continue;
                 }
 
+
                 try {
-                    Move current2 = move((char) Move.col(k), (char) Move.row(k),
-                            (char) Move.col(k), (char) Move.row(k + i));
+                    Move current2 = move( Move.col(k), Move.row(k),
+                            Move.col(k), Move.row(k + i));
                     if (legalMove(current2)) {
                         moves.add(current2); }
                     }
-                catch (AssertionError a) {
-                    continue;
-                }
-                catch (StringIndexOutOfBoundsException s) {
-                    continue;
+                catch (AssertionError | StringIndexOutOfBoundsException s) {
+                    //continue;
                 }
             }
         }
@@ -326,17 +321,15 @@ class Board extends Observable {
                         continue;
                     }
                     try {
-                        Move currentMove = move((char) Move.col(k), (char) Move.row(k),
-                                alp.charAt(Move.alp.indexOf((char) Move.col(k)) + i), (char) Move.row(k + j));
+                        Move currentMove = move( Move.col(k), Move.row(k),
+                                colConverter(k, i), rowConverter(k, j));
                         if (checkJump(currentMove, true)) {// try Integer.toString(a).charAt(0)
+                            //helper
                             moves.add(currentMove);
                         }
                     }
-                    catch (AssertionError a) {
-                        continue;
-                    }
-                    catch (StringIndexOutOfBoundsException s) {
-                        continue;
+                    catch (AssertionError | StringIndexOutOfBoundsException s) {
+                        //continue;
                     }
                 }
 
@@ -348,34 +341,86 @@ class Board extends Observable {
                     continue;
                 }
                 try {
-                    Move current = move((char) Move.col(k), (char) Move.row(k),
-                            alp.charAt(Move.alp.indexOf((char) Move.col(k)) + i), (char) Move.row(k));
+                    Move current = move(Move.col(k),  Move.row(k),
+                            colConverter(k, i), Move.row(k));
                     if (checkJump(current, true)) {
                         moves.add(current);
                     }
                 }
-                catch (AssertionError a) {
-                    continue;
+                catch (AssertionError | StringIndexOutOfBoundsException s) {
+                    //continue;
                 }
-                catch (StringIndexOutOfBoundsException s) {
-                    continue;
-                }
+
                 try{
-                    Move current2 = move((char) Move.col(k), (char) Move.row(k),
-                            (char) Move.col(k), (char) Move.row(k + i));
+                    Move current2 = move(Move.col(k), Move.row(k),
+                            Move.col(k), rowConverter(k, i));
                     if (checkJump(current2, true)) {
                         moves.add(current2);
                     }
                 }
-                catch (AssertionError a) {
-                    continue;
-                }
-                catch (StringIndexOutOfBoundsException s) {
-                    continue;
+                catch (AssertionError | StringIndexOutOfBoundsException s) {
+                    //continue;
                 }
             }
         }
     }
+
+    private void jumpHelper (Move move, ArrayList<Move> moves, int k) {
+        boolean made_move = false;
+        if (k % 2 == 0) {
+            for (int i = -2; i < 3; i++) {
+                for (int j = -2; j < 3; j++) {
+                    if ((i == 0 && j == 0) | i == 1 | j == 1) {
+                        continue;
+                    }
+                    try {
+                        Move currentMove = move( Move.col(k), Move.row(k),
+                                colConverter(k, i),rowConverter(k, j));
+                        //boolean made_move = false;
+                        if (checkJump(currentMove, true)) {// try Integer.toString(a).charAt(0)
+                            made_move = true;
+                            jumpHelper(move(move, currentMove), moves, kPacker(colConverter(k, i),rowConverter(k, j)));
+                        }
+                        if (!made_move) {
+                            moves.add(move);
+                        }
+                    }
+                    catch (AssertionError | StringIndexOutOfBoundsException s) {
+                        //continue;
+                    }
+                }
+
+            }
+        }
+        if (k % 2 == 1) {
+            for (int i = -2; i <3; i++) {
+                if (i == 0 | i == -1 | i ==1) {
+                    continue;
+                }
+                try {
+                    Move current = move(Move.col(k),  Move.row(k),
+                            colConverter(k, i), Move.row(k));
+                    if (checkJump(current, true)) {
+                        moves.add(current);
+                    }
+                }
+                catch (AssertionError | StringIndexOutOfBoundsException s) {
+                    //continue;
+                }
+                try{
+                    Move current2 = move(Move.col(k), Move.row(k),
+                            Move.col(k), rowConverter(k, i));
+                    if (checkJump(current2, true)) {
+                        moves.add(current2);
+                    }
+                }
+                catch (AssertionError | StringIndexOutOfBoundsException s) {
+                   //continue;
+                }
+            }
+        }
+    }
+
 
 
 
@@ -405,7 +450,7 @@ class Board extends Observable {
         }
 
         if (whoseMove() == BLACK) {
-            if (((mov.row1() > mov.row0()) && !mov.isJump())| get(mov.col0(), mov.row0()) != BLACK) {
+            if (((mov.row1() > mov.row0()) && !mov.isJump()) | get(mov.col0(), mov.row0()) != BLACK) {
                 return false;
             }
         }                               //recycled from legal move
@@ -419,21 +464,23 @@ class Board extends Observable {
             return false; //check if ending square is empty
         }
         a.board[mov.jumpedIndex()] = EMPTY;
-        if (mov.jumpTail() != null) {
-            checkJumpHelper(mov.jumpTail(), allowPartial, a); //recurse for tails
+        if (allowPartial) {
+            if (mov.jumpTail() != null) {
+                checkJumpHelper(mov.jumpTail(), allowPartial, a); //recurse for tails
+            }
         }
-            return true;
+        return true;
     }
 
-    boolean singleJumpChecker(Move mov) {
-        if (!legalMove(mov)) {
-            return false;
-        }
-        if (!mov.isJump()) {
-            return false;
-        }
-        return board[mov.jumpedIndex()] == whoseMove().opposite();
-    }
+//    boolean singleJumpChecker(Move mov) {
+//        if (!legalMove(mov)) {
+//            return false;
+//        }
+//        if (!mov.isJump()) {
+//            return false;
+//        }
+//        return board[mov.jumpedIndex()] == whoseMove().opposite();
+//    }
 
     /** Return true iff a jump is possible for a piece at position C R. */
     boolean jumpPossible(char c, char r) {
@@ -608,6 +655,7 @@ class Board extends Observable {
     private static class MoveList extends ArrayList<Move> {
     }
     MoveList moves = new MoveList();
+    MoveList jumps = new MoveList();
 
     /** A read-only view of a Board. */
     private class ConstantBoard extends Board implements Observer {

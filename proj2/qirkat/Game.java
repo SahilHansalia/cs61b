@@ -48,13 +48,28 @@ class Game {
         while (true) {
             while (_state == SETUP) {
                 doCommand();
+            } // FIXME ///fixed
+            if (_whiteIsManual) {
+                white = new Manual(this, WHITE);
+            }
+            if (_blackIsManual) {
+                black = new Manual(this, BLACK);
+            }
+            if (!_whiteIsManual) {
+                white = new AI(this, WHITE);
+            }
+            if (!_blackIsManual) {
+                black = new AI(this, BLACK);
             }
 
-            // FIXME
-
-            while (_state != SETUP && !_board.gameOver()) {
+            while (_state != SETUP && !_board.gameOver()) {  // FIXME //fixed
                 Move move;
-                move = null; // FIXME
+                if (_board.whoseMove() == WHITE) {
+                    move = white.myMove();
+                }
+                else {
+                    move = black.myMove();
+                }
 
                 if (_state == PLAYING) {
                     _board.makeMove(move);

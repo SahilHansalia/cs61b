@@ -6,6 +6,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import static qirkat.Move.*;
+import static qirkat.Board.*;
 
 /** Test Move creation.
  *  @author
@@ -45,6 +46,11 @@ public class MoveTest {
     public void jumpedColTest() {
         Move m = move('a', '3', 'a', '5');
         assertNotNull(m);
-        assertEquals('4', m.jumpedCol());
+        assertEquals('4', m.jumpedRow());
+//        char col = 'a';
+//        char row = '4';
+//        System.out.println(kPacker(col, row));
+//        System.out.println(Character.getNumericValue('2'));
+
     }
 }
