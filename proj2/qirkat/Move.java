@@ -218,7 +218,7 @@ class Move {
         if (Math.abs(alp.indexOf(col1())- alp.indexOf(col0())) == 2) {
             int i = (alp.indexOf(col1()) + alp.indexOf(col0()))/2;
             //System.out.println( alp.charAt(Move.alp.indexOf((char) Move.col(0)) + 1));
-            System.out.println(Move.row(0));
+//            System.out.println(Move.row(0));
 //            System.out.println(alp.charAt(-1));
             return alp.charAt(i);
 

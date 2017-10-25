@@ -221,7 +221,7 @@ class Game {
         if ((operands.length - 5) % 3 != 0) {
             reportError("invalid move syntax", operands);
         }
-        Move make = Move.move(operands[0].charAt(0), operands[1].charAt(0), operands[3].charAt(0), operands[4].charAt(0)); //not completed
+        Move make = Move.move(operands[0].charAt(0), operands[1].charAt(0), operands[3].charAt(0), operands[4].charAt(0)); //not completed //use Move.parsemove
         if (!_board.legalMove(make)) {
             reportError("Illegal move", make);
         }

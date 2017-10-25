@@ -206,10 +206,16 @@ class Board extends Observable {
             if (get(mov.col0(), mov.row0()) != WHITE | ((mov.row1() < mov.row0() && !mov.isJump())))
             //if ((mov.row1() < mov.row0() && !mov.isJump())) {
                 return false;
+            if (Character.getNumericValue(mov.row0()) == 5 && !mov.isJump()) {
+                return false;
+            }
             }
 
         if (whoseMove() == BLACK) {
             if (((mov.row1() > mov.row0()) && !mov.isJump())| get(mov.col0(), mov.row0()) != BLACK) {
+                return false;
+            }
+            if (Character.getNumericValue(mov.row0()) == 1 && !mov.isJump()) {
                 return false;
             }
         }
@@ -252,6 +258,9 @@ class Board extends Observable {
     /** Add all legal non-capturing moves from the position
      *  with linearized index K to MOVES. */
     private void getMoves(ArrayList<Move> moves, int k) {
+        if (jumpPossible()) {
+            return;
+        }
         // FIXME //fixed
         if (k % 2 == 0) {
             for (int i = -1; i < 2; i++) {
@@ -377,7 +386,7 @@ class Board extends Observable {
                         Move currentMove = move( Move.col(k), Move.row(k),
                                 colConverter(k, i),rowConverter(k, j));
                         //boolean made_move = false;
-                        if (checkJump(currentMove, true)) {// try Integer.toString(a).charAt(0)
+                        if (checkJump(move(move, currentMove), true)) {// try Integer.toString(a).charAt(0)
                             made_move = true;
                             jumpHelper(move(move, currentMove), moves, kPacker(colConverter(k, i),rowConverter(k, j)));
                         }
@@ -530,28 +539,37 @@ class Board extends Observable {
     /** Make the Move MOV on this Board, assuming it is legal. */
     void makeMove(Move mov) {
         assert legalMove(mov);
+//        jumped = false;
         PieceColor turn = _whoseMove;
         board[mov.toIndex()] = turn;
         board[mov.fromIndex()] = EMPTY;
         if (mov.isJump()) {
             board[mov.jumpedIndex()] = EMPTY;
         }
+        if (!jumped) {
+            moves.add(mov);
+        }
+        //moves.add(mov);
         if (mov.jumpTail() != null) {
+            jumped = true;
             makeMove(mov.jumpTail());
         }
+        jumped = false;
         _whoseMove = turn.opposite();
-        moves.add(mov);
+        //moves.add(mov);
+//        System.out.println(moves);
         boolean pieces = false;
         for (int i = 0; i < 25; i++) {
             if (board[i] == whoseMove()) {
                 pieces = true;
+                break;
             }
         }
-        if (!isMove() | !pieces) {
-            _gameOver = true;
-            //report winner????
-
-        }
+//        if (!isMove() | !pieces) {
+//            _gameOver = true;
+//            //report winner????
+//
+//        }
 
         // FIXME
         //fixed???
@@ -566,8 +584,9 @@ class Board extends Observable {
             return;
         }
         Move mov = moves.get(moves.size() - 1);
+        System.out.println(mov);
         moves.remove(moves.size() - 1);
-        assert legalMove(mov);
+        //assert legalMove(mov);
         PieceColor prevTurn = whoseMove().opposite();
         board[mov.toIndex()] = EMPTY;
         board[mov.fromIndex()] = prevTurn;
@@ -597,6 +616,11 @@ class Board extends Observable {
         notifyObservers();
     }
 
+    Move reverse(Move mov) {
+        Move before = null;
+        Move tmp = 
+    }
+
     @Override
     public String toString() {
         return toString(false);
@@ -608,20 +632,36 @@ class Board extends Observable {
         Formatter out = new Formatter();
         StringBuilder output = new StringBuilder(100);
         // FIXME
-        for (int i = 24; i >= 0; i--) {
-
-            output.append(board[i].shortName() + " ");
-            if (legend){
+            for (int i = 24; i >= 0; i--) {
                 if (i % 5 == 0) {
-                    output.append((i-1)/4 + 1); //is legend supposed to be on other side?
-                    output.append("\n");
+                    output.append("  ");
+                    for (int j = i; j < i + 5; j++) {
+                        if ((j-4) % 5 == 0) {
+                            output.append(board[j].shortName());
+                        }
+                        else {output.append(board[j].shortName() + " "); } }
+                    if (legend){
+                        output.append(((i + 5)/5));
+                    }
+                    if ((i + 4) != 4) {
+                        output.append("\n");
+                    }
+
+
                 }
-            }
-            else {
-                if (i % 5 == 0 && i != 0) {
-                    output.append("\n");
-                }
-            }
+
+//            output.append(board[i].shortName() + " ");
+//            if (legend){
+//                if (i % 5 == 0) {
+//                    output.append((i-1)/4 + 1); //is legend supposed to be on other side?
+//                    output.append("\n");
+//                }
+//            }
+//            else {
+//                if (i % 5 == 0 && i != 0) {
+//                    output.append("\n");
+//                }
+//            }
         }
         if (legend) {
             output.append("1 2 3 4 5");
@@ -636,7 +676,8 @@ class Board extends Observable {
     /** Return true iff there is a move for the current player. */
     private boolean isMove() {
         // FIXME //fixed??
-        return (jumpPossible() | getMoves().size() > 0);
+//        return (jumpPossible() | getMoves().size() > 0);
+        return (getMoves().size() > 0);
         // arraylistmove and _whoseMove?
     }
 
@@ -652,10 +693,11 @@ class Board extends Observable {
 
     /** One cannot create arrays of ArrayList<Move>, so we introduce
      *  a specialized private list type for this purpose. */
-    private static class MoveList extends ArrayList<Move> {
+    private class MoveList extends ArrayList<Move> {
     }
     MoveList moves = new MoveList();
     MoveList jumps = new MoveList();
+    boolean jumped = false;
 
     /** A read-only view of a Board. */
     private class ConstantBoard extends Board implements Observer {
