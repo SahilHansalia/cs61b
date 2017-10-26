@@ -183,7 +183,7 @@ class Game {
     void doLoad(String[] operands) {
         try {
             FileReader reader = new FileReader(operands[0]);
-            ReaderSource source = new ReaderSource(reader, true);
+            ReaderSource source = new ReaderSource(reader, false);
             _inputs.addSource(source);
             // FIXME //fixed
         } catch (IOException e) {
@@ -218,12 +218,17 @@ class Game {
 
     /** Perform the move OPERANDS[0]. */
     void doMove(String[] operands) {
-        if ((operands.length - 5) % 3 != 0) {
-            reportError("invalid move syntax", operands);
-        }
-        Move make = Move.move(operands[0].charAt(0), operands[1].charAt(0), operands[3].charAt(0), operands[4].charAt(0)); //not completed //use Move.parsemove
-        if (!_board.legalMove(make)) {
+//        if ((operands.length - 5) % 3 != 0) {
+//            reportError("invalid move syntax", operands);
+//        }
+        Move make = Move.parseMove(operands[0]);
+
+        if (!_board.legalMove(make) | !_board.checkJump(make, true)) {
+//        if (!_board.legalMove(make)) {
             reportError("Illegal move", make);
+        }
+        if (_board) {
+
         }
         else {
             _board.makeMove(make);

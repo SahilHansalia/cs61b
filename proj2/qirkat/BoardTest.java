@@ -4,7 +4,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /** Tests of the Board class.
- *  @author
+ *  @author sahil
  */
 public class BoardTest {
 

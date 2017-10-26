@@ -507,6 +507,9 @@ class Board extends Observable {
         // if getJumps adds anything then true else false
         //maybe run and create array
     }
+    boolean jumpPossibleEasy(int k) {
+        return true;
+    }
 
     /** Return true iff a jump is possible from the current board. */
     boolean jumpPossible() {
@@ -580,22 +583,21 @@ class Board extends Observable {
 
     /** Undo the last move, if any. */
     void undo() {
-        if (moves.size() == 0) {
-            return;
-        }
+
         Move mov = moves.get(moves.size() - 1);
-        System.out.println(mov);
+//        System.out.println(mov);
         moves.remove(moves.size() - 1);
-        //assert legalMove(mov);
         PieceColor prevTurn = whoseMove().opposite();
-        board[mov.toIndex()] = EMPTY;
-        board[mov.fromIndex()] = prevTurn;
-        if (mov.isJump()) {
-            board[mov.jumpedIndex()] = prevTurn.opposite();
-        }
-        if (mov.jumpTail() != null) {
-            makeMove(mov.jumpTail()); //create undo helper if needed that looks like
-        }
+        undoHelper(mov, prevTurn);
+        //assert legalMove(mov);
+//        board[mov.toIndex()] = EMPTY;
+//        board[mov.fromIndex()] = prevTurn;
+//        if (mov.isJump()) {
+//            board[mov.jumpedIndex()] = prevTurn.opposite();
+//        }
+//        if (mov.jumpTail() != null) {
+//            makeMove(mov.jumpTail()); //create undo helper if needed that looks like
+//        }
 
         _whoseMove = prevTurn;
         _gameOver = false;
@@ -616,9 +618,21 @@ class Board extends Observable {
         notifyObservers();
     }
 
-    Move reverse(Move mov) {
-        Move before = null;
-        Move tmp = 
+    private void reverse(Move mov, PieceColor prevTurn) {
+        board[mov.toIndex()] = EMPTY;
+        board[mov.fromIndex()] = prevTurn;
+        if (mov.isJump()) {
+            board[mov.jumpedIndex()] = prevTurn.opposite();
+        }
+    }
+
+    private void undoHelper(Move mov, PieceColor prevTurn) {
+        if (mov.jumpTail() == null) {
+            reverse(mov, prevTurn);
+        }
+        else {
+            undoHelper(mov.jumpTail(), prevTurn);
+        }
     }
 
     @Override
@@ -734,5 +748,13 @@ class Board extends Observable {
             setChanged();
             notifyObservers(arg);
         }
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this.board == ((Board) obj).board && this.whoseMove() == ((Board) obj).whoseMove() && this.gameOver() == ((Board) obj).gameOver()) {
+            return true;
+        }
+        return false;
+
     }
 }
