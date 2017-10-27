@@ -225,10 +225,12 @@ class Game {
 
         if (!_board.legalMove(make) | !_board.checkJump(make, true)) {
 //        if (!_board.legalMove(make)) {
-            reportError("Illegal move", make);
+            reportError("Illegal move", make); //throw game exception?
         }
-        if (_board) {
-
+        if (_board.jumpPossible()) {
+            if (!make.isJump()) {
+                reportError("Illegal move", make);  //throw game exception?
+            }
         }
         else {
             _board.makeMove(make);
@@ -242,6 +244,9 @@ class Game {
         //person whose turn it is resigns
         board().clear();
         _state = SETUP;
+        _whiteIsManual = true;
+        _blackIsManual = false;
+
         //"initially and after a clear command white is manual and black is AI"
         //valid in any state- do they resign in setup?
         //if they resign do we output winner message?
@@ -254,8 +259,7 @@ class Game {
         PieceColor color;
         String piece = operands[0];
         if (piece.equals("WHITE") | piece.equals("White") | piece.equals("white")) {
-            color = WHITE;
-            _board.setPieces(operands[1], color);
+            _board.setPieces(operands[1], WHITE);
             return; //brick?
         }
         if (piece.equals("BLACK") | piece.equals("Black") | piece.equals("black")) {
@@ -270,7 +274,7 @@ class Game {
     /** Perform the command 'dump'. */
     void doDump(String[] unused) {
         System.out.println("===");
-        System.out.print(_board);
+        System.out.print(_board.toString(false));
         System.out.println("===");
         // FIXME //fixed?
     }

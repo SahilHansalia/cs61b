@@ -1,5 +1,6 @@
 package plumbum_beta;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,7 +12,7 @@ import java.util.List;
  * @author Eli Lipsitz
  */
 public class SparseIntVector {
-	private List<Entry> entries;
+	private List<Entry> entries = new ArrayList<>();
 	private int size;
 
 	public SparseIntVector(int... values) {
@@ -19,7 +20,8 @@ public class SparseIntVector {
 
 		for (int i = 0; i < values.length; i++) {
 			if (values[i] != 0) {
-				entries.add(new Entry(i, values[i]));
+				Entry a = new Entry(i, values[i]);
+				entries.add(a);
 			}
 		}
 
@@ -49,7 +51,7 @@ public class SparseIntVector {
 		int value = 0;
 		int indexA = 0;
 		int indexB = 0;
-		while (indexA <= a.size() && indexB <= b.size()) {
+		while (indexA < a.entries.size() && indexB < b.entries.size()) {
 			Entry entryA = a.entries.get(indexA);
 			Entry entryB = b.entries.get(indexB);
 

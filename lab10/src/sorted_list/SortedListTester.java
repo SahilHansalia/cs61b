@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
  */
 public class SortedListTester {
 
-	@Test
+	@Test(timeout = 1000)
 	public void testIsListSorted() {
 		List<Integer> sortedList = Arrays.asList(-40, 1, 5, 7, 50, 494, 481293);
 		List<Integer> unsortedList = Arrays.asList(48, 29, 491, 5, 2, -239);
@@ -25,22 +25,26 @@ public class SortedListTester {
 		assertFalse(SortedListHelper.isListSorted(unsortedList));
 	}
 
-	@Test
+	@Test(timeout = 1000)
 	public void testInsertIntoSortedList() {
 		// TODO Allan please add more tests
-
 		List<Integer> list = new ArrayList<>();
+
 
 		SortedListHelper.insertIntoSortedList(list, 40);
 		assertEquals(1, list.size());
 		assertTrue(SortedListHelper.isListSorted(list));
 
-		SortedListHelper.insertIntoSortedList(list, 50);
+		SortedListHelper.insertIntoSortedList(list, 30);
 		assertEquals(2, list.size());
 		assertTrue(SortedListHelper.isListSorted(list));
 
-		SortedListHelper.insertIntoSortedList(list, 60);
+		SortedListHelper.insertIntoSortedList(list, 20);
 		assertEquals(3, list.size());
+		assertTrue(SortedListHelper.isListSorted(list));
+
+		SortedListHelper.insertIntoSortedList(list, (int) 'c');
+		assertEquals(4, list.size());
 		assertTrue(SortedListHelper.isListSorted(list));
 	}
 }

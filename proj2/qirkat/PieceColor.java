@@ -22,7 +22,7 @@ enum PieceColor {
     BLACK {
         @Override
         PieceColor opposite() {
-            return WHITE;
+                return WHITE;
         }
 
         @Override
