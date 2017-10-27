@@ -227,20 +227,23 @@ class Game {
                 //throw new GameException("Illegal move");
             }
         }
-        if (!make.isJump()) {
-            if (_board.jumpPossible() | !_board.legalMove(make)) {
-                reportError("Illegal move", make);
-                //throw new GameException("Illegal move");
-            }
-        }
+//        if (!make.isJump()) {
+//            if (_board.jumpPossible() | !_board.legalMove(make)) {
+//                reportError("Illegal move", make);
+//                //throw new GameException("Illegal move");
+//            }
+//        } commented to check
+//
+
+
 //        if (_board.jumpPossible()) {
 //            if (!make.isJump()) {
 //                reportError("Illegal move", make);  //throw game exception?
 //            }
 //        }
-        else {
+//        else {
             _board.makeMove(make);
-        }
+//        }
         // FIXME
     }
 

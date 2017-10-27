@@ -120,7 +120,7 @@ class Board extends Observable {
         for (int i = 0; i < 25; i++) {
             if (board[i] == whoseMove()) {
                 pieces = true;
-                break; //just added
+//                break; //just added
             }
         }
         if (!isMove() | !pieces) {
@@ -163,24 +163,7 @@ class Board extends Observable {
     private void set(int k, PieceColor v) {
         assert validSquare(k);
         // FIXME  fixed?
-//        if (k < 5) {
-//            board[k + 20] = v;
-//        }
-//        if (5 <= k && k < 10) {
-//            board[k + 10] = v;
-//        }
-//        if (10 <= k && k < 15) {
-//            board[k] = v;
-//        }
-//        if (15 <= k && k < 20) {
-//            board[k - 10] = v;
-//        }
-//        if (20 <= k && k < 25) {
-//            board[k - 20] = v;
-//        }
         board[k] = v;
-        //System.out.println(board[2]);
-        //board[k] = v;
     }
 
     boolean comprehensiveLegal(Move mov) {
