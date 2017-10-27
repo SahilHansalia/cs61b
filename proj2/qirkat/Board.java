@@ -58,8 +58,6 @@ class Board extends Observable {
         board[10] = BLACK;
         board[11] = BLACK;
         board[12] = EMPTY;
-        //populate board with right color (do we have to reset? or can we get away with adding color where it should be)
-        //what add does is it adds specified piece... if already piece it shift others.
         setChanged();
         notifyObservers();
     }
@@ -75,8 +73,6 @@ class Board extends Observable {
         _gameOver = b._gameOver;
         _whoseMove = b._whoseMove;
         board = b.board;
-        // copy array elements, copy whosemove, and copy gameover
-
     }
 
     private void newBoard(Board a) {
@@ -103,9 +99,6 @@ class Board extends Observable {
         _gameOver = false;
 
         // FIXME
-        //find out when its called?
-        //whosemove = nextmove
-        //gameover = false if no legal moves?
 
         for (int k = 0; k < str.length(); k += 1) {
             switch (str.charAt(k)) {
@@ -127,6 +120,7 @@ class Board extends Observable {
         for (int i = 0; i < 25; i++) {
             if (board[i] == whoseMove()) {
                 pieces = true;
+                break; //just added
             }
         }
         if (!isMove() | !pieces) {
@@ -187,6 +181,20 @@ class Board extends Observable {
         board[k] = v;
         //System.out.println(board[2]);
         //board[k] = v;
+    }
+
+    boolean comprehensiveLegal(Move mov) {
+        if (mov.isJump()) {
+            if (!checkJump(mov, true)) {
+                return false;
+            }
+        }
+        if (!mov.isJump()) {
+            if (jumpPossible() | !legalMove(mov)) {
+                return false;
+            }
+        }
+            return true;
     }
 
     /** Return true iff MOV is legal on the current board. */
@@ -471,7 +479,11 @@ class Board extends Observable {
             return false; //check if ending square is empty
         }
         a.board[mov.jumpedIndex()] = EMPTY;
+        a.board[index(mov.col1(), mov.row1())] = a.whoseMove();
+        a.board[index(mov.col0(), mov.row0())] = EMPTY;
         if (allowPartial) {
+//            if (mov.jumpTail() == null && a.jumpPossible(mov.col1, mov.row1)) {
+            //return false}
             if (mov.jumpTail() != null) {
                 checkJumpHelper(mov.jumpTail(), allowPartial, a); //recurse for tails
             }
@@ -479,14 +491,14 @@ class Board extends Observable {
         return true;
     }
 
-//    boolean singleJumpChecker(Move mov) {
-//        if (!legalMove(mov)) {
+//    boolean singleJumpChecker(Move mov, Board curr, int k) {
+//        if (!curr.legalMove(mov)) {
 //            return false;
 //        }
 //        if (!mov.isJump()) {
 //            return false;
 //        }
-//        return board[mov.jumpedIndex()] == whoseMove().opposite();
+//        return curr.board[mov.jumpedIndex()] == curr.whoseMove().opposite();
 //    }
 
     /** Return true iff a jump is possible for a piece at position C R. */
@@ -545,6 +557,7 @@ class Board extends Observable {
     /** Make the Move MOV on this Board, assuming it is legal. */
     void makeMove(Move mov) {
         assert legalMove(mov);
+
 //        jumped = false;
         PieceColor turn = _whoseMove;
         board[mov.toIndex()] = turn;

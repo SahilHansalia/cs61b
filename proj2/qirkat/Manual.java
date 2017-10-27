@@ -27,14 +27,15 @@ class Manual extends Player {
         if (todo.commandType() == Command.Type.QUIT) {
             game().doQuit(new String[1]);
         }
-        if (todo.commandType() == Command.Type.PIECEMOVE) {
-            //do I use docommand? if so what do I return
-            //if not what does doCOmmand even do?
-            //how do i know its legal
+        String[] myMove = todo.operands();
+
+        Move make = Move.parseMove(myMove[0]);
+        if ((make == null) || !game().board().legalMove(make)) { //change to comprehensive legal once completed
+            game().reportError("illegal move, please try again", make);
+            myMove();
         }
 
-
-        return null;
+        return make;
     }
 
     /** Identifies the player serving as a source of input commands. */

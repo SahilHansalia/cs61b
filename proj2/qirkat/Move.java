@@ -214,17 +214,12 @@ class Move {
     /** For a jump, returns the column of the jumped-over square for the
      *  first leg of the jump.  For a non-capturing move, same as col1(). */
     char jumpedCol() {
-        //System.out.println(Character.getNumericValue((char) Move.row(0)));
         if (Math.abs(alp.indexOf(col1())- alp.indexOf(col0())) == 2) {
             int i = (alp.indexOf(col1()) + alp.indexOf(col0()))/2;
-            //System.out.println( alp.charAt(Move.alp.indexOf((char) Move.col(0)) + 1));
-//            System.out.println(Move.row(0));
-//            System.out.println(alp.charAt(-1));
             return alp.charAt(i);
-
         }
         return col1();  // FIXME //fixed
-    }  //trivial.. ceck if cols are the same
+    }
 
     /** Return the linearized index of my source square. */
     int fromIndex() {
@@ -297,13 +292,11 @@ class Move {
 
     /** Write my string representation into OUT. */
     private void toString(Formatter out) {
-//        char a = '3';
-//        Character.getN
         if (_nextJump == null) {
             out.format(String.valueOf(col0())+ String.valueOf(row0()) + "-" + col1() + row1());
         }
         else {out.format(String.valueOf(col0())+ String.valueOf(row0()) + "-" + _nextJump.toString());} // FIXME
-    }  //trivial... use recursion and next jump
+    }
 
     /** Set me to COL0 ROW0 - COL1 ROW1 - NEXTJUMP. */
     private void set(char col0, char row0, char col1, char row1,
