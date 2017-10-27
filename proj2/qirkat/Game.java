@@ -242,7 +242,7 @@ class Game {
     void doClear(String[] unused) {
         //abandons game
         //person whose turn it is resigns
-        board().clear();
+        _board.clear();
         _state = SETUP;
         _whiteIsManual = true;
         _blackIsManual = false;
@@ -275,6 +275,7 @@ class Game {
     void doDump(String[] unused) {
         System.out.println("===");
         System.out.print(_board.toString(false));
+        System.out.println();
         System.out.println("===");
         // FIXME //fixed?
     }
