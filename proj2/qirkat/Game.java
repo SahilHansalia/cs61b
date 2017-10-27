@@ -227,12 +227,12 @@ class Game {
                 //throw new GameException("Illegal move");
             }
         }
-//        if (!make.isJump()) {
-//            if (_board.jumpPossible() | !_board.legalMove(make)) {
-//                reportError("Illegal move", make);
-//                //throw new GameException("Illegal move");
-//            }
-//        } commented to check
+        if (!make.isJump()) {
+            if (_board.jumpPossible() | !_board.legalMove(make)) {
+                reportError("Illegal move", make);
+                //throw new GameException("Illegal move");
+            }
+        }
 //
 
 
