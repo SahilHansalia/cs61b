@@ -1,7 +1,5 @@
 package qirkat;
 
-import A.A.G;
-import com.sun.tools.javac.util.Assert;
 
 import java.util.*;
 
