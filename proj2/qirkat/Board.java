@@ -71,7 +71,7 @@ class Board extends Observable {
         // FIXME //fixed?
         _gameOver = b._gameOver;
         _whoseMove = b._whoseMove;
-        board = b.board;
+        board = b.board.clone();
     }
 
     void newBoard(Board a) {
@@ -427,12 +427,12 @@ class Board extends Observable {
      *  MOV must be a jump or null.  If ALLOWPARTIAL, allow jumps that
      *  could be continued and are valid as far as they go.  */
     boolean checkJump(Move mov, boolean allowPartial) {
-        Board a = new Board();
+        Board a = new Board(this);
 //        Board b = new Board();
 
 //        a.internalCopy(this);
 //        b.internalCopy(this);
-        newBoard(a);
+//        newBoard(a);
         return checkJumpHelper(mov, allowPartial, a);
 
         //fixme
@@ -446,13 +446,13 @@ class Board extends Observable {
         if (!validSquare(mov.col0(), mov.row0()) | !validSquare(mov.col1(), mov.row1())) {    //recycled from legalmove
             return false; //check if starting and final is valid square
         }
-        if (whoseMove() == WHITE) {
+        if (a.whoseMove() == WHITE) {
             if (get(mov.col0(), mov.row0()) != WHITE | ((mov.row1() < mov.row0() && !mov.isJump())))
                 //if ((mov.row1() < mov.row0() && !mov.isJump())) {
                 return false;
         }
 
-        if (whoseMove() == BLACK) {
+        if (a.whoseMove() == BLACK) {
             if (((mov.row1() > mov.row0()) && !mov.isJump()) | get(mov.col0(), mov.row0()) != BLACK) {
                 return false;
             }
