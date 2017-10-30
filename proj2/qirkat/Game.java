@@ -284,6 +284,7 @@ class Game {
     void doDump(String[] unused) {
         System.out.println("===");
         System.out.print(_board.toString(false));
+        System.out.println();
         System.out.println("===");
         // FIXME //fixed?
     }
