@@ -320,8 +320,8 @@ class Game {
 
         // FIXME //fixed????
 
-       // _reporter.outcomeMsg(msg);
-        //_state = SETUP;
+//        _reporter.outcomeMsg(msg);
+        _state = SETUP;
     }
 
     /** Mapping of command types to methods that process them. */
