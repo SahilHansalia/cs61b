@@ -645,7 +645,6 @@ class Board extends Observable {
     String toString(boolean legend) {
         Formatter out = new Formatter();
         StringBuilder output = new StringBuilder(100);
-        System.out.println(board[11]);
         // FIXME
             for (int i = 24; i >= 0; i--) {
                 if (i % 5 == 0) {
