@@ -499,14 +499,9 @@ class Board extends Observable {
         // if getJumps adds anything then true else false
         //maybe run and create array
     }
-//    boolean jumpPossibleEasy(int k) {
-//        if (jumpPossible()) {
-//            for (int i = 0; i <= MAX_INDEX; i += 1) {
-//                getJumps(moves, i);
-//            }
-//            return true;
-//        }
-//    }
+    boolean jumpPossibleEasy(int k) {
+        return true;
+    }
 
     /** Return true iff a jump is possible from the current board. */
     boolean jumpPossible() {
