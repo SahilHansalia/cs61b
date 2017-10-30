@@ -2,8 +2,6 @@ package qirkat;
 
 /* Author: P. N. Hilfinger */
 
-import com.sun.tools.doclets.formats.html.SourceToHTMLConverter;
-
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
@@ -253,7 +251,7 @@ class Game {
     void doClear(String[] unused) {
         //abandons game
         //person whose turn it is resigns
-        board().clear();
+        _board.clear();
         _state = SETUP;
         _whiteIsManual = true;
         _blackIsManual = false;
