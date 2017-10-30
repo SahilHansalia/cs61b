@@ -72,6 +72,7 @@ class Board extends Observable {
         _gameOver = b._gameOver;
         _whoseMove = b._whoseMove;
         board = b.board.clone();
+        moves = b.moves;
     }
 
     void newBoard(Board a) {
@@ -632,6 +633,7 @@ class Board extends Observable {
         }
         else {
             undoHelper(mov.jumpTail(), prevTurn);
+            reverse(mov, prevTurn);
         }
     }
 
@@ -752,7 +754,12 @@ class Board extends Observable {
     }
     @Override
     public boolean equals(Object obj) {
-        if (this.board == ((Board) obj).board && this.whoseMove() == ((Board) obj).whoseMove() && this.gameOver() == ((Board) obj).gameOver()) {
+        for (int i = 0; i < 25; i++) {
+            if (this.board[i] != ((Board) obj).board[i]) {
+                return false;
+            }
+        }
+        if (this.whoseMove() == ((Board) obj).whoseMove() && this.gameOver() == ((Board) obj).gameOver()) {
             return true;
         }
         return false;
