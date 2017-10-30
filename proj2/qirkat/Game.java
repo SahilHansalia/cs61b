@@ -222,15 +222,15 @@ class Game {
 //        }
         Move make = Move.parseMove(operands[0]);
         if (make.isJump()) {
-            if (!_board.checkJump(make, true)) {
+            if (!_board.checkJump(make, true)) { //issue is here!
                 reportError("Illegal move", make);
-                //throw new GameException("Illegal move");
+                throw new GameException("Illegal move");
             }
         }
         if (!make.isJump()) {
             if (_board.jumpPossible() | !_board.legalMove(make)) {
                 reportError("Illegal move", make);
-                //throw new GameException("Illegal move");
+                throw new GameException("Illegal move");
             }
         }
 //
@@ -265,15 +265,16 @@ class Game {
     /** Perform the command 'set OPERANDS[0] OPERANDS[1]'. */
     void doSet(String[] operands) {
         _state = SETUP;
-        PieceColor color;
-        String piece = operands[0];
-        if (piece.equals("WHITE") | piece.equals("White") | piece.equals("white")) {
+        String color = operands[0];
+        String piece = operands[1];
+        //System.out.println(operands[0] + operands[1]);
+        if (color.equals("WHITE") | color.equals("White") | color.equals("white")) {
             _board.setPieces(operands[1], WHITE);
             return; //brick?
         }
-        if (piece.equals("BLACK") | piece.equals("Black") | piece.equals("black")) {
-            color = BLACK;
-            _board.setPieces(operands[1], color);
+        if (color.equals("BLACK") | color.equals("Black") | color.equals("black")) {
+            _board.setPieces(operands[1], BLACK);
+            return;
         } else {
             reportError("Illegal player color", piece);
         }
@@ -283,7 +284,7 @@ class Game {
     /** Perform the command 'dump'. */
     void doDump(String[] unused) {
         System.out.println("===");
-        System.out.print(_board.toString(false));
+        System.out.print(_board.toString());
         System.out.println();
         System.out.println("===");
         // FIXME //fixed?

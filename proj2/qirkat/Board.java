@@ -74,7 +74,7 @@ class Board extends Observable {
         board = b.board;
     }
 
-    private void newBoard(Board a) {
+    void newBoard(Board a) {
         a._gameOver = _gameOver;
         a._whoseMove = _whoseMove;
         a.board = board;
@@ -95,6 +95,7 @@ class Board extends Observable {
         if (!str.matches("[bw-]{25}")) {
             throw new IllegalArgumentException("bad board description");
         }
+        //clear();
         _gameOver = false;
 
         // FIXME
@@ -117,14 +118,15 @@ class Board extends Observable {
         _whoseMove = nextMove;
         boolean pieces = false;
         for (int i = 0; i < 25; i++) {
-            if (board[i] == whoseMove()) {
+            //System.out.println(board[i]);
+            if (board[i].equals(whoseMove())) {
                 pieces = true;
-//                break; //just added
+                break;
             }
         }
-        if (!isMove() | !pieces) {
-            _gameOver = true;
-        }
+//        if (!isMove() | !pieces) {
+//            _gameOver = true;
+//        }
 
         // FIXME ///whats left?
 
@@ -163,6 +165,7 @@ class Board extends Observable {
         assert validSquare(k);
         // FIXME  fixed?
         board[k] = v;
+//        System.out.println(board[11]);
     }
 
     boolean comprehensiveLegal(Move mov) {
@@ -425,6 +428,10 @@ class Board extends Observable {
      *  could be continued and are valid as far as they go.  */
     boolean checkJump(Move mov, boolean allowPartial) {
         Board a = new Board();
+//        Board b = new Board();
+
+//        a.internalCopy(this);
+//        b.internalCopy(this);
         newBoard(a);
         return checkJumpHelper(mov, allowPartial, a);
 
@@ -469,6 +476,7 @@ class Board extends Observable {
                 checkJumpHelper(mov.jumpTail(), allowPartial, a); //recurse for tails
             }
         }
+
         return true;
     }
 
@@ -637,6 +645,7 @@ class Board extends Observable {
     String toString(boolean legend) {
         Formatter out = new Formatter();
         StringBuilder output = new StringBuilder(100);
+        System.out.println(board[11]);
         // FIXME
             for (int i = 24; i >= 0; i--) {
                 if (i % 5 == 0) {
@@ -645,7 +654,8 @@ class Board extends Observable {
                         if ((j-4) % 5 == 0) {
                             output.append(board[j].shortName());
                         }
-                        else {output.append(board[j].shortName() + " "); } }
+                        else {output.append(board[j].shortName() + " ");
+                            } }
                     if (legend){
                         output.append(((i + 5)/5));
                     }
