@@ -200,7 +200,7 @@ class Board extends Observable {
             if (Character.getNumericValue(mov.row0()) == 5 && !mov.isJump()) {
                 return false;
             }
-            }
+        }
 
         if (whoseMove() == BLACK) {
             if (((mov.row1() > mov.row0()) && !mov.isJump())| get(mov.col0(), mov.row0()) != BLACK) {

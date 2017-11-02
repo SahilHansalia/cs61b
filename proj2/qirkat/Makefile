@@ -51,7 +51,7 @@ pre-style: default
 	$(STYLEPROG) -s pre-style.xml $(SRCS) 
 
 check:
-	@code=0; $(MAKE) unit || code=1; $(MAKE) integration || code=1; \
+	code=0; "$(MAKE)" unit || code=1; "$(MAKE)" integration || code=1; \
 	[ $$code -eq 0 ]
 
 unit: default

@@ -30,12 +30,14 @@ class Manual extends Player {
         String[] myMove = todo.operands();
 
         Move make = Move.parseMove(myMove[0]);
-        if ((make == null) || !game().board().legalMove(make)) { //change to comprehensive legal once completed
-            game().reportError("illegal move, please try again", make);
-            myMove();
+        //System.out.println(game().board().toString());
+        if ((make != null) && game().board().legalMove(make)) { //change to comprehensive legal once completed
+            return make;
         }
-
-        return make;
+        else {
+            game().reportError("illegal move, please try again", make);
+            return myMove();
+        }
     }
 
     /** Identifies the player serving as a source of input commands. */

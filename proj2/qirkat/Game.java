@@ -63,7 +63,7 @@ class Game {
             while (_state != SETUP && !_board.gameOver()) {  // FIXME //fixed
                 Move move;
                 if (_board.whoseMove() == WHITE) {
-                    move = white.myMove();
+                    move = white.myMove(); //this is not getting called correctly in the case of illegal moves
                 }
                 else {
                     move = black.myMove();
