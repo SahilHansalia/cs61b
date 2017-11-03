@@ -6,6 +6,7 @@ import java.util.List;
 /** A set of String values.
  *  @author sahil
  */
+<<<<<<< HEAD
 
 public class ECHashStringSet implements StringSet {
 
@@ -59,6 +60,9 @@ public class ECHashStringSet implements StringSet {
         return map[(s.hashCode() % map.length)].contains(s);
     }
 
+=======
+class ECHashStringSet implements StringSet {
+>>>>>>> shared/hw6
 
 
 }
