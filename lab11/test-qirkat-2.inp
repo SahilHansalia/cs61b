@@ -1,1 +1,27 @@
 # This is where your second integration test should go!
+# Tests if program properly handles illegal moves
+java -ea qirkat.Main
+set white w---b -w-b- --b-- -b-w- b---w
+dump
+@<===
+@< b - - - w
+@< - b - w -
+@< - - b - -
+@< - w - b -
+@< w - - - b
+@<===
+b2-d2
+@<illegal move, please try again
+b2-c2
+d2-b2
+a1-a2
+a5-b5
+dump
+@<===
+@< - b - - w
+@< - b - w -
+@< - - b - -
+@< w b - b -
+@< - - - - b
+@<===
+quit

@@ -1,3 +1,6 @@
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class MoreBoardTests {
 	
@@ -54,8 +57,36 @@ public class MoreBoardTests {
     }
 
     @Test
-    public void testSomething() {
-    	Board b = getBoard();
-    	// write things to test here
+    public void testinitMoves() {
+        Board b0 = getBoard();
+        assertEquals(1, b0.getMoves().size());
+        resetToInitialState(b0);
+    }
+
+    @Test
+    public void testLaterMoves() {
+        Board b0 = getBoard();
+        String[] GAME1 = { "c2-c3", "c4-c2"};
+        makeMoves(b0, GAME1);
+        assertEquals(1, b0.getMoves().size());
+        resetToInitialState(b0);
+
+    }
+    @Test
+    public void testLaterMoves2() {
+        Board b0 = getBoard();
+        String[] GAME1 = { "c2-c3", "c4-c2",
+                "c1-c3", "a3-c1",};
+        makeMoves(b0, GAME1);
+        assertEquals(2, b0.getMoves().size());
+        resetToInitialState(b0);
+    }
+    @Test
+    public void testLegalMoves() {
+        Board b0 = getBoard();
+        String[] GAME1 = { "c2-c3", "c4-c2",
+                "c1-c3", "a3-c1",};
+        assertEquals(false, b0.legalMove(Move.move('a', '2', 'b', '2')));
+        resetToInitialState(b0);
     }
 }

@@ -9,17 +9,17 @@ import static org.junit.Assert.*;
 public class BoardTest {
 
     private static final String INIT_BOARD =
-        "  b b b b b\n  b b b b b\n  b b - w w\n  w w w w w\n  w w w w w";
+            "  b b b b b\n  b b b b b\n  b b - w w\n  w w w w w\n  w w w w w";
 
     private static final String[] GAME1 =
-    { "c2-c3", "c4-c2",
-      "c1-c3", "a3-c1",
-      "c3-a3", "c5-c4",
-      "a3-c5-c3",
-    };
+            {"c2-c3", "c4-c2",
+                    "c1-c3", "a3-c1",
+                    "c3-a3", "c5-c4",
+                    "a3-c5-c3",
+            };
 
     private static final String GAME1_BOARD =
-        "  b b - b b\n  b - - b b\n  - - w w w\n  w - - w w\n  w w b w w";
+            "  b b - b b\n  b - - b b\n  - - w w w\n  w - - w w\n  w w b w w";
 
     private static void makeMoves(Board b, String[] moves) {
         for (String s : moves) {
@@ -53,12 +53,38 @@ public class BoardTest {
         makeMoves(b0, GAME1);
         assertEquals("second pass failed to reach same position", b2, b0);
     }
+
 //    @Test
-//    public void testString() {
+//    public void testinitMoves() {
 //        Board b0 = new Board();
-//        b0.setPieces("w w w w w  w w w w w w w - b b b b b b b  b b b b b", PieceColor.BLACK);
-//        assertEquals(INIT_BOARD, b0.toString(false));
+//        assertEquals(1, b0.getMoves().size());
 //    }
+//
+//    @Test
+//    public void testLaterMoves() {
+//        Board b0 = new Board();
+//        String[] GAME1 = { "c2-c3", "c4-c2"};
+//        makeMoves(b0, GAME1);
+//        assertEquals(1, b0.getMoves().size());
+//    }
+//    @Test
+//    public void testLaterMoves2() {
+//        Board b0 = new Board();
+//        String[] GAME1 = { "c2-c3", "c4-c2",
+//                "c1-c3", "a3-c1",};
+//        makeMoves(b0, GAME1);
+//        assertEquals(2, b0.getMoves().size());
+//    }
+//    @Test
+//    public void testLegalMoves() {
+//        Board b0 = new Board();
+//        String[] GAME1 = { "c2-c3", "c4-c2",
+//                "c1-c3", "a3-c1",};
+//        assertEquals(false, b0.legalMove(Move.move('a', '2', 'b', '2')));
+//    }
+
+
+
 
 
 }

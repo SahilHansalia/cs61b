@@ -6,7 +6,7 @@ import java.util.Stack;
 
 /**
  * Implementation of a BST based String Set.
- * @author
+ * @author sahil
  */
 public class BSTStringSet implements SortedStringSet, Iterable<String> {
     /** Creates a new empty set. */
@@ -51,7 +51,7 @@ public class BSTStringSet implements SortedStringSet, Iterable<String> {
 
     @Override
     public Iterator<String> iterator(String low, String high) {
-        return null;  // FIXME
+        return new BSTIterator2(low, high);  // FIXME
     }
 
     /** Return either the node in this BST that contains S, or, if
@@ -141,7 +141,43 @@ public class BSTStringSet implements SortedStringSet, Iterable<String> {
         }
     }
 
-    // ADD A CLASS, PERHAPS?
+    private class BSTIterator2 implements Iterator<String> {
+        private Stack<Node> _toDo = new Stack<>();
+
+        BSTIterator2(String low, String high) {
+
+
+            addTree(root, low, high);
+        }
+
+        public boolean hasNext() {
+            return !_toDo.empty();
+        }
+
+        public String next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+
+            Node node = _toDo.pop();
+//            addTree(node.right);
+            return node.s;
+        }
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+
+        private void addTree(Node node, String low, String high) {
+            while (node != null) {
+                _toDo.push(node);
+                node = node.left;
+            }
+        }
+
+
+
+    }
+
 
     /** Root node of the tree. */
     private Node root;
