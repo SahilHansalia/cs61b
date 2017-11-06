@@ -209,8 +209,7 @@ class Board extends Observable {
         return _whoseMove;
     }
 
-    /** Perform the move C0R0-C1R1, or pass if C0 is '-'.  For moves
-     *  other than pass, assumes that legalMove(C0, R0, C1, R1). */
+    /** Perform the move C0R0-C1R1. Assumes that legalMove(C0, R0, C1, R1). */
     void makeMove(char c0, char r0, char c1, char r1) {
         makeMove(Move.move(c0, r0, c1, r1, null));
     }

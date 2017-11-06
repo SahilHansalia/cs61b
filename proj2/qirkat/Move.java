@@ -301,7 +301,7 @@ class Move {
     /** True iff move is a jump. */
     private boolean _isJump;
 
-    /** From and to squares, or 0s if a pass. */
+    /** From and to squares. */
     private char _col0, _row0, _col1, _row1;
 
     /** For a jump, the Move representing the jumps following the
