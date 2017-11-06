@@ -235,23 +235,23 @@ class Board extends Observable {
         if (gameOver()) {
             return;
         }
-        if (jumpPossible()) {
-            for (int k = 0; k <= MAX_INDEX; k += 1) {
-                getJumps(moves, k);
-            }
-        } else {
+//        if (jumpPossible()) {
+//            for (int k = 0; k <= MAX_INDEX; k += 1) {
+//                getJumps(moves, k);
+//            }
+//        } else {
             for (int k = 0; k <= MAX_INDEX; k += 1) {
                 getMoves(moves, k);
             }
         }
-    }
+//    }
 
     /** Add all legal non-capturing moves from the position
      *  with linearized index K to MOVES. */
     private void getMoves(ArrayList<Move> moves, int k) {
-        if (jumpPossible()) {
-            return;
-        }
+//        if (jumpPossible()) {
+//            return;
+//        }
         // FIXME //fixed
         if (k % 2 == 0) {
             for (int i = -1; i < 2; i++) {
@@ -296,7 +296,7 @@ class Board extends Observable {
 
                 try {
                     Move current2 = move( Move.col(k), Move.row(k),
-                            Move.col(k), Move.row(k + i));
+                            Move.col(k), Move.rowConverter(k ,i));
                     if (legalMove(current2)) {
                         moves.add(current2); }
                     }
@@ -323,9 +323,9 @@ class Board extends Observable {
                     try {
                         Move currentMove = move( Move.col(k), Move.row(k),
                                 colConverter(k, i), rowConverter(k, j));
-                        if (checkJump(currentMove, true)) {// try Integer.toString(a).charAt(0)
-                            //helper
-                            moves.add(currentMove);
+                        if (checkJump(currentMove, false)) {
+                            moves.addAll(jumpHelper(currentMove, moves, index(colConverter(k, i),rowConverter(k, j)))); //does this work?
+                            //moves.add(currentMove);
                         }
                     }
                     catch (AssertionError | StringIndexOutOfBoundsException s) {
@@ -343,8 +343,8 @@ class Board extends Observable {
                 try {
                     Move current = move(Move.col(k),  Move.row(k),
                             colConverter(k, i), Move.row(k));
-                    if (checkJump(current, true)) {
-                        moves.add(current);
+                    if (checkJump(current, false)) {
+                        moves.addAll(jumpHelper(current, moves, index(colConverter(k, i), Move.row(k)))); //does this work?
                     }
                 }
                 catch (AssertionError | StringIndexOutOfBoundsException s) {
@@ -354,8 +354,8 @@ class Board extends Observable {
                 try{
                     Move current2 = move(Move.col(k), Move.row(k),
                             Move.col(k), rowConverter(k, i));
-                    if (checkJump(current2, true)) {
-                        moves.add(current2);
+                    if (checkJump(current2, false)) {
+                        moves.addAll(jumpHelper(current2, moves, index(Move.col(k),rowConverter(k, i)))); //does this work?
                     }
                 }
                 catch (AssertionError | StringIndexOutOfBoundsException s) {
@@ -365,7 +365,7 @@ class Board extends Observable {
         }
     }
 
-    private void jumpHelper (Move move, ArrayList<Move> moves, int k) {
+    private ArrayList<Move> jumpHelper (Move move, ArrayList<Move> moves, int k) {
         boolean made_move = false;
         if (k % 2 == 0) {
             for (int i = -2; i < 3; i++) {
@@ -379,7 +379,7 @@ class Board extends Observable {
                         //boolean made_move = false;
                         if (checkJump(move(move, currentMove), true)) {// try Integer.toString(a).charAt(0)
                             made_move = true;
-                            jumpHelper(move(move, currentMove), moves, kPacker(colConverter(k, i),rowConverter(k, j)));
+                            jumpHelper(move(move, currentMove), moves, index(colConverter(k, i),rowConverter(k, j)));
                         }
                         if (!made_move) {
                             moves.add(move);
@@ -398,20 +398,30 @@ class Board extends Observable {
                     continue;
                 }
                 try {
-                    Move current = move(Move.col(k),  Move.row(k),
-                            colConverter(k, i), Move.row(k));
-                    if (checkJump(current, true)) {
-                        moves.add(current);
+                    Move currentMove = move( Move.col(k), Move.row(k),
+                            colConverter(k, i),Move.row(k));
+                    //boolean made_move = false;
+                    if (checkJump(move(move, currentMove), true)) {// try Integer.toString(a).charAt(0)
+                        made_move = true;
+                        jumpHelper(move(move, currentMove), moves, index(colConverter(k, i),Move.row(k)));
+                    }
+                    if (!made_move) {
+                        moves.add(move);
                     }
                 }
                 catch (AssertionError | StringIndexOutOfBoundsException s) {
                     //continue;
                 }
-                try{
-                    Move current2 = move(Move.col(k), Move.row(k),
-                            Move.col(k), rowConverter(k, i));
-                    if (checkJump(current2, true)) {
-                        moves.add(current2);
+                try {
+                    Move currentMove = move( Move.col(k), Move.row(k),
+                            Move.col(k),rowConverter(k, i));
+                    //boolean made_move = false;
+                    if (checkJump(move(move, currentMove), true)) {// try Integer.toString(a).charAt(0)
+                        made_move = true;
+                        jumpHelper(move(move, currentMove), moves, index( Move.col(k),rowConverter(k, i)));
+                    }
+                    if (!made_move) {
+                        moves.add(move);
                     }
                 }
                 catch (AssertionError | StringIndexOutOfBoundsException s) {
@@ -419,6 +429,7 @@ class Board extends Observable {
                 }
             }
         }
+        return moves;
     }
 
 
@@ -443,7 +454,7 @@ class Board extends Observable {
         //deal with recursion of jumps if allowed partial
     }
 
-    boolean checkJumpHelper(Move mov, boolean allowPartial, Board a) {
+    private boolean checkJumpHelper(Move mov, boolean allowPartial, Board a) {
         if (!validSquare(mov.col0(), mov.row0()) | !validSquare(mov.col1(), mov.row1())) {    //recycled from legalmove
             return false; //check if starting and final is valid square
         }
@@ -471,7 +482,7 @@ class Board extends Observable {
         a.board[index(mov.col1(), mov.row1())] = a.whoseMove();
         a.board[index(mov.col0(), mov.row0())] = EMPTY;
         if (allowPartial) {
-//            if (mov.jumpTail() == null && a.jumpPossible(mov.col1, mov.row1)) {
+//            if (mov.jumpTail() == null && a.jumpPossibleEasy(mov.col1, mov.row1)) {  //helper jump possible easy should call check jump helper allowPartial = false
             //return false}
             if (mov.jumpTail() != null) {
                 checkJumpHelper(mov.jumpTail(), allowPartial, a); //recurse for tails
@@ -480,6 +491,12 @@ class Board extends Observable {
 
         return true;
     }
+
+    /** Return true iff a single jump is possible for a piece at position k. */
+    boolean jumpPossibleEasy(int k) {
+        return true;
+    }
+
 
 //    boolean singleJumpChecker(Move mov, Board curr, int k) {
 //        if (!curr.legalMove(mov)) {
@@ -506,9 +523,6 @@ class Board extends Observable {
 
         // if getJumps adds anything then true else false
         //maybe run and create array
-    }
-    boolean jumpPossibleEasy(int k) {
-        return true;
     }
 
     /** Return true iff a jump is possible from the current board. */

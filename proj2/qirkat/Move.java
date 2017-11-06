@@ -109,14 +109,23 @@ class Move {
         }
         if (move0.isVestigial()) {
             //return move1?
-            return null; // FIXME
+            return move1; // FIXME
         }
         if (move0.jumpTail() == null) {
             //set mov0.nextjump = mov1
-            return null; // FIXME
+            return move0._nextJump = move1; // FIXME
         } else {
+            Move temp = move0;
+            Move curr = move0;
+            Move next = move0._nextJump;
+            while (next != null) {
+                curr = next;
+                next = next._nextJump;
+            }
+            curr._nextJump = move1;
+
             //find until next jump is null and set next jump to mov1?
-            return null; // FIXME
+            return temp; // FIXME
         }
 
     }

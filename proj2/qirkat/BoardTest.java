@@ -54,6 +54,15 @@ public class BoardTest {
         assertEquals("second pass failed to reach same position", b2, b0);
     }
 
+    @Test
+    public void testGenerator() {
+        Board b0 = new Board();
+        makeMoves(b0, GAME1);
+        System.out.println(b0.toString());
+        System.out.println(b0.getMoves());
+    }
+
+
 //    @Test
 //    public void testinitMoves() {
 //        Board b0 = new Board();
