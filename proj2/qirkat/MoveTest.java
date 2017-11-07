@@ -59,12 +59,12 @@ public class MoveTest {
     public void concatTest() {
         Move m = move('a', '3', 'a', '5');
         Move j = move('a', '5', 'b', '3');
-        Move p = move('b','3','a','5');
+        Move p = move('b', '3', 'a', '5');
         assertNotNull(m);
-        Move n = Move.move(m,j);
+        Move n = Move.move(m, j);
         assertEquals("a3-a5-b3", n.toString());
         assertTrue(n != m);
-        Move q = Move.move(n,p);
+        Move q = Move.move(n, p);
         assertEquals("a3-a5-b3-a5", q.toString());
     }
 

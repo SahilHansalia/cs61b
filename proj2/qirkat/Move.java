@@ -108,11 +108,11 @@ class Move {
             return move0;
         }
         if (move0.isVestigial()) {
-            //return move1?
             return move1; // FIXME
         }
         if (move0.jumpTail() == null) {
-            return Move.move(move0.col0(),move0.row0(), move0.col1(), move0.row1(), move1); // FIXME
+            return Move.move(move0.col0(), move0.row0(),
+                    move0.col1(), move0.row1(), move1);
         } else {
 //            Move temp = move0;
 //            Move curr = move0;
@@ -125,7 +125,8 @@ class Move {
 //
 //            //find until next jump is null and set next jump to mov1?
 //            return temp; // FIXME
-            return Move.move(move0.col0(),move0.row0(), move0.col1(), move0.row1(), Move.move(move0.jumpTail(), move1));
+            return Move.move(move0.col0(), move0.row0(), move0.col1(),
+                    move0.row1(), Move.move(move0.jumpTail(), move1));
         }
 
     }
@@ -146,15 +147,29 @@ class Move {
         assert 0 <= k && k <= MAX_INDEX;
         return k;
     }
+
+    /** Convert col coordinates to character.
+     * @return character of col coordinates
+     * @param k is x-axis coordinate and
+     * @param i is y-axis coord.*/
     static char colConverter(int k, int i) {
-        return alp.charAt(Move.alp.indexOf(Move.col(k)) + i);
-    }
-    static char rowConverter(int k, int j) {
-        return Integer.toString(Character.getNumericValue( Move.row(k)) + j).charAt(0);
+        return ALP.charAt(Move.ALP.indexOf(Move.col(k)) + i);
     }
 
-    static int kPacker (char col, char row) {
-        return ((5 *(Character.getNumericValue(row) - 1))+ alp.indexOf(col));
+    /** Convert row coordinates to character.
+     * @return character of row coordinates
+     * @param k is x-axis coordinate and
+     * @param j is y-axis coord.*/
+    static char rowConverter(int k, int j) {
+        return Integer.toString(Character.getNumericValue(
+                Move.row(k)) + j).charAt(0);
+    }
+    /** Convert col,row coordinates to int k.
+     * @return character of row coordinates
+     * @param col is col char
+     * @param row is row char.*/
+    static int kPacker(char col, char row) {
+        return ((5 * (Character.getNumericValue(row) - 1)) + ALP.indexOf(col));
     }
 
     /** Return the column letter of linearized index K. */
@@ -181,13 +196,13 @@ class Move {
     /** Return true iff this is a horizontal, non-capturing move to
      *  the left. */
     boolean isLeftMove() {
-        return alp.indexOf(col1()) == alp.indexOf(col0()) - 1; // FIXME //fixed
+        return ALP.indexOf(col1()) == ALP.indexOf(col0()) - 1; // FIXME //fixed
     } //this is trivial
 
     /** Return true iff this is a horizontal, non-capturing move
      *  to the right. */
     boolean isRightMove() {
-        return alp.indexOf(col1()) == alp.indexOf(col0()) + 1; // FIXME //fixed
+        return ALP.indexOf(col1()) == ALP.indexOf(col0()) + 1; // FIXME //fixed
     } //this is trivial
 
     /** Returns the source column. */
@@ -213,8 +228,8 @@ class Move {
     /** For a jump, returns the row of the jumped-over square for the
      *  first leg of the jump.  For a non-capturing move, same as row1(). */
     char jumpedRow() {
-        if (Math.abs(row1()- row0()) == 2) {
-            int i = (row1() + row0())/2;
+        if (Math.abs(row1() - row0()) == 2) {
+            int i = (row1() + row0()) / 2;
             return (char) i;
         }
         return row1();  // FIXME //fixed
@@ -223,9 +238,9 @@ class Move {
     /** For a jump, returns the column of the jumped-over square for the
      *  first leg of the jump.  For a non-capturing move, same as col1(). */
     char jumpedCol() {
-        if (Math.abs(alp.indexOf(col1())- alp.indexOf(col0())) == 2) {
-            int i = (alp.indexOf(col1()) + alp.indexOf(col0()))/2;
-            return alp.charAt(i);
+        if (Math.abs(ALP.indexOf(col1()) - ALP.indexOf(col0())) == 2) {
+            int i = (ALP.indexOf(col1()) + ALP.indexOf(col0())) / 2;
+            return ALP.charAt(i);
         }
         return col1();  // FIXME //fixed
     }
@@ -302,9 +317,12 @@ class Move {
     /** Write my string representation into OUT. */
     private void toString(Formatter out) {
         if (_nextJump == null) {
-            out.format(String.valueOf(col0())+ String.valueOf(row0()) + "-" + col1() + row1());
-        }
-        else {out.format(String.valueOf(col0())+ String.valueOf(row0()) + "-" + _nextJump.toString());} // FIXME
+            out.format(String.valueOf(col0()) + String.valueOf(row0())
+                + "-" + col1() + row1());
+        } else {
+            out.format(String.valueOf(col0()) + String.valueOf(row0())
+                + "-" + _nextJump.toString());
+        } // FIXME
     }
 
     /** Set me to COL0 ROW0 - COL1 ROW1 - NEXTJUMP. */
@@ -354,8 +372,8 @@ class Move {
     /** The identity function on Moves. */
     static final Function<Move, Move> IDENTITY = k -> k;
 
-    /** Convert cols to numbers */
-    static final String alp = "abcde";
+    /** Convert cols to numbers. */
+    static final String ALP = "abcde";
 
 
 }

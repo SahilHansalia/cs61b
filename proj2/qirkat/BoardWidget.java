@@ -13,7 +13,7 @@ import java.awt.event.MouseEvent;
 import static qirkat.PieceColor.*;
 
 /** Widget for displaying a Qirkat board.
- *  @author
+ *  @author not me?
  */
 class BoardWidget extends Pad implements Observer {
 
@@ -26,8 +26,7 @@ class BoardWidget extends Pad implements Observer {
 
     /** Color of white pieces. */
     private static final Color WHITE_COLOR = Color.WHITE;
-    /** Color of "phantom" white pieces. */
-    /** Color of black pieces. */
+    /** Color of "phantom" white pieces. Color of black pieces. */
     private static final Color BLACK_COLOR = Color.BLACK;
     /** Color of painted lines. */
     private static final Color LINE_COLOR = Color.BLACK;

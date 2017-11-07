@@ -63,9 +63,8 @@ class Game {
             while (_state != SETUP && !_board.gameOver()) {  // FIXME //fixed
                 Move move;
                 if (_board.whoseMove() == WHITE) {
-                    move = white.myMove(); //this is not getting called correctly in the case of illegal moves
-                }
-                else {
+                    move = white.myMove();
+                } else {
                     move = black.myMove();
                 }
 
@@ -223,7 +222,7 @@ class Game {
         Move make = Move.parseMove(operands[0]);
         if (make.isJump()) {
             System.out.println(make);
-            if (!_board.checkJump(make, true)) { //issue is still here!
+            if (!_board.checkJump(make, true)) {
                 reportError("Illegal move", make);
                 throw new GameException("Illegal move");
             }
@@ -243,7 +242,7 @@ class Game {
 //            }
 //        }
 //        else {
-            _board.makeMove(make);
+        _board.makeMove(make);
 //        }
         // FIXME
     }
@@ -269,11 +268,13 @@ class Game {
         String color = operands[0];
         String piece = operands[1];
         //System.out.println(operands[0] + operands[1]);
-        if (color.equals("WHITE") | color.equals("White") | color.equals("white")) {
+        if (color.equals("WHITE") | color.equals("White")
+                | color.equals("white")) {
             _board.setPieces(operands[1], WHITE);
             return; //brick?
         }
-        if (color.equals("BLACK") | color.equals("Black") | color.equals("black")) {
+        if (color.equals("BLACK") | color.equals("Black")
+                | color.equals("black")) {
             _board.setPieces(operands[1], BLACK);
             return;
         } else {

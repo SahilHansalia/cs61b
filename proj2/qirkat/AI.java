@@ -1,11 +1,8 @@
 package qirkat;
-
-import graph.B;
-
 import static qirkat.PieceColor.*;
 
 /** A Player that computes its own moves.
- *  @author
+ *  @author sahil h
  */
 class AI extends Player {
 
@@ -82,13 +79,16 @@ class AI extends Player {
 
 
 
-
-    private int simpleMax(Board board, int alpha, int beta) {
-        if (board.gameOver() && board.whoseMove() == WHITE) {
-
-        }
-        return 0;
-    }
+//    /** Return static evaluation for BOARD.
+//     * @param alpha is alpha
+//     * @param beta  is beta
+//     * @return static eval*/
+//    private int simpleMax(Board board, int alpha, int beta) {
+//        if (board.gameOver() && board.whoseMove() == WHITE) {
+//
+//        }
+//        return 0;
+//    }
 
 
 
@@ -103,22 +103,24 @@ class AI extends Player {
 
     /** Return a heuristic value for BOARD. */
     private int staticScore(Board board) {
-        int whiteCount = 0;
-        int blackCount = 0;
-        for (int i = 0; i < 25; i++) {
-            if (board.board[i] == WHITE) {
-                whiteCount ++;
-            }
-            if (board.board[i] == BLACK) {
-                blackCount ++;
-            }
-        }
+        return 0;
+    }
+//        int whiteCount = 0;
+//        int blackCount = 0;
+//        for (int i = 0; i < (Move.SIDE * Move.SIDE); i++) {
+//            if (board.board[i] == WHITE) {
+//                whiteCount++;
+//            }
+//            if (board.board[i] == BLACK) {
+//                blackCount++;
+//            }
+//        }
 //        if (myColor() == WHITE) {
 //            return (whiteCount - blackCount);
 //        }
 //        if (myColor() == BLACK) {
 //            return (blackCount - whiteCount);
 //        }
-        return whiteCount - blackCount; // FIXME //fixed?
-    }
+//        return whiteCount - blackCount; // FIXME //fixed?
+//    }
 }

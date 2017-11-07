@@ -31,10 +31,9 @@ class Manual extends Player {
 
         Move make = Move.parseMove(myMove[0]);
         //System.out.println(game().board().toString());
-        if ((make != null) && game().board().legalMove(make)) { //change to comprehensive legal once completed
+        if ((make != null) && game().board().legalMove(make)) {
             return make;
-        }
-        else {
+        } else {
             game().reportError("illegal move, please try again", make);
             return myMove();
         }
