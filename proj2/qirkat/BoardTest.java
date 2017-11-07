@@ -18,6 +18,9 @@ public class BoardTest {
                     "a3-c5-c3",
             };
 
+    private static final String[] GAMEtest =
+            {"c2-c3", "c4-c2"};
+
     private static final String GAME1_BOARD =
             "  b b - b b\n  b - - b b\n  - - w w w\n  w - - w w\n  w w b w w";
 
@@ -54,12 +57,23 @@ public class BoardTest {
         assertEquals("second pass failed to reach same position", b2, b0);
     }
 
+
+
     @Test
+
     public void testGenerator() {
         Board b0 = new Board();
         makeMoves(b0, GAME1);
         System.out.println(b0.toString());
         System.out.println(b0.getMoves());
+    }
+
+    @Test
+
+    public void jumpPossibleTest() {
+        Board b0 = new Board();
+        makeMoves(b0, GAMEtest);
+//        System.out.println(b0.jumpPossible());
     }
 
 

@@ -222,7 +222,8 @@ class Game {
 //        }
         Move make = Move.parseMove(operands[0]);
         if (make.isJump()) {
-            if (!_board.checkJump(make, true)) { //issue is here!
+            System.out.println(make);
+            if (!_board.checkJump(make, true)) { //issue is still here!
                 reportError("Illegal move", make);
                 throw new GameException("Illegal move");
             }

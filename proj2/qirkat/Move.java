@@ -112,20 +112,20 @@ class Move {
             return move1; // FIXME
         }
         if (move0.jumpTail() == null) {
-            //set mov0.nextjump = mov1
-            return move0._nextJump = move1; // FIXME
+            return Move.move(move0.col0(),move0.row0(), move0.col1(), move0.row1(), move1); // FIXME
         } else {
-            Move temp = move0;
-            Move curr = move0;
-            Move next = move0._nextJump;
-            while (next != null) {
-                curr = next;
-                next = next._nextJump;
-            }
-            curr._nextJump = move1;
-
-            //find until next jump is null and set next jump to mov1?
-            return temp; // FIXME
+//            Move temp = move0;
+//            Move curr = move0;
+//            Move next = move0._nextJump;
+//            while (next != null) {
+//                curr = next;
+//                next = next._nextJump;
+//            }
+//            curr._nextJump = move1;
+//
+//            //find until next jump is null and set next jump to mov1?
+//            return temp; // FIXME
+            return Move.move(move0.col0(),move0.row0(), move0.col1(), move0.row1(), Move.move(move0.jumpTail(), move1));
         }
 
     }

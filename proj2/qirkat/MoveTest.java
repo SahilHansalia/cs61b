@@ -32,7 +32,7 @@ public class MoveTest {
         assertEquals("a3-b2", move('a', '3', 'b', '2').toString());
         assertEquals("a3-a5", move('a', '3', 'a', '5').toString());
         assertEquals("a3-a5-c3", move('a', '3', 'a', '5',
-                                      move('a', '5', 'c', '3')).toString());
+                move('a', '5', 'c', '3')).toString());
     }
 
     @Test
@@ -42,6 +42,7 @@ public class MoveTest {
         assertEquals("a3-a5-c3", parseMove("a3-a5-c3").toString());
         assertEquals("a3-a5-c3-e1", parseMove("a3-a5-c3-e1").toString());
     }
+
     @Test
     public void jumpedColTest() {
         Move m = move('a', '3', 'a', '5');
@@ -53,4 +54,18 @@ public class MoveTest {
 //        System.out.println(Character.getNumericValue('2'));
 
     }
+
+    @Test
+    public void concatTest() {
+        Move m = move('a', '3', 'a', '5');
+        Move j = move('a', '5', 'b', '3');
+        Move p = move('b','3','a','5');
+        assertNotNull(m);
+        Move n = Move.move(m,j);
+        assertEquals("a3-a5-b3", n.toString());
+        assertTrue(n != m);
+        Move q = Move.move(n,p);
+        assertEquals("a3-a5-b3-a5", q.toString());
+    }
+
 }
