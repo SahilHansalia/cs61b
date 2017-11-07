@@ -73,8 +73,8 @@ class BoardWidget extends Pad implements Observer {
         if (where.getButton() == MouseEvent.BUTTON1) {
             mouseCol = (char) (x / SQDIM + 'a');
             mouseRow = (char) ((SQDIM * SIDE - y) / SQDIM + '1');
-            if (mouseCol >= 'a' && mouseCol <= 'g'
-                && mouseRow >= '1' && mouseRow <= '7') {
+            if (mouseCol >= 'a' && mouseCol <= 'e'
+                && mouseRow >= '1' && mouseRow <= '5') {
                 setChanged();
                 notifyObservers("" + mouseCol + mouseRow);
             }

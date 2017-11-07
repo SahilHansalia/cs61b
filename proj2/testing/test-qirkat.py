@@ -10,10 +10,10 @@ EOF = object()
 
 CLEANUP_TIME = 2
 DEFAULT_TOTAL_TIME = 120
-MOVE_FORMAT = '[a-g][1-7]-[a-g][1-7]'
-WHITE_MOVE = re.compile(r'(?:((?:White|Black) wins|Draw)|White (passes)|White moves ('
+MOVE_FORMAT = '[a-g][1-7](?:-[a-g][1-7])+'
+WHITE_MOVE = re.compile(r'(?:((?:White|Black) wins)|White moves ('
                       + MOVE_FORMAT + '))\.$')
-BLACK_MOVE = re.compile(r'(?:((?:White|Black) wins|Draw)|Black (passes)|Black moves ('
+BLACK_MOVE = re.compile(r'(?:((?:White|Black) wins)|Black moves ('
                        + MOVE_FORMAT + '))\.$')
 
 class test_err(BaseException):
@@ -146,10 +146,8 @@ class program:
             self.error("invalid move for {} ({})", who, move)
         if group(1):
             return move, None
-        elif group(2):
-            return move, "-"
         else:
-            return move, group(3)
+            return move, group(2)
 
     def check_patn(self, pattern):
         if re.match(r' *$', pattern):
@@ -207,7 +205,7 @@ class program:
     def is_game_end(self, move):
         if move is EOF:
             self.error("game output truncated")
-        return search(r'wins|Draw', move)
+        return search(r'wins', move)
 
     # Script-command handlers
 
@@ -332,7 +330,7 @@ def get_output_queue(title, stream):
                     queue.put(line)
                     if match(r'\s*===', line):
                         break
-            elif search(r'(?i)wins|passes|moves|draw|Exception in thread', line):
+            elif search(r'(?i)wins|moves|Exception in thread', line):
                 queue.put(line)
     th = Thread(target=reader, name=title, daemon=True)
     th.start()
