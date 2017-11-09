@@ -61,19 +61,71 @@ class AI extends Player {
      *  of the board value and does not set _lastMoveFound. */
     private int findMove(Board board, int depth, boolean saveMove, int sense,
                          int alpha, int beta) {
-        // mind simple max if depth = 0 or gameover(board)
+        if (board.getMoves().contains(Move.parseMove("a3-c5-c3"))) {
+//            System.out.println(board.getMoves() + " " + depth);
+        }
+        int bestScore;
+        Move best = null;
+        if (depth == 0 || board.gameOver()) {
+            return staticScore(board);
+        }
+        if (sense == 1) {
+            bestScore = -1 * INFTY;
+            for (Move testMove : board.getMoves()) {
+                Board board1 = new Board();
+                board1.copy(board);
+                board1.makeMove(testMove);
+                int response = findMove(board1, depth - 1, saveMove, -1, alpha, beta);
+                if (response >= bestScore) {
+                    best = testMove;
+                    bestScore = response;
+//                    if (saveMove) {
+//                        _lastFoundMove = best;
+//                    }
+                    alpha = Math.max(alpha, response);
+                    if (beta <= alpha) {
+                        break;
+                    }
+                }
 
-        ///
-        Move best;
-        best = null;
+            }
+//            if (saveMove) {
+//                _lastFoundMove = best;
+//            }
+//            return bestScore;
 
-        // FIXME
+        }
+        else {
+            bestScore = INFTY;
+            for (Move testMove2 : board.getMoves()) {
+                Board board2 = new Board();
+                board2.copy(board);
+                board2.makeMove(testMove2);
+                int response2 = findMove(board2, depth - 1, saveMove, 1, alpha, beta);
+                if (response2 <= bestScore) {
+                    best = testMove2;
+                    bestScore = response2;
+//                    if (saveMove) {
+//                        _lastFoundMove = best;
+//                    }
+                    beta = Math.min(beta, response2);
+                    if (beta <= alpha) {
+                        break;
+                    }
 
+                }
+            }
+//            if (saveMove) {
+//                _lastFoundMove = best;
+//            }
+//
+//            return bestScore;
+        }
         if (saveMove) {
             _lastFoundMove = best;
         }
+        return bestScore;
 
-        return 0; // FIXME
     }
 
 
@@ -94,33 +146,21 @@ class AI extends Player {
 
 
 
-
-
-
-
-
+//its looking for a move at the wrong depth??
 
 
     /** Return a heuristic value for BOARD. */
     private int staticScore(Board board) {
-        return 0;
+//        return 5;
+        int whiteCount = board.whitePieces();
+        int blackCount = board.blackPieces();
+        if (board.gameOver() && board.whoseMove() == WHITE) {
+            return WINNING_VALUE * -1;
+        }
+        if (board.gameOver() && board.whoseMove() == BLACK) {
+            return WINNING_VALUE;
+        }
+
+        return (whiteCount - blackCount);
     }
-//        int whiteCount = 0;
-//        int blackCount = 0;
-//        for (int i = 0; i < (Move.SIDE * Move.SIDE); i++) {
-//            if (board.board[i] == WHITE) {
-//                whiteCount++;
-//            }
-//            if (board.board[i] == BLACK) {
-//                blackCount++;
-//            }
-//        }
-//        if (myColor() == WHITE) {
-//            return (whiteCount - blackCount);
-//        }
-//        if (myColor() == BLACK) {
-//            return (blackCount - whiteCount);
-//        }
-//        return whiteCount - blackCount; // FIXME //fixed?
-//    }
 }

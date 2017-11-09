@@ -216,35 +216,30 @@ class Game {
 
     /** Perform the move OPERANDS[0]. */
     void doMove(String[] operands) {
-//        if ((operands.length - 5) % 3 != 0) {
-//            reportError("invalid move syntax", operands);
-//        }
         Move make = Move.parseMove(operands[0]);
-        if (make.isJump()) {
-            System.out.println(make);
-            if (!_board.checkJump(make, true)) {
-                reportError("Illegal move", make);
-                throw new GameException("Illegal move");
-            }
-        }
-        if (!make.isJump()) {
-            if (_board.jumpPossible() | !_board.legalMove(make)) {
-                reportError("Illegal move", make);
-                throw new GameException("Illegal move");
-            }
-        }
-//
-
-
-//        if (_board.jumpPossible()) {
-//            if (!make.isJump()) {
-//                reportError("Illegal move", make);  //throw game exception?
+//        System.out.println(_board.getMoves());
+        if (_board.getMoves().contains(make)) {
+            _board.makeMove(make);
+        } else {
+            throw new GameException("Illegal move");
+//        }
+//        if (make.isJump()) {
+////            System.out.println(make);
+//            System.out.println(_board.getMoves());
+//            if (!_board.checkJump(make, true)) {
+////                reportError("Illegal move", make);
+//                throw new GameException("Illegal move");
 //            }
 //        }
-//        else {
-        _board.makeMove(make);
+//        if (!make.isJump()) {
+//            if (_board.jumpPossible() | !_board.legalMove(make)) {
+////                reportError("Illegal move", make);
+//                throw new GameException("Illegal move");
+//            }
 //        }
-        // FIXME
+//        _board.makeMove(make);
+            // FIXME
+        }
     }
 
     /** Perform the command 'clear'. */
@@ -276,7 +271,6 @@ class Game {
         if (color.equals("BLACK") | color.equals("Black")
                 | color.equals("black")) {
             _board.setPieces(operands[1], BLACK);
-            return;
         } else {
             reportError("Illegal player color", piece);
         }

@@ -84,7 +84,7 @@ class Board extends Observable {
      *  NEXTMOVE indicates whose move it is.
      */
     void setPieces(String str, PieceColor nextMove) {
-        if (nextMove == EMPTY || nextMove == null) {
+        if (nextMove == EMPTY | nextMove == null) {
             throw new IllegalArgumentException("bad player color");
         }
         str = str.replaceAll("\\s", "");
@@ -114,13 +114,12 @@ class Board extends Observable {
         _whoseMove = nextMove;
         boolean pieces = false;
         for (int i = 0; i < (Move.SIDE * Move.SIDE); i++) {
-            //System.out.println(board[i]);
             if (board[i].equals(whoseMove())) {
                 pieces = true;
                 break;
             }
         }
-        if (!isMove() | !pieces) {
+        if (!isMove() || !pieces) {
             _gameOver = true;
         }
 
@@ -181,7 +180,7 @@ class Board extends Observable {
     //what is legal move?- no piece on the square. square has to be on grid.
     boolean legalMove(Move mov) {
         if (!validSquare(mov.col0(), mov.row0())
-                | !validSquare(mov.col1(), mov.row1())) {
+                || !validSquare(mov.col1(), mov.row1())) {
             return false;
         }
         if (board[index(mov.col1(), mov.row1())] != EMPTY) {
@@ -189,7 +188,7 @@ class Board extends Observable {
         }
         if (whoseMove() == WHITE) {
             if (get(mov.col0(), mov.row0()) != WHITE
-                    | ((mov.row1() < mov.row0() && !mov.isJump()))) {
+                    || ((mov.row1() < mov.row0() && !mov.isJump()))) {
                 return false;
             }
             if (Character.getNumericValue(mov.row0()) == 5 && !mov.isJump()) {
@@ -199,7 +198,7 @@ class Board extends Observable {
 
         if (whoseMove() == BLACK) {
             if (((mov.row1() > mov.row0()) && !mov.isJump())
-                    | get(mov.col0(), mov.row0()) != BLACK) {
+                    || get(mov.col0(), mov.row0()) != BLACK) {
                 return false;
             }
             if (Character.getNumericValue(mov.row0()) == 1 && !mov.isJump()) {
@@ -255,7 +254,7 @@ class Board extends Observable {
                             moves.add(currentMove);
                         }
                     } catch (AssertionError
-                            | StringIndexOutOfBoundsException s) {
+                        | StringIndexOutOfBoundsException s) {
                         //continue;
                     }
                 }
@@ -299,8 +298,8 @@ class Board extends Observable {
         if (k % 2 == 0) {
             for (int i = -2; i < 3; i++) {
                 for (int j = -2; j < 3; j++) {
-                    if ((i == 0 && j == 0) | Math.abs(i) == 1
-                            | Math.abs(j) == 1) {
+                    if ((i == 0 && j == 0) |Math.abs(i) == 1
+                            |Math.abs(j) == 1) {
                         continue;
                     }
                     try {
@@ -321,7 +320,7 @@ class Board extends Observable {
         }
         if (k % 2 == 1) {
             for (int i = -2; i < 3; i++) {
-                if (i == 0 | Math.abs(i) == 1) {
+                if (i == 0 |Math.abs(i) == 1) {
                     continue;
                 }
                 try {
@@ -358,8 +357,8 @@ class Board extends Observable {
         if (k % 2 == 0) {
             for (int i = -2; i < 3; i++) {
                 for (int j = -2; j < 3; j++) {
-                    if ((i == 0 && j == 0) | Math.abs(i) == 1
-                            | Math.abs(j) == 1) {
+                    if ((i == 0 && j == 0) |Math.abs(i) == 1
+                            |Math.abs(j) == 1) {
                         continue;
                     }
                     try {
@@ -381,7 +380,7 @@ class Board extends Observable {
         }
         if (k % 2 == 1) {
             for (int i = -2; i < 3; i++) {
-                if (i == 0 | Math.abs(i) == 1) {
+                if (i == 0 |Math.abs(i) == 1) {
                     continue;
                 }
                 try {
@@ -433,19 +432,19 @@ class Board extends Observable {
      * @return boolean*/
     private boolean checkJumpHelper(Move mov, boolean allowPartial, Board a) {
         if (!validSquare(mov.col0(), mov.row0())
-                | !validSquare(mov.col1(), mov.row1())) {
+                |!validSquare(mov.col1(), mov.row1())) {
             return false;
         }
         if (a.whoseMove() == WHITE) {
             if (a.get(mov.col0(), mov.row0()) != WHITE
-                    | ((mov.row1() < mov.row0() && !mov.isJump()))) {
+                    |((mov.row1() < mov.row0() && !mov.isJump()))) {
                 return false;
             }
         }
 
         if (a.whoseMove() == BLACK) {
             if (((mov.row1() > mov.row0()) && !mov.isJump())
-                    | get(mov.col0(), mov.row0()) != BLACK) {
+                    |a.get(mov.col0(), mov.row0()) != BLACK) {
                 return false;
             }
         }
@@ -482,7 +481,7 @@ class Board extends Observable {
         if (k % 2 == 0) {
             for (int i = -2; i < 3; i++) {
                 for (int j = -2; j < 3; j++) {
-                    if ((i == 0 && j == 0) | i == 1 | j == 1) {
+                    if ((i == 0 && j == 0) |Math.abs(i) == 1 |Math.abs(j) == 1) {
                         continue;
                     }
                     try {
@@ -492,7 +491,7 @@ class Board extends Observable {
                             return true;
                         }
                     } catch (AssertionError
-                            | StringIndexOutOfBoundsException s) {
+                            |StringIndexOutOfBoundsException s) {
                         //continue;
                     }
                 }
@@ -501,7 +500,7 @@ class Board extends Observable {
         }
         if (k % 2 == 1) {
             for (int i = -2; i < 3; i++) {
-                if (i == 0 | i == -1 | i == 1) {
+                if (i == 0 |Math.abs(i) == 1) {
                     continue;
                 }
                 try {
@@ -510,7 +509,7 @@ class Board extends Observable {
                     if (checkJump(current, false)) {
                         return true;
                     }
-                } catch (AssertionError | StringIndexOutOfBoundsException s) {
+                } catch (AssertionError |StringIndexOutOfBoundsException s) {
                     //continue;
                 }
 
@@ -520,7 +519,7 @@ class Board extends Observable {
                     if (checkJump(current2, false)) {
                         return true;
                     }
-                } catch (AssertionError | StringIndexOutOfBoundsException s) {
+                } catch (AssertionError |StringIndexOutOfBoundsException s) {
                     //continue;
                 }
             }
@@ -536,6 +535,28 @@ class Board extends Observable {
             }
         }
         return false;
+    }
+
+    /** Counts white pieces on board. */
+    public int whitePieces() {
+        int count = 0;
+        for (int i = 0; i < (Move.SIDE * Move.SIDE); i++) {
+            if (board[i] == PieceColor.WHITE) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /** Counts black pieces on board. */
+    public int blackPieces() {
+        int count = 0;
+        for (int i = 0; i < (Move.SIDE * Move.SIDE); i++) {
+            if (board[i] == PieceColor.BLACK) {
+                count++;
+            }
+        }
+        return count;
     }
 
     /** Return the color of the player who has the next move.  The
@@ -581,11 +602,10 @@ class Board extends Observable {
                 break;
             }
         }
-//        if (!isMove() | !pieces) {
-//            _gameOver = true;
-//            //report winner????
-//
-//        }
+        if (!isMove() || !pieces) {
+            _gameOver = true;
+        //report winner????
+       }
 
         // FIXME
         setChanged();
@@ -671,8 +691,8 @@ class Board extends Observable {
     /** Return true iff there is a move for the current player. */
     private boolean isMove() {
         // FIXME //fixed??
-//        return (jumpPossible() | getMoves().size() > 0);
-        return (getMoves().size() > 0);
+        return (jumpPossible() || getMoves().size() > 0);
+//        return (getMoves().size() > 0);
         // arraylistmove and _whoseMove?
     }
 
