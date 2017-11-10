@@ -58,9 +58,18 @@ class Board extends Observable {
         board[10] = BLACK;
         board[11] = BLACK;
         board[12] = EMPTY;
+//        MemorySet();
+//        System.out.println(memory[1]);
         setChanged();
         notifyObservers();
     }
+
+    /** Memory Clear. */
+//    void MemorySet() {
+//        for (int i = 0; i < 25; i++) {
+//            memory[i] = -1;
+//        }
+//    }
 
     /** Copy B into me. */
     void copy(Board b) {
@@ -74,6 +83,7 @@ class Board extends Observable {
         _whoseMove = b._whoseMove;
         board = b.board.clone();
         undoMoves = b.undoMoves;
+        memory = b.memory.clone();
     }
 
     /** Set my contents as defined by STR.  STR consists of 25 characters,
@@ -205,6 +215,14 @@ class Board extends Observable {
                 return false;
             }
         }
+        int to = index(mov.col1(), mov.row1());
+        int from = index(mov.col0(), mov.row0());
+        //System.out.println(from);
+        if (memory[from] != -1 | memory[to] != -1) {  //try from if this doesnt work
+            if (memory[from].equals(to)) {   //added today
+                return false;
+            }
+    }
         return true;
     }
 
@@ -580,12 +598,23 @@ class Board extends Observable {
     /** Make the Move MOV on this Board, assuming it is legal. */
     void makeMove(Move mov) {
         assert legalMove(mov);
+        if (!mov.isJump()) {
+//            System.out.println(memory[17]);
+//            System.out.println(memory[18]);
+            memory[index(mov.col1(), mov.row1())] = index(mov.col0(), mov.row0());   //added today
+//            System.out.println(memory[17]);
+//            System.out.println(memory[18]);
+        }
+        if (mov.isJump()) {
+            memory[index(mov.col1(), mov.row1())] = -1;   //added today
+        }
         PieceColor turn = _whoseMove;
         board[mov.toIndex()] = turn;
         board[mov.fromIndex()] = EMPTY;
         if (mov.isJump()) {
             board[mov.jumpedIndex()] = EMPTY;
         }
+
         if (!jumped) {
             undoMoves.add(mov);
         }
@@ -702,6 +731,13 @@ class Board extends Observable {
 
     /** A new list to represent the board. */
     private PieceColor[] board = new PieceColor[Move.SIDE * Move.SIDE];
+
+    /** A new memory list. */
+    private Integer[] memory = new Integer[]{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+            -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+
+    /** A new memory list. */
+    private String[][] map = new String[Move.SIDE * Move.SIDE][];
 
     /** Set true when game ends. */
     private boolean _gameOver;

@@ -96,6 +96,14 @@ public class BoardTest {
         assertEquals(false, b0.legalMove(Move.move('a', '2', 'b', '2')));
     }
 
+    @Test
+    public void testLaterMoves3() {
+        Board b0 = new Board();
+        String[] test = { "c2-c3", "c4-c2", "c1-c3", "a3-c1", "c3-a3", "d4-c4", "b1-b2", "c4-d4"};
+        makeMoves(b0, test);
+        assertEquals(1, b0.getMoves().size());
+    }
+
 
 
 
