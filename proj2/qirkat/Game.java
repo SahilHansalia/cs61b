@@ -228,9 +228,9 @@ class Game {
 
     /** Perform the command 'set OPERANDS[0] OPERANDS[1]'. */
     void doSet(String[] operands) {
-        _board.clear(); //added
-        _whiteIsManual = true;  //added
-        _blackIsManual = false; //added
+        _board.clear();
+        _whiteIsManual = true;
+        _blackIsManual = false;
         _state = SETUP;
         String color = operands[0];
         String piece = operands[1];

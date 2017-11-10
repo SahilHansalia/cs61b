@@ -16,13 +16,13 @@ class Manual extends Player {
     }
 
     @Override
-    Move myMove() { // FIXME
+    Move myMove() {
         Command todo = game().getMoveCmnd(_prompt);
         if (todo == null) {
             return null;
         }
         if (todo.commandType() == Command.Type.CLEAR) {
-            game().doClear(new String[1]);  //does this matter since its unused?
+            game().doClear(new String[1]);
         }
         if (todo.commandType() == Command.Type.QUIT) {
             game().doQuit(new String[1]);
@@ -31,20 +31,11 @@ class Manual extends Player {
 
         Move make = Move.parseMove(myMove[0]);
         if (game().board().getMoves().contains(make)) {
-//            System.out.println(game().board().getMoves());
             return make;
-        }
-        else {
+        } else {
             game().reportError("illegal move, please try again", make);
-//            System.out.println(game().board().getMoves());
             return myMove();
         }
-//        if ((make != null) && game().board().legalMove(make)) {
-//            return make;
-//        } else {
-//            game().reportError("illegal move, please try again", make);
-//            return myMove();
-//        }
     }
 
     /** Identifies the player serving as a source of input commands. */

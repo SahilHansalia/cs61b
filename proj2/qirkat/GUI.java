@@ -105,12 +105,10 @@ class GUI extends TopLevel implements Observer, Reporter {
 
     @Override
     public void errMsg(String format, Object... args) {
-        // FIXME
     }
 
     @Override
     public void outcomeMsg(String format, Object... args) {
-        // FIXME
     }
 
     @Override
@@ -120,15 +118,14 @@ class GUI extends TopLevel implements Observer, Reporter {
     @Override
     public void update(Observable obs, Object arg) {
         if (obs == _model) {
-            // FIXME (if needed)
+            String a;
         } else if (obs == _widget) {
-            // FIXME (if needed)
+            String b;
         }
     }
 
     /** Respond to a click on SQ. */
     private void movePiece(String sq) {
-        // FIXME
     }
 
     /** Make MOV the user-selected move (no move if null). */

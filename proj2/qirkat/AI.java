@@ -82,8 +82,7 @@ class AI extends Player {
                 }
 
             }
-        }
-        else {
+        } else {
             bestScore = INFTY;
             for (Move testMove2 : board.getMoves()) {
                 Board board2 = new Board();
@@ -112,10 +111,10 @@ class AI extends Player {
     private int staticScore(Board board) {
         int whiteCount = board.whitePieces();
         int blackCount = board.blackPieces();
-        if (board.gameOver() && board.whoseMove() == WHITE) {
+        if (board.gameOver() && board.whoseMove() == BLACK) {
             return WINNING_VALUE * -1;
         }
-        if (board.gameOver() && board.whoseMove() == BLACK) {
+        if (board.gameOver() && board.whoseMove() == WHITE) {
             return WINNING_VALUE;
         }
 

@@ -48,10 +48,6 @@ public class MoveTest {
         Move m = move('a', '3', 'a', '5');
         assertNotNull(m);
         assertEquals('4', m.jumpedRow());
-//        char col = 'a';
-//        char row = '4';
-//        System.out.println(kPacker(col, row));
-//        System.out.println(Character.getNumericValue('2'));
 
     }
 

@@ -108,7 +108,7 @@ class Move {
             return move0;
         }
         if (move0.isVestigial()) {
-            return move1; // FIXME
+            return move1;
         }
         if (move0.jumpTail() == null) {
             return Move.move(move0.col0(), move0.row0(),

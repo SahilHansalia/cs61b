@@ -55,7 +55,7 @@ class Board extends Observable {
         board[10] = BLACK;
         board[11] = BLACK;
         board[12] = EMPTY;
-        for (int i = 0; i < (Move.SIDE * Move.SIDE); i++) {   //added
+        for (int i = 0; i < (Move.SIDE * Move.SIDE); i++) {
             memory[i] = -1;
         }
         setChanged();
@@ -155,7 +155,6 @@ class Board extends Observable {
     }
 
     /** Return true iff MOV is legal on the current board. */
-    //what is legal move?- no piece on the square. square has to be on grid.
     boolean legalMove(Move mov) {
         if (!validSquare(mov.col0(), mov.row0())
                 || !validSquare(mov.col1(), mov.row1())) {
@@ -189,7 +188,7 @@ class Board extends Observable {
             if (memory[from].equals(to)) {
                 return false;
             }
-    }
+        }
         return true;
     }
 
@@ -234,6 +233,7 @@ class Board extends Observable {
                         }
                     } catch (AssertionError
                         | StringIndexOutOfBoundsException s) {
+                        String a;
                     }
                 }
             }
@@ -250,6 +250,7 @@ class Board extends Observable {
                         moves.add(current);
                     }
                 } catch (AssertionError | StringIndexOutOfBoundsException s) {
+                    String a;
                 }
 
 
@@ -261,6 +262,7 @@ class Board extends Observable {
                     }
                 } catch (AssertionError
                         | StringIndexOutOfBoundsException s) {
+                    String a;
                 }
             }
         }
@@ -286,6 +288,7 @@ class Board extends Observable {
                         }
                     } catch (AssertionError
                             | StringIndexOutOfBoundsException s) {
+                        String a;
                     }
                 }
 
@@ -304,6 +307,7 @@ class Board extends Observable {
                                 Move.row(k)));
                     }
                 } catch (AssertionError | StringIndexOutOfBoundsException s) {
+                    String a;
                 }
 
                 try {
@@ -314,6 +318,7 @@ class Board extends Observable {
                                rowConverter(k, i)));
                     }
                 } catch (AssertionError | StringIndexOutOfBoundsException s) {
+                    String a;
                 }
             }
         }
@@ -343,6 +348,7 @@ class Board extends Observable {
                         }
                     } catch (AssertionError
                             | StringIndexOutOfBoundsException s) {
+                        String a;
                     }
                 }
             }
@@ -362,6 +368,7 @@ class Board extends Observable {
                                 Move.row(k)));
                     }
                 } catch (AssertionError | StringIndexOutOfBoundsException s) {
+                    String a;
                 }
                 try {
                     Move currentMove = move(Move.col(k), Move.row(k),
@@ -373,6 +380,7 @@ class Board extends Observable {
                                 rowConverter(k, i)));
                     }
                 } catch (AssertionError | StringIndexOutOfBoundsException s) {
+                    String a;
                 }
             }
         }
@@ -399,19 +407,19 @@ class Board extends Observable {
      * @return boolean*/
     private boolean checkJumpHelper(Move mov, boolean allowPartial, Board a) {
         if (!validSquare(mov.col0(), mov.row0())
-                |!validSquare(mov.col1(), mov.row1())) {
+                | !validSquare(mov.col1(), mov.row1())) {
             return false;
         }
         if (a.whoseMove() == WHITE) {
             if (a.get(mov.col0(), mov.row0()) != WHITE
-                    |((mov.row1() < mov.row0() && !mov.isJump()))) {
+                    | ((mov.row1() < mov.row0() && !mov.isJump()))) {
                 return false;
             }
         }
 
         if (a.whoseMove() == BLACK) {
             if (((mov.row1() > mov.row0()) && !mov.isJump())
-                    |a.get(mov.col0(), mov.row0()) != BLACK) {
+                    | a.get(mov.col0(), mov.row0()) != BLACK) {
                 return false;
             }
         }
@@ -446,7 +454,8 @@ class Board extends Observable {
         if (k % 2 == 0) {
             for (int i = -2; i < 3; i++) {
                 for (int j = -2; j < 3; j++) {
-                    if ((i == 0 && j == 0) | Math.abs(i) == 1 | Math.abs(j) == 1) {
+                    if ((i == 0 && j == 0) | Math.abs(i) == 1
+                            | Math.abs(j) == 1) {
                         continue;
                     }
                     try {
@@ -457,6 +466,7 @@ class Board extends Observable {
                         }
                     } catch (AssertionError
                             | StringIndexOutOfBoundsException s) {
+                        String a;
                     }
                 }
 
@@ -501,7 +511,8 @@ class Board extends Observable {
         return false;
     }
 
-    /** Counts white pieces on board. */
+    /** Counts white pieces on board.
+     * @return number of white pieces */
     public int whitePieces() {
         int count = 0;
         for (int i = 0; i < (Move.SIDE * Move.SIDE); i++) {
@@ -512,7 +523,8 @@ class Board extends Observable {
         return count;
     }
 
-    /** Counts black pieces on board. */
+    /** Counts black pieces on board.
+     * @return number of black pieces */
     public int blackPieces() {
         int count = 0;
         for (int i = 0; i < (Move.SIDE * Move.SIDE); i++) {
@@ -545,7 +557,8 @@ class Board extends Observable {
     void makeMove(Move mov) {
         assert legalMove(mov);
         if (!mov.isJump()) {
-            memory[index(mov.col1(), mov.row1())] = index(mov.col0(), mov.row0());
+            memory[index(mov.col1(), mov.row1())]
+                    = index(mov.col0(), mov.row0());
         }
         if (mov.isJump()) {
             memory[index(mov.col1(), mov.row1())] = -1;
@@ -575,7 +588,7 @@ class Board extends Observable {
         }
         if (!isMove() || !pieces) {
             _gameOver = true;
-       }
+        }
         setChanged();
         notifyObservers();
     }
@@ -666,8 +679,8 @@ class Board extends Observable {
     private PieceColor[] board = new PieceColor[Move.SIDE * Move.SIDE];
 
     /** A new memory list. */
-    private Integer[] memory = new Integer[]{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+    private Integer[] memory = new Integer[]{-1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 
     /** A new memory list. */
     private String[][] map = new String[Move.SIDE * Move.SIDE][];
