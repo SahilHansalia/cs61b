@@ -104,17 +104,18 @@ class AI extends Player {
             _lastFoundMove = best;
         }
         return bestScore;
-
     }
 
     /** Return a heuristic value for BOARD. */
     private int staticScore(Board board) {
         int whiteCount = board.whitePieces();
         int blackCount = board.blackPieces();
-        if (board.gameOver()) {
+        if (board.gameOver() && myColor() == BLACK) {
+            return -1 * WINNING_VALUE;
+        }
+        if (board.gameOver() && myColor() == WHITE) {
             return WINNING_VALUE;
         }
-
         return (whiteCount - blackCount);
     }
 }
