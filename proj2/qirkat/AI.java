@@ -7,7 +7,7 @@ import static qirkat.PieceColor.*;
 class AI extends Player {
 
     /** Maximum minimax search depth before going to static evaluation. */
-    private static final int MAX_DEPTH = 5;
+    private static final int MAX_DEPTH = 8;
     /** A position magnitude indicating a win (for white if positive, black
      *  if negative). */
     private static final int WINNING_VALUE = Integer.MAX_VALUE - 1;
@@ -32,8 +32,6 @@ class AI extends Player {
             col = "Black";
         }
         System.out.println(col + " moves " + move.toString() + ".");
-
-        // FIXME //fixed?
         return move;
     }
 
@@ -61,9 +59,6 @@ class AI extends Player {
      *  of the board value and does not set _lastMoveFound. */
     private int findMove(Board board, int depth, boolean saveMove, int sense,
                          int alpha, int beta) {
-        if (board.getMoves().contains(Move.parseMove("a3-c5-c3"))) {
-//            System.out.println(board.getMoves() + " " + depth);
-        }
         int bestScore;
         Move best = null;
         if (depth == 0 || board.gameOver()) {
@@ -75,13 +70,11 @@ class AI extends Player {
                 Board board1 = new Board();
                 board1.copy(board);
                 board1.makeMove(testMove);
-                int response = findMove(board1, depth - 1, saveMove, -1, alpha, beta);
+                int response = findMove(board1, depth - 1,
+                        saveMove, -1, alpha, beta);
                 if (response >= bestScore) {
                     best = testMove;
                     bestScore = response;
-//                    if (saveMove) {
-//                        _lastFoundMove = best;
-//                    }
                     alpha = Math.max(alpha, response);
                     if (beta <= alpha) {
                         break;
@@ -89,11 +82,6 @@ class AI extends Player {
                 }
 
             }
-//            if (saveMove) {
-//                _lastFoundMove = best;
-//            }
-//            return bestScore;
-
         }
         else {
             bestScore = INFTY;
@@ -101,25 +89,17 @@ class AI extends Player {
                 Board board2 = new Board();
                 board2.copy(board);
                 board2.makeMove(testMove2);
-                int response2 = findMove(board2, depth - 1, saveMove, 1, alpha, beta);
+                int response2 = findMove(board2, depth - 1,
+                        saveMove, 1, alpha, beta);
                 if (response2 <= bestScore) {
                     best = testMove2;
                     bestScore = response2;
-//                    if (saveMove) {
-//                        _lastFoundMove = best;
-//                    }
                     beta = Math.min(beta, response2);
                     if (beta <= alpha) {
                         break;
                     }
-
                 }
             }
-//            if (saveMove) {
-//                _lastFoundMove = best;
-//            }
-//
-//            return bestScore;
         }
         if (saveMove) {
             _lastFoundMove = best;
@@ -128,30 +108,8 @@ class AI extends Player {
 
     }
 
-
-
-
-//    /** Return static evaluation for BOARD.
-//     * @param alpha is alpha
-//     * @param beta  is beta
-//     * @return static eval*/
-//    private int simpleMax(Board board, int alpha, int beta) {
-//        if (board.gameOver() && board.whoseMove() == WHITE) {
-//
-//        }
-//        return 0;
-//    }
-
-
-
-
-
-//its looking for a move at the wrong depth??
-
-
     /** Return a heuristic value for BOARD. */
     private int staticScore(Board board) {
-//        return 5;
         int whiteCount = board.whitePieces();
         int blackCount = board.blackPieces();
         if (board.gameOver() && board.whoseMove() == WHITE) {

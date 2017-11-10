@@ -13,7 +13,6 @@ import java.util.function.Consumer;
 
 import static qirkat.PieceColor.*;
 import static qirkat.Game.State.*;
-import static qirkat.Board.*;
 import static qirkat.Command.Type.*;
 import static qirkat.GameException.error;
 
@@ -46,7 +45,7 @@ class Game {
         while (true) {
             while (_state == SETUP) {
                 doCommand();
-            } // FIXME ///fixed
+            }
             if (_whiteIsManual) {
                 white = new Manual(this, WHITE);
             }
@@ -60,7 +59,7 @@ class Game {
                 black = new AI(this, BLACK);
             }
 
-            while (_state != SETUP && !_board.gameOver()) {  // FIXME //fixed
+            while (_state != SETUP && !_board.gameOver()) {
                 Move move;
                 if (_board.whoseMove() == WHITE) {
                     move = white.myMove();
@@ -69,7 +68,6 @@ class Game {
                 }
 
                 if (_state == PLAYING) {
-//                    System.out.println(move);
                     _board.makeMove(move);
                 }
             }
@@ -150,7 +148,6 @@ class Game {
         if (op.equals("Black") | op.equals("black") | op.equals("BLACK")) {
             _blackIsManual = false;
         }
-        // FIXME //fixed
     }
 
     /** Perform a 'help' command. */
@@ -180,10 +177,9 @@ class Game {
     /** Perform the command 'load OPERANDS[0]'. */
     void doLoad(String[] operands) {
         try {
-            FileReader reader = new FileReader(operands[0]); //edited this
+            FileReader reader = new FileReader(operands[0]);
             ReaderSource source = new ReaderSource(reader, false);
             _inputs.addSource(source);
-            // FIXME //fixed
         } catch (IOException e) {
             throw error("Cannot open file %s", operands[0]);
         }
@@ -199,8 +195,6 @@ class Game {
         if (op.equals("Black") | op.equals("black") | op.equals("BLACK")) {
             _blackIsManual = true;
         }
-
-        // FIXME //fixed
     }
 
     /** Exit the program. */
@@ -217,56 +211,33 @@ class Game {
     /** Perform the move OPERANDS[0]. */
     void doMove(String[] operands) {
         Move make = Move.parseMove(operands[0]);
-//        System.out.println(_board.getMoves());
         if (_board.getMoves().contains(make)) {
             _board.makeMove(make);
         } else {
             throw new GameException("Illegal move");
-//        }
-//        if (make.isJump()) {
-////            System.out.println(make);
-//            System.out.println(_board.getMoves());
-//            if (!_board.checkJump(make, true)) {
-////                reportError("Illegal move", make);
-//                throw new GameException("Illegal move");
-//            }
-//        }
-//        if (!make.isJump()) {
-//            if (_board.jumpPossible() | !_board.legalMove(make)) {
-////                reportError("Illegal move", make);
-//                throw new GameException("Illegal move");
-//            }
-//        }
-//        _board.makeMove(make);
-            // FIXME
         }
     }
 
     /** Perform the command 'clear'. */
     void doClear(String[] unused) {
-        //abandons game
-        //person whose turn it is resigns
         _board.clear();
         _state = SETUP;
         _whiteIsManual = true;
         _blackIsManual = false;
-
-        //"initially and after a clear command white is manual and black is AI"
-        //valid in any state- do they resign in setup?
-        //if they resign do we output winner message?
-        // FIXME //ask about resigning?
     }
 
     /** Perform the command 'set OPERANDS[0] OPERANDS[1]'. */
     void doSet(String[] operands) {
+        _board.clear(); //added
+        _whiteIsManual = true;  //added
+        _blackIsManual = false; //added
         _state = SETUP;
         String color = operands[0];
         String piece = operands[1];
-        //System.out.println(operands[0] + operands[1]);
         if (color.equals("WHITE") | color.equals("White")
                 | color.equals("white")) {
             _board.setPieces(operands[1], WHITE);
-            return; //brick?
+            return;
         }
         if (color.equals("BLACK") | color.equals("Black")
                 | color.equals("black")) {
@@ -274,7 +245,6 @@ class Game {
         } else {
             reportError("Illegal player color", piece);
         }
-        // FIXME //fixed?
     }
 
     /** Perform the command 'dump'. */
@@ -283,7 +253,6 @@ class Game {
         System.out.print(_board.toString());
         System.out.println();
         System.out.println("===");
-        // FIXME //fixed?
     }
 
     /** Execute 'seed OPERANDS[0]' command, where the operand is a string
@@ -314,10 +283,6 @@ class Game {
             }
             _reporter.outcomeMsg(msg);
         }
-
-        // FIXME //fixed????
-
-//        _reporter.outcomeMsg(msg);
         _state = SETUP;
     }
 

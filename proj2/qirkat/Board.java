@@ -25,7 +25,6 @@ class Board extends Observable {
 
     /** A new, cleared board at the start of the game. */
     Board() {
-        // FIXME? //nah
         clear();
     }
 
@@ -45,8 +44,6 @@ class Board extends Observable {
     void clear() {
         _whoseMove = WHITE;
         _gameOver = false;
-
-        // FIXME  fixed?
         for (int i = 0; i < 10; i++) {
             board[i] = WHITE;
         }
@@ -58,18 +55,12 @@ class Board extends Observable {
         board[10] = BLACK;
         board[11] = BLACK;
         board[12] = EMPTY;
-//        MemorySet();
-//        System.out.println(memory[1]);
+        for (int i = 0; i < (Move.SIDE * Move.SIDE); i++) {   //added
+            memory[i] = -1;
+        }
         setChanged();
         notifyObservers();
     }
-
-    /** Memory Clear. */
-//    void MemorySet() {
-//        for (int i = 0; i < 25; i++) {
-//            memory[i] = -1;
-//        }
-//    }
 
     /** Copy B into me. */
     void copy(Board b) {
@@ -78,7 +69,6 @@ class Board extends Observable {
 
     /** Copy B into me. */
     private void internalCopy(Board b) {
-        // FIXME //fixed?
         _gameOver = b._gameOver;
         _whoseMove = b._whoseMove;
         board = b.board.clone();
@@ -101,11 +91,7 @@ class Board extends Observable {
         if (!str.matches("[bw-]{25}")) {
             throw new IllegalArgumentException("bad board description");
         }
-        //clear();
         _gameOver = false;
-
-        // FIXME
-
         for (int k = 0; k < str.length(); k += 1) {
             switch (str.charAt(k)) {
             case '-':
@@ -132,9 +118,6 @@ class Board extends Observable {
         if (!isMove() || !pieces) {
             _gameOver = true;
         }
-
-        // FIXME ///whats left?
-
         setChanged();
         notifyObservers();
     }
@@ -149,42 +132,27 @@ class Board extends Observable {
      *  and '1' <= R <= '5'.  */
     PieceColor get(char c, char r) {
         assert validSquare(c, r);
-        return get(index(c, r)); // FIXME? no
+        return get(index(c, r));
     }
 
     /** Return the current contents of the square at linearized index K. */
     PieceColor get(int k) {
         assert validSquare(k);
-        return board[k]; // FIXME  //fixed?
+        return board[k];
     }
 
     /** Set get(C, R) to V, where 'a' <= C <= 'e', and
      *  '1' <= R <= '5'. */
     private void set(char c, char r, PieceColor v) {
         assert validSquare(c, r);
-        set(index(c, r), v);  // FIXME? no
+        set(index(c, r), v);
     }
 
     /** Set get(K) to V, where K is the linearized index of a square. */
     private void set(int k, PieceColor v) {
         assert validSquare(k);
-        // FIXME  fixed?
         board[k] = v;
     }
-//
-//    boolean comprehensiveLegal(Move mov) {
-//        if (mov.isJump()) {
-//            if (!checkJump(mov, true)) {
-//                return false;
-//            }
-//        }
-//        if (!mov.isJump()) {
-//            if (jumpPossible() | !legalMove(mov)) {
-//                return false;
-//            }
-//        }
-//            return true;
-//    }
 
     /** Return true iff MOV is legal on the current board. */
     //what is legal move?- no piece on the square. square has to be on grid.
@@ -217,9 +185,8 @@ class Board extends Observable {
         }
         int to = index(mov.col1(), mov.row1());
         int from = index(mov.col0(), mov.row0());
-        //System.out.println(from);
-        if (memory[from] != -1 | memory[to] != -1) {  //try from if this doesnt work
-            if (memory[from].equals(to)) {   //added today
+        if (memory[from] != -1 | memory[to] != -1) {
+            if (memory[from].equals(to)) {
                 return false;
             }
     }
@@ -253,18 +220,12 @@ class Board extends Observable {
     /** Add all legal non-capturing moves from the position
      *  with linearized index K to MOVES. */
     private void getMoves(ArrayList<Move> moves, int k) {
-//        if (jumpPossible()) {
-//            return;
-//        }
-        // FIXME //fixed
         if (k % 2 == 0) {
             for (int i = -1; i < 2; i++) {
                 for (int j = -1; j < 2; j++) {
                     if (i == 0 && j == 0) {
                         continue;
                     }
-                    //Alp.charAt(Move.Alp.indexOf((char) Move.col(k)) + i);
-                    //
                     try {
                         Move currentMove = move(Move.col(k), Move.row(k),
                                 colConverter(k, i), rowConverter(k, j));
@@ -273,7 +234,6 @@ class Board extends Observable {
                         }
                     } catch (AssertionError
                         | StringIndexOutOfBoundsException s) {
-                        //continue;
                     }
                 }
             }
@@ -290,7 +250,6 @@ class Board extends Observable {
                         moves.add(current);
                     }
                 } catch (AssertionError | StringIndexOutOfBoundsException s) {
-                    //continue;
                 }
 
 
@@ -302,7 +261,6 @@ class Board extends Observable {
                     }
                 } catch (AssertionError
                         | StringIndexOutOfBoundsException s) {
-                    //continue;
                 }
             }
         }
@@ -311,13 +269,11 @@ class Board extends Observable {
     /** Add all legal captures from the position with linearized index K
      *  to MOVES. */
     private void getJumps(ArrayList<Move> moves, int k) {
-        //generate jumps, pass checkJump, add to array
-        // FIXME //fixed?
         if (k % 2 == 0) {
             for (int i = -2; i < 3; i++) {
                 for (int j = -2; j < 3; j++) {
-                    if ((i == 0 && j == 0) |Math.abs(i) == 1
-                            |Math.abs(j) == 1) {
+                    if ((i == 0 && j == 0) | Math.abs(i) == 1
+                            | Math.abs(j) == 1) {
                         continue;
                     }
                     try {
@@ -330,7 +286,6 @@ class Board extends Observable {
                         }
                     } catch (AssertionError
                             | StringIndexOutOfBoundsException s) {
-                        //continue;
                     }
                 }
 
@@ -338,7 +293,7 @@ class Board extends Observable {
         }
         if (k % 2 == 1) {
             for (int i = -2; i < 3; i++) {
-                if (i == 0 |Math.abs(i) == 1) {
+                if (i == 0 | Math.abs(i) == 1) {
                     continue;
                 }
                 try {
@@ -349,7 +304,6 @@ class Board extends Observable {
                                 Move.row(k)));
                     }
                 } catch (AssertionError | StringIndexOutOfBoundsException s) {
-                    //continue;
                 }
 
                 try {
@@ -360,7 +314,6 @@ class Board extends Observable {
                                rowConverter(k, i)));
                     }
                 } catch (AssertionError | StringIndexOutOfBoundsException s) {
-                    //continue;
                 }
             }
         }
@@ -375,14 +328,13 @@ class Board extends Observable {
         if (k % 2 == 0) {
             for (int i = -2; i < 3; i++) {
                 for (int j = -2; j < 3; j++) {
-                    if ((i == 0 && j == 0) |Math.abs(i) == 1
-                            |Math.abs(j) == 1) {
+                    if ((i == 0 && j == 0) | Math.abs(i) == 1
+                            | Math.abs(j) == 1) {
                         continue;
                     }
                     try {
                         Move currentMove = move(Move.col(k), Move.row(k),
                                 colConverter(k, i), rowConverter(k, j));
-                        //boolean test = false;
                         Move a = move(z, currentMove);
                         if (checkJump(a, true)) {
                             test = true;
@@ -391,14 +343,13 @@ class Board extends Observable {
                         }
                     } catch (AssertionError
                             | StringIndexOutOfBoundsException s) {
-                        //continue;
                     }
                 }
             }
         }
         if (k % 2 == 1) {
             for (int i = -2; i < 3; i++) {
-                if (i == 0 |Math.abs(i) == 1) {
+                if (i == 0 | Math.abs(i) == 1) {
                     continue;
                 }
                 try {
@@ -411,7 +362,6 @@ class Board extends Observable {
                                 Move.row(k)));
                     }
                 } catch (AssertionError | StringIndexOutOfBoundsException s) {
-                    //continue;
                 }
                 try {
                     Move currentMove = move(Move.col(k), Move.row(k),
@@ -440,7 +390,6 @@ class Board extends Observable {
     boolean checkJump(Move mov, boolean allowPartial) {
         Board a = new Board(this);
         return checkJumpHelper(mov, allowPartial, a);
-        //fixme
     }
 
     /** helper to check jumps.
@@ -479,8 +428,6 @@ class Board extends Observable {
         a.board[index(mov.col1(), mov.row1())] = a.whoseMove();
         a.board[index(mov.col0(), mov.row0())] = EMPTY;
         if (allowPartial) {
-//            if (mov.jumpTail() == null && a.jumpPossible(mov.col1, mov.row1)){
-            //return false}
             if (mov.jumpTail() != null) {
                 return checkJumpHelper(mov.jumpTail(), allowPartial, a);
             }
@@ -499,7 +446,7 @@ class Board extends Observable {
         if (k % 2 == 0) {
             for (int i = -2; i < 3; i++) {
                 for (int j = -2; j < 3; j++) {
-                    if ((i == 0 && j == 0) |Math.abs(i) == 1 |Math.abs(j) == 1) {
+                    if ((i == 0 && j == 0) | Math.abs(i) == 1 | Math.abs(j) == 1) {
                         continue;
                     }
                     try {
@@ -509,8 +456,7 @@ class Board extends Observable {
                             return true;
                         }
                     } catch (AssertionError
-                            |StringIndexOutOfBoundsException s) {
-                        //continue;
+                            | StringIndexOutOfBoundsException s) {
                     }
                 }
 
@@ -518,7 +464,7 @@ class Board extends Observable {
         }
         if (k % 2 == 1) {
             for (int i = -2; i < 3; i++) {
-                if (i == 0 |Math.abs(i) == 1) {
+                if (i == 0 | Math.abs(i) == 1) {
                     continue;
                 }
                 try {
@@ -527,8 +473,8 @@ class Board extends Observable {
                     if (checkJump(current, false)) {
                         return true;
                     }
-                } catch (AssertionError |StringIndexOutOfBoundsException s) {
-                    //continue;
+                } catch (AssertionError | StringIndexOutOfBoundsException s) {
+                    String a;
                 }
 
                 try {
@@ -537,8 +483,8 @@ class Board extends Observable {
                     if (checkJump(current2, false)) {
                         return true;
                     }
-                } catch (AssertionError |StringIndexOutOfBoundsException s) {
-                    //continue;
+                } catch (AssertionError | StringIndexOutOfBoundsException s) {
+                    continue;
                 }
             }
         }
@@ -599,14 +545,10 @@ class Board extends Observable {
     void makeMove(Move mov) {
         assert legalMove(mov);
         if (!mov.isJump()) {
-//            System.out.println(memory[17]);
-//            System.out.println(memory[18]);
-            memory[index(mov.col1(), mov.row1())] = index(mov.col0(), mov.row0());   //added today
-//            System.out.println(memory[17]);
-//            System.out.println(memory[18]);
+            memory[index(mov.col1(), mov.row1())] = index(mov.col0(), mov.row0());
         }
         if (mov.isJump()) {
-            memory[index(mov.col1(), mov.row1())] = -1;   //added today
+            memory[index(mov.col1(), mov.row1())] = -1;
         }
         PieceColor turn = _whoseMove;
         board[mov.toIndex()] = turn;
@@ -633,10 +575,7 @@ class Board extends Observable {
         }
         if (!isMove() || !pieces) {
             _gameOver = true;
-        //report winner????
        }
-
-        // FIXME
         setChanged();
         notifyObservers();
     }
@@ -652,8 +591,6 @@ class Board extends Observable {
         undoHelper(mov, prevTurn);
         _whoseMove = prevTurn;
         _gameOver = false;
-
-        // FIXME
         setChanged();
         notifyObservers();
     }
@@ -692,7 +629,6 @@ class Board extends Observable {
     String toString(boolean legend) {
         Formatter out = new Formatter();
         StringBuilder output = new StringBuilder(100);
-        // FIXME
         for (int i = (Move.SIDE * Move.SIDE - 1); i >= 0; i--) {
             if (i % 5 == 0) {
                 output.append("  ");
@@ -719,10 +655,7 @@ class Board extends Observable {
 
     /** Return true iff there is a move for the current player. */
     private boolean isMove() {
-        // FIXME //fixed??
         return (jumpPossible() || getMoves().size() > 0);
-//        return (getMoves().size() > 0);
-        // arraylistmove and _whoseMove?
     }
 
 

@@ -114,17 +114,6 @@ class Move {
             return Move.move(move0.col0(), move0.row0(),
                     move0.col1(), move0.row1(), move1);
         } else {
-//            Move temp = move0;
-//            Move curr = move0;
-//            Move next = move0._nextJump;
-//            while (next != null) {
-//                curr = next;
-//                next = next._nextJump;
-//            }
-//            curr._nextJump = move1;
-//
-//            //find until next jump is null and set next jump to mov1?
-//            return temp; // FIXME
             return Move.move(move0.col0(), move0.row0(), move0.col1(),
                     move0.row1(), Move.move(move0.jumpTail(), move1));
         }
@@ -196,14 +185,14 @@ class Move {
     /** Return true iff this is a horizontal, non-capturing move to
      *  the left. */
     boolean isLeftMove() {
-        return ALP.indexOf(col1()) == ALP.indexOf(col0()) - 1; // FIXME //fixed
-    } //this is trivial
+        return ALP.indexOf(col1()) == ALP.indexOf(col0()) - 1;
+    }
 
     /** Return true iff this is a horizontal, non-capturing move
      *  to the right. */
     boolean isRightMove() {
-        return ALP.indexOf(col1()) == ALP.indexOf(col0()) + 1; // FIXME //fixed
-    } //this is trivial
+        return ALP.indexOf(col1()) == ALP.indexOf(col0()) + 1;
+    }
 
     /** Returns the source column. */
     char col0() {
@@ -232,8 +221,8 @@ class Move {
             int i = (row1() + row0()) / 2;
             return (char) i;
         }
-        return row1();  // FIXME //fixed
-    }  //trivial... check if rows are same
+        return row1();
+    }
 
     /** For a jump, returns the column of the jumped-over square for the
      *  first leg of the jump.  For a non-capturing move, same as col1(). */
@@ -242,7 +231,7 @@ class Move {
             int i = (ALP.indexOf(col1()) + ALP.indexOf(col0())) / 2;
             return ALP.charAt(i);
         }
-        return col1();  // FIXME //fixed
+        return col1();
     }
 
     /** Return the linearized index of my source square. */
@@ -322,7 +311,7 @@ class Move {
         } else {
             out.format(String.valueOf(col0()) + String.valueOf(row0())
                 + "-" + _nextJump.toString());
-        } // FIXME
+        }
     }
 
     /** Set me to COL0 ROW0 - COL1 ROW1 - NEXTJUMP. */
