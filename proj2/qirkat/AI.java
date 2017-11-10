@@ -111,10 +111,7 @@ class AI extends Player {
     private int staticScore(Board board) {
         int whiteCount = board.whitePieces();
         int blackCount = board.blackPieces();
-        if (board.gameOver() && board.whoseMove() == BLACK) {
-            return WINNING_VALUE * -1;
-        }
-        if (board.gameOver() && board.whoseMove() == WHITE) {
+        if (board.gameOver()) {
             return WINNING_VALUE;
         }
 
