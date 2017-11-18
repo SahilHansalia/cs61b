@@ -35,10 +35,21 @@ public class MySortingAlgorithms {
     }
 
     /** Insertion sorts the provided data. */
-    public static class InsertionSort implements SortingAlgorithm {
+    public static class InsertionSort implements SortingAlgorithm {    //do
         @Override
         public void sort(int[] array, int k) {
-            // FIXME
+            int ermediate;
+            int end = k;
+            for (int i = 0; i < k; i++) {
+                ermediate = array[i];
+                for (int j = i; j > 0; j-- ) {
+                    if (array[j] < array[j-1]) {
+                        ermediate = array[j];
+                        array[j] = array[j-1];
+                        array[j-1] = ermediate;
+                    }
+                }
+            }
         }
 
         @Override
@@ -53,10 +64,18 @@ public class MySortingAlgorithms {
      * though if you want an extra challenge, feel free to
      * implement a heap based selection sort (i.e. heapsort).
      */
-    public static class SelectionSort implements SortingAlgorithm {
+    public static class SelectionSort implements SortingAlgorithm { //do
         @Override
         public void sort(int[] array, int k) {
-            // FIXME
+            for (int i = 0; i <k; i++) {
+                int smallest = i;
+                for (int j = i + 1; j < k; j++) {
+                    if (array[smallest] > array[j]) {
+                        smallest = j;
+                    }
+                }
+                swap(array, smallest, i);
+            }
         }
 
         @Override
@@ -119,10 +138,25 @@ public class MySortingAlgorithms {
 
     /** Your Quicksort implementation.
      */
-    public static class QuickSort implements SortingAlgorithm {
+    public static class QuickSort implements SortingAlgorithm { //do
         @Override
         public void sort(int[] array, int k) {
-            // FIXME
+            sortHelper(array, 0, Math.min(k, array.length));
+        }
+
+        public void sortHelper(int[] array, int left, int right) {
+            if (left < right) {
+                int save = left;
+                for (int i = left; i < right; i++) {
+                    if (array[i] < array[save]) {
+                        left++;
+                        swap(array, left, i);
+                    }
+                }
+                swap(array, save, left);
+                sortHelper(array, 0, left - 1);
+                sortHelper(array, left + 1, right);
+            }
         }
 
         @Override
@@ -141,7 +175,7 @@ public class MySortingAlgorithms {
     /**
      * LSD Sort implementation.
      */
-    public static class LSDSort implements SortingAlgorithm {
+    public static class LSDSort implements SortingAlgorithm { //do
         @Override
         public void sort(int[] a, int k) {
             // FIXME

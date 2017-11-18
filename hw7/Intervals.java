@@ -1,20 +1,34 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.ArrayList;
-import java.util.List;
+
+import java.util.*;
 
 /** HW #8, Problem 3.
- *  @author
+ *  @author sahil
   */
 public class Intervals {
     /** Assuming that INTERVALS contains two-element arrays of integers,
      *  <x,y> with x <= y, representing intervals of ints, this returns the
      *  total length covered by the union of the intervals. */
     public static int coveredLength(List<int[]> intervals) {
-        // REPLACE WITH APPROPRIATE STATEMENTS.
-        return 0;
+
+
+
+        int total = 0;
+        int first = 0;
+        int second = 0;
+
+        for(int[] i : intervals){
+            if(i[0] > second){
+                total += (second - first);
+                first = i[0];
+                second = i[1];
+            } else if(i[0] <= second && i[1] > second ){
+                second = i[1];
+            }
+        }
+        total += (second - first);
+        return total;
     }
 
     /** Test intervals. */

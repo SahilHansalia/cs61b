@@ -20,19 +20,20 @@ public class MySortingAlgorithmsTest {
         javaSort.sort(correct, correct.length);
 
         SortingAlgorithm[] algorithms = {
-            new MySortingAlgorithms.InsertionSort(),
-            new MySortingAlgorithms.SelectionSort(),
-            new MySortingAlgorithms.MergeSort(),
-            new MySortingAlgorithms.DistributionSort(),
-            new MySortingAlgorithms.HeapSort(),
-            new MySortingAlgorithms.QuickSort(),
-            new MySortingAlgorithms.LSDSort(),
-            new MySortingAlgorithms.MSDSort()};
+//            new MySortingAlgorithms.InsertionSort(),
+//            new MySortingAlgorithms.SelectionSort(),
+//                new MySortingAlgorithms.MergeSort(),
+//                new MySortingAlgorithms.DistributionSort(),
+//                new MySortingAlgorithms.HeapSort(),
+                new MySortingAlgorithms.QuickSort(),
+//                new MySortingAlgorithms.LSDSort(),
+//                new MySortingAlgorithms.MSDSort()
+        };
 
         for (SortingAlgorithm sa : algorithms) {
             int[] input = BenchmarkUtility.copy(original);
             sa.sort(input, input.length);
-            assertArrayEquals("Result for " + sa + " inorrect: ",
+            assertArrayEquals("Result for " + sa + " incorrect: ",
                               correct, input);
         }
 
@@ -44,7 +45,7 @@ public class MySortingAlgorithmsTest {
         for (SortingAlgorithm sa : algorithms) {
             int[] input = BenchmarkUtility.copy(original);
             sa.sort(input, k);
-            assertArrayEquals("Result for " + sa + " inorrect: ",
+            assertArrayEquals("Result for " + sa + " incorrect: ",
                               correct, input);
         }
     }

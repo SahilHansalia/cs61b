@@ -4,9 +4,9 @@ H. Balanced Search Trees
    implemented in homework 6) as a function of N if we insert N values in
    increasing order.
 
-
+Worst case the height can be the number of elements, so a tree with N values would have a height of N.
 
 2. Give a formula for the exact height of a 2-4 tree in terms of N if 
    we insert N values in increasing order.
 
-
+The height would be log2(N).
