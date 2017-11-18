@@ -19,13 +19,13 @@ public class MazeBreadthFirstPaths extends MazeExplorer {
     private Queue<Integer> queue;
 //
     public MazeBreadthFirstPaths(Maze m, int sourceX, int sourceY, int targetX, int targetY) {
-        super(m);
-        maze = m;
-        s = maze.xyTo1D(sourceX, sourceY);
-        t = maze.xyTo1D(targetX, targetY);
-        distTo[s] = 0;
-        edgeTo[s] = s;
-        queue = new LinkedList<>();
+            super(m);
+            maze = m;
+            s = maze.xyTo1D(sourceX, sourceY);
+            t = maze.xyTo1D(targetX, targetY);
+            distTo[s] = 0;
+            edgeTo[s] = s;
+            queue = new LinkedList<>();
 //         Add more variables here!
     }
 
