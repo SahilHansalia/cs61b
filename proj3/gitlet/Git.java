@@ -11,6 +11,10 @@ public class Git {
         //create new Git instance
     }
 
+    public void init() {
+        //initialize new Git
+    }
+
 
     public void add(String fileName) {
 
@@ -56,12 +60,18 @@ public class Git {
 
 
 
-    public void checkout(String fileName) {
-//can be either fileName or branchName
+    public void checkout1(String fileName) {
+    //can be either fileName or branchName
+        // how does --- get treated
+    }
+
+    public void checkout2(String branchName) {
+        //can be either fileName or branchName
+        // how does --- get treated
     }
 
 
-    public void checkout(String commitID, String fileName) {
+    public void checkout3(String commitID, String fileName) {
 
     }
 
