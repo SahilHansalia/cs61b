@@ -26,7 +26,7 @@ public class Graph {
             LinkedList<Edge> v1Neighbors = adjLists[v1];
             for (Edge e : v1Neighbors) {
                 if (e.to() == v2) {
-                    e.edgeWeight = edgeWeight;
+//                    e.edgeWeight = edgeWeight;
                 }
             }
         }
@@ -65,17 +65,24 @@ public class Graph {
     // an integer array consisting of the shortest distances from 'startVertex'
     // to all other vertices.
     public int[] dijkstras(int startVertex) {
-        // TODO: Your code here!
-        return null;
+        int[] results = new int[vertexCount];
+        Queue<Integer> q = new LinkedList<>();
+        List a = neighbors(startVertex);
+        for (Object i : a) {
+            results[startVertex]  = startVertex;
+
+
+        }
+        return results;
     }
 
     // Returns the Edge object corresponding to the listed vertices, v1 and v2.
     // You may find this helpful to implement!
     private Edge getEdge(int v1, int v2) {
         return null;
-    }
+    } }
 
-    private class Edge {
+     class Edge {
 
         private int from;
         private int to;
@@ -99,7 +106,7 @@ public class Graph {
             return "(" + from + "," + to + ",dist=" + edgeWeight + ")";
         }
 
-    }
+
 
     public static void main(String[] args) {
         // Put some tests here!
