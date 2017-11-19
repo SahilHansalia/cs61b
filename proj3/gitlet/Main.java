@@ -20,6 +20,8 @@ public class Main {
         }
         String command = args[0];
         Git gitlit = new Git();   //could be onto something
+        //find out where i am
+        //if not in working directory and not init command give error??????
 
         switch(command) {
             case "init":
@@ -139,6 +141,11 @@ public class Main {
                 //do
         }
 
+
+        //gameplan: 1) create gitlet class-- copy old one if it exists. (should be saved in a file within .gitlet subdir)?
+        // if not create new one. Need to find out what vars/maps/arrays are needed for gitlet object
+        //create class for node- also find out what is needed to represent node
+        //create class for tree- represent nodes and keep apropriate pointers?
 
 
 

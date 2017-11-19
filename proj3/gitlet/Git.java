@@ -1,11 +1,12 @@
 package gitlet;
 
 
+import java.io.Serializable;
 
 /** class responsible for processing commands given to gitlet.
  *  @author sahil
  */
-public class Git {
+public class Git implements Serializable {
 
     public Git() {
         //create new Git instance
