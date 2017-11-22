@@ -20,13 +20,13 @@ public class MySortingAlgorithmsTest {
         javaSort.sort(correct, correct.length);
 
         SortingAlgorithm[] algorithms = {
-//            new MySortingAlgorithms.InsertionSort(),
-//            new MySortingAlgorithms.SelectionSort(),
+            new MySortingAlgorithms.InsertionSort(),
+            new MySortingAlgorithms.SelectionSort(),
 //                new MySortingAlgorithms.MergeSort(),
 //                new MySortingAlgorithms.DistributionSort(),
 //                new MySortingAlgorithms.HeapSort(),
                 new MySortingAlgorithms.QuickSort(),
-//                new MySortingAlgorithms.LSDSort(),
+                new MySortingAlgorithms.LSDSort(),
 //                new MySortingAlgorithms.MSDSort()
         };
 

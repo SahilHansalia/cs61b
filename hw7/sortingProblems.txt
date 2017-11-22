@@ -20,4 +20,4 @@ True, we can see Quicksort and inserting into a BST take the same time complexit
 
 e. Give an example of a comparison performed by Mergesort that is not given in your answers to 1a or 1b.
 
-//need to do 
+4-6 is a comparison used by merge sort not in 1a/1b.

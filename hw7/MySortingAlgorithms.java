@@ -175,11 +175,32 @@ public class MySortingAlgorithms {
     /**
      * LSD Sort implementation.
      */
+    // worked on this question with people at office hours whose names I forgot to take note of
     public static class LSDSort implements SortingAlgorithm { //do
         @Override
         public void sort(int[] a, int k) {
-            // FIXME
+            /* Each int is 32 bits and are thus 4 byes wide.
+               Each byte holds a value between 0 and 255.
+               MASK is used to mask off 8 bits at a time */
+            int[] copy = new int[k];
+            for (int i = 0; i < 4; i++) {
+
+                int[] nums = new int[257];
+                for (int j = 0; j < k; j++) {
+                    nums[((a[j] >> 8*i) & 255) + 1]++;
+                }
+
+                for (int j = 0; j < nums.length-1; j++)
+                    nums[j+1] = nums[j+1] + nums[j];
+
+                for (int j = 0; j < k; j++) {
+                    copy[nums[(a[j] >> 8*i) & 255]++] = a[j];
+
+                }
+                System.arraycopy(copy, 0, a, 0, copy.length);
+            }
         }
+
 
         @Override
         public String toString() {
