@@ -8,11 +8,19 @@ import java.io.Serializable;
  */
 public class Git implements Serializable {
 
+
+
+
     public Git() {
         //create new Git instance
+        //what info do we need?
     }
 
     public void init() {
+        //new tree
+        //initial commit (has no files) - single branch master points to initial commimt; master is also current branch
+        //initial commit timestamp is given
+
         //initialize new Git
     }
 

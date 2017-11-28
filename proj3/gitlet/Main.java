@@ -1,5 +1,7 @@
 package gitlet;
 
+import java.io.File;
+
 /** Driver class for Gitlet, the tiny stupid version-control system.
  *  @author sahil
  */
@@ -20,13 +22,26 @@ public class Main {
         }
         String command = args[0];
         Git gitlit = new Git();   //could be onto something
+        //LOAD previously saved by transferring info??
         //find out where i am
         //if not in working directory and not init command give error??????
+        if (!command.equals("init")) {
+            File a = new File(".gitlet"); //does this check direcoties too?
+            if (!a.exists()) {
+                System.out.println("gitlet directory does not exists.");   //can you call this from the main?
+                return;
+            }
+        }
 
         switch(command) {
             case "init":
                 if (len != 1) {
                     System.out.println("Incorrect operands.");
+                    return;
+                }
+                File a = new File(".gitlet"); //does this check direcoties too?
+                if (a.exists()) {
+                    System.out.println("gitlet directory already exists.");
                     return;
                 }
                 gitlit.init();  //this should work?
@@ -140,6 +155,8 @@ public class Main {
                 return;
                 //do
         }
+
+        //save object?
 
 
         //gameplan: 1) create gitlet class-- copy old one if it exists. (should be saved in a file within .gitlet subdir)?
