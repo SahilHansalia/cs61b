@@ -8,12 +8,12 @@ import java.io.Serializable;
  */
 public class Git implements Serializable {
 
-
+//pointer to branch/most recent commit?
 
 
     public Git() {
         //create new Git instance
-        //what info do we need?
+        //what info do we need? -- maybe dont need anything here
     }
 
     public void init() {
@@ -21,7 +21,6 @@ public class Git implements Serializable {
         //initial commit (has no files) - single branch master points to initial commimt; master is also current branch
         //initial commit timestamp is given
 
-        //initialize new Git
     }
 
 
