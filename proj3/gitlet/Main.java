@@ -61,6 +61,7 @@ public class Main {
                     System.out.println("Incorrect operands.");
                     return;
                 }
+                //if no messages error case
                 gitlit.commit(args[1]);
                 //do
 
