@@ -67,32 +67,32 @@ public class MSTTest {
         check(V, minEdges, maxWeight, seed, mstWeight, E);
     }
 
-    @Test(timeout = 500)
+    @Test (timeout = 500)
     public void singletonTest() {
         check(1, 0, 100, 1923, 0);
     }
 
-    @Test(timeout = 500)
+    @Test (timeout = 500)
     public void doubletonTest() {
         check(2, 1, 100, 1923, 96);
     }
 
-    @Test(timeout = 500)
+    @Test (timeout = 500)
     public void smallishTest() {
         check(20, 10, 100, 19234, 1076);
     }
 
-    @Test(timeout = 500)
+    @Test (timeout = 500)
     public void biggishTest1() {
         check(5000, 30000, 1000, 192345, 536912);
     }
 
-    @Test(timeout = 500)
+    @Test (timeout = 500)
     public void biggishTest2() {
         check(20000, 100000, 1000, 1923456, 2595553);
     }
 
-    @Test(timeout = 2000)
+    @Test (timeout = 2000)
     public void biggishTest3() {
         check(200000, 1000000, 100, 192345678, 2515034, BIG3);
     }
