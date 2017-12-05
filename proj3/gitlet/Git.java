@@ -1,6 +1,8 @@
 package gitlet;
 
-
+import java.io.File;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.io.Serializable;
 
 /** class responsible for processing commands given to gitlet.
@@ -8,11 +10,20 @@ import java.io.Serializable;
  */
 public class Git implements Serializable {
 
+
+
+    HashMap<String, String> branchTocommit = new HashMap<>();
+    String headBranch;
+    HashMap<String, String> messagetoID = new HashMap<>();
+    HashSet<String> stage = new HashSet<>();
+
     //pointer to branch/most recent commit (head)?
     //removed files
     //staged files
     //list of branches'
     //list of marks (to not commit)
+    //mapping from ID to messages
+    //map from branch name to commit
 
     public Git() {
         //create new Git instance
@@ -20,6 +31,31 @@ public class Git implements Serializable {
     }
 
     public void init() {
+        File git = new File(".gitlet");
+        if (!git.exists()) {
+            git.mkdir();
+            Commit first = new Commit("initial commit", true, null);
+            String sha = new SHAconverter(first).SHA;
+            branchTocommit.put("master", sha);
+            headBranch = "master";
+            messagetoID.put("initial commit", sha);
+
+        } else {
+            System.out.println("A gitlet version control system already exists in the current"
+                    + " directory.");
+            System.exit(0);
+        }
+
+
+        //add serialized commit to hash map with master branch
+
+
+
+
+
+
+
+
         //new tree
         //initial commit (has no files) - single branch master points to initial commimt; master is also current branch
         //initial commit timestamp is given
@@ -28,6 +64,7 @@ public class Git implements Serializable {
 
 
     public void add(String fileName) {
+
         //check if file exists
         //remove mark if marked
         //if identical to version in current commit- do not stage and remove from stage if there..??
