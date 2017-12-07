@@ -26,6 +26,7 @@ public class Git implements Serializable {
     HashSet<String> removedFiles = new HashSet<>();
     HashMap<String, Commit> SHAtoCommit = new HashMap<>();
     Commit head;
+    String headSHA = new SHAconverter(head).SHA;
     private HashSet<String> deleteMarks = new HashSet<>();
 
 
@@ -497,6 +498,8 @@ public class Git implements Serializable {
             System.out.println("A branch with that name already exists.");
             return;
         }
+        branches.add(branchName);
+        branchTocommitHeadSHA.put(branchName, headSHA);
 
 
         //10 lines?
