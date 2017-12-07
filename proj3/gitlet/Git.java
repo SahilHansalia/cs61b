@@ -244,14 +244,27 @@ public class Git implements Serializable {
 
     }
 
+    private void commitPrinter(Commit c) {
+
+        System.out.println("===");
+        System.out.println("commit" + new SHAconverter(c).SHA);
+        if (c.parent2 != null) {
+            System.out.println("Merge:" + new SHAconverter(c.parent).SHA.substring(0, 7) + new SHAconverter(c.parent2).SHA.substring(0, 7));
+        }
+        System.out.println("Date:" + "add here" ); //do this shit later
+
+
+
+    }
+
+
 
 
     public void log() {
         Commit curr = head;
         while (curr != null) {
-            System.out.println(curr.toString());
+            commitPrinter(curr);
             curr = curr.parent;
-
         }
 
 
