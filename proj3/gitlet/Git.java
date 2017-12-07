@@ -1,8 +1,12 @@
 package gitlet;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.io.File;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /** class responsible for processing commands given to gitlet.
  *  @author sahil
@@ -386,9 +390,15 @@ public class Git implements Serializable {
             System.out.println("File does not exist in that commit.");
             return;
         }
-        else {
-            //Utils.writeObject();
-        }
+        else { //figure out how to read and write contents?
+            String SHA = new SHAconverter(head).SHA;
+            try {
+                Files.copy(Paths.get(".gitlet/" + SHA + "/" + fileName), Paths.get(fileName), REPLACE_EXISTING);
+            } catch (IOException e) {
+                System.out.println("IOException when trying to checkout " + fileName + " from commit");
+                return;
+            }
+            }
 
         //~15 lines
         //takes file as it is in head commit and puts it in working directory, overwriting if already there
@@ -409,6 +419,23 @@ public class Git implements Serializable {
 
 
     public void checkout3(String commitID, String fileName) {
+        int len = commitID.length();
+        String SHAKey = "";
+        for (String S: SHAtoCommit.keySet()) {
+            if (S.substring(0, len).equals(commitID)) {
+                SHAKey = S;
+                break;
+            }
+        }
+        if(SHAKey.equals("")) {
+            System.out.println("No commit with that id exists.");
+            return;
+        }
+        Commit c = SHAtoCommit.get(SHAKey);
+        if (!c.Files.contains(fileName)) {
+
+        }
+
         //takes file from given commit and places it in working directory.
         //failure if 1) file doesnt exist in commit 2) commit doesnt exist
         //ID is first 6 digits of hash

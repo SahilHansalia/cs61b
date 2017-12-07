@@ -21,14 +21,15 @@ public class Main {
             return;
         }
         String command = args[0];
-//        if (Git.prevGit) {
-//            //Git gitlit =
-//
-//        }
-//        else {
-//            Git gitlit = new Git()
-//        }
-        Git gitlit = new Git();   //could be onto something
+        Git gitlit;
+        if (Git.prevGit() != null) {
+            gitlit = Git.prevGit();
+
+        }
+        else {
+            gitlit = new Git();
+        }
+//        Git gitlit = new Git();   //could be onto something
         //LOAD previously saved by transferring info??
         //find out where i am
         //if not in working directory and not init command give error??????
@@ -162,7 +163,7 @@ public class Main {
                 break;
         }
 
-        Git.save();
+        Git.saveGit(gitlit);
 
         //save object?
 

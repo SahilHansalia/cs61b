@@ -32,7 +32,7 @@ public class Commit implements Serializable {
             Files.addAll(Parent.Files);
         }
         if (!Stage.isEmpty()) {
-            Files.addAll(Stage);
+            Files.addAll(Stage); //properly add files here
             //deal with second parent files and branches here
 
 
