@@ -21,33 +21,27 @@ public class Commit implements Serializable {
     HashSet<String> Files = new HashSet<>();
 
 
-    Commit(String message, boolean first, Commit Parent, Commit Parent2) {  //are the files in a commit = parents files + stage?
+    Commit(String message, boolean first, Commit Parent, Commit Parent2, HashSet<String> Stage) {  //are the files in a commit = parents files + stage?
         this.name = message;
         if (first) {
             this.date = new Date(0); //is this all you need?
-        }
-        else {
+        } else {
             this.date = new Date();
         }
-        Files.addAll(Parent.Files);
-
-
+        if (!Parent.Files.isEmpty()) {
+            Files.addAll(Parent.Files);
+        }
+        if (!Stage.isEmpty()) {
+            Files.addAll(Stage);
+            //deal with second parent files and branches here
 
 
         parent = Parent;
         parent2 = Parent2;
 
 
+        }
 
-
-
-    }   //do you need to know what commit a file was added in?
-//when do you get a commit ID... ask mihir?
-
-//node in the commit tree!!!!
-    //contains date time it was made
-    //
-
-
+    }
 
 }

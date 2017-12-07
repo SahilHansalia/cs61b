@@ -1,9 +1,9 @@
 package gitlet;
 
-import java.io.File;
+import java.io.*;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.io.Serializable;
+import java.io.File;
 
 /** class responsible for processing commands given to gitlet.
  *  @author sahil
@@ -23,6 +23,7 @@ public class Git implements Serializable {
     Commit head;
     private HashSet<String> deleteMarks = new HashSet<>();
 
+
     //pointer to branch/most recent commit (head)?
     //removed files
     //staged files
@@ -36,23 +37,48 @@ public class Git implements Serializable {
         //what info do we need? -- maybe dont need anything here
     }
 
-    public static void save() {
+    public static void saveGit(Git toSave) {
+        try {
+            File saveGitlet = new File(".gitlet/savedgit.ser");
+            FileOutputStream s = new FileOutputStream(saveGitlet);
+            ObjectOutputStream obj = new ObjectOutputStream(s);
+            obj.writeObject(toSave);
+            obj.close();
+            s.close();
+        } catch (IOException e) {
+            System.out.println("IOException when trying to save Gitlet.");
+        }
    //serialize and write to file??
         //name the file?
-
-
     }
 
     public static Git prevGit() {
-        // get from file that was previously written to
-        return new Git();
+        Git prev = null;
+        File dir = new File(".gitlet/savedgit.ser");
+        if (dir.exists()) {
+            try {
+                FileInputStream filein = new FileInputStream(".gitlet/savedgit.ser");
+                ObjectInputStream objin = new ObjectInputStream(filein);
+                prev = (Git) objin.readObject();
+                filein.close();
+                objin.close();
+            } catch (IOException e) {
+                System.out.println("IOException when trying to read saved git.");
+                System.exit(0);
+            } catch (ClassNotFoundException e) {
+                System.out.println("ClassNotFoundException when trying to read saved git.");
+                System.exit(0);
+            }
+        }
+        return prev;
+
     }
 
     public void init() {
         File git = new File(".gitlet"); //is it .gitlet/
         if (!git.exists()) {
             git.mkdir();
-            Commit first = new Commit("initial commit", true, null, null);
+            Commit first = new Commit("initial commit", true, null, null, stage);
             String sha = new SHAconverter(first).SHA;
             branchTocommit.put("master", sha);
             headBranch = "master";
@@ -63,9 +89,7 @@ public class Git implements Serializable {
             head = first;
 
         } else {
-            System.out.println("A gitlet version control system already exists in the current"
-                    + " directory.");
-            System.exit(0);
+            System.out.println("A Gitlet version-control system already exists in the current directory.");
         }
 
 
@@ -92,8 +116,7 @@ public class Git implements Serializable {
             return;
         }
 
-        if (Utils.sha1(check).equals(head.fileNameToContents.get(fileName))) {
-            System.out.println("file has not been modified since last stage");
+        if (Utils.sha1(check).equals(head.fileNameToContents.get(fileName))) { //does this work????
             if (stage.contains(fileName)) {
                 stage.remove(fileName);
 
@@ -127,9 +150,14 @@ public class Git implements Serializable {
 
 
 
-    private void saveCommit() {
+    private void saveCommit(Commit c) {
+
+
+
+
         //can i do this here without infinite recursion
         //create .gitlet/commitSHA/fileName for all fileNames in commit
+        //for strings in c.files, somehow save them??? fml
 
     }
 
@@ -146,7 +174,7 @@ public class Git implements Serializable {
             System.out.println("No changes added to the commit.");
             return;
         }
-        Commit toAdd = new Commit(message, false, head, null);
+        Commit toAdd = new Commit(message, false, head, null, stage);
         String SHA = new SHAconverter(toAdd).SHA;
         branchTocommit.put(headBranch, message);
         IDtoMessage.put(SHA, message);
