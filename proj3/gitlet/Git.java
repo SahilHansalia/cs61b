@@ -369,19 +369,9 @@ public class Git implements Serializable {
             System.out.println(S);
         }
         System.out.println();
-
-
-
-
-
-        //branches (with * by the current one) -- need list of branches
-        //staged files
-        //removed files
-
-
-
-
-
+        System.out.println("=== Modifications Not Staged For Commit ===");
+        System.out.println();
+        System.out.println("=== Untracked Files ===");
 
 
         //modifications not staged for commmit (need to keep track of changed files? (EXTRA CREDIT)
@@ -392,6 +382,14 @@ public class Git implements Serializable {
 
 
     public void checkout1(String fileName) {
+        if (!head.Files.contains(fileName)) {
+            System.out.println("File does not exist in that commit.");
+            return;
+        }
+        else {
+            //Utils.writeObject();
+        }
+
         //~15 lines
         //takes file as it is in head commit and puts it in working directory, overwriting if already there
         //new version not staged (remove if it is staged?)
