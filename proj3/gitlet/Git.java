@@ -12,7 +12,7 @@ public class Git implements Serializable {
 
 
 //    static boolean prevGit = false; //could be an issue?
-    HashMap<String, String> branchTocommit = new HashMap<>();
+    HashMap<String, HashSet<String>> branchTocommitSHA = new HashMap<>();
     String headBranch;
     HashMap<String, HashSet<String>> messagetoID = new HashMap<>();
     HashMap<String, String> IDtoMessage = new HashMap<>();
@@ -20,6 +20,7 @@ public class Git implements Serializable {
     HashMap<String, String> stagetest = new HashMap<>();
     HashSet<String> branches = new HashSet<>();
     HashSet<String> removedFiles = new HashSet<>();
+    HashMap<String, Commit> SHAtoCommit = new HashMap<>();
     Commit head;
     private HashSet<String> deleteMarks = new HashSet<>();
 
@@ -80,7 +81,9 @@ public class Git implements Serializable {
             git.mkdir();
             Commit first = new Commit("initial commit", true, null, null, stage);
             String sha = new SHAconverter(first).SHA;
-            branchTocommit.put("master", sha);
+            HashSet<String> toAdd = new HashSet<>();
+            toAdd.add(sha);
+            branchTocommitSHA.put("master", toAdd);
             headBranch = "master";
             HashSet<String> lst = new HashSet<>();
             lst.add(sha);
@@ -180,7 +183,14 @@ public class Git implements Serializable {
         }
         Commit toAdd = new Commit(message, false, head, null, stage);
         String SHA = new SHAconverter(toAdd).SHA;
-        branchTocommit.put(headBranch, message);
+        if (branchTocommitSHA.containsKey(headBranch)) {
+            branchTocommitSHA.get(headBranch).add(SHA);
+        }
+        else {
+            HashSet<String> lst2 = new HashSet<>();
+            lst2.add(SHA);
+            branchTocommitSHA.put(headBranch, lst2);
+        }
         IDtoMessage.put(SHA, message);
         if (messagetoID.containsKey(message)) {
             messagetoID.get(message).add(SHA);
@@ -190,6 +200,7 @@ public class Git implements Serializable {
             lst.add(SHA);
             messagetoID.put(message, lst);
         }
+        SHAtoCommit.put(SHA, toAdd); //is this ok?
 
         stage.clear();
         removedFiles.clear(); //does this go here?
@@ -244,16 +255,45 @@ public class Git implements Serializable {
 
     }
 
-    private void commitPrinter(Commit c) {
-
+    private void commitPrinter(Commit c) { //note: branch management is poor but fix when i get to branch commands?
+        String b1 = "";
+        String b2 = "";
         System.out.println("===");
         System.out.println("commit" + new SHAconverter(c).SHA);
         if (c.parent2 != null) {
-            System.out.println("Merge:" + new SHAconverter(c.parent).SHA.substring(0, 7) + new SHAconverter(c.parent2).SHA.substring(0, 7));
+            String p1SHA = new SHAconverter(c.parent).SHA;
+            String p2SHA = new SHAconverter(c.parent2).SHA;
+
+
+            if (branchTocommitSHA.get(headBranch).contains(p1SHA)) {
+                b1 = headBranch;
+                for (String S : branches) {
+                    if (branchTocommitSHA.get(S).contains(p2SHA)) {
+                        b2 = S;
+                        break;
+                    }
+                }
+                System.out.println("Merge:" + p1SHA.substring(0, 7) + p2SHA.substring(0, 7));  //first is branch you were on second is merged in branch
+
+
+            } else if (branchTocommitSHA.get(headBranch).contains(p2SHA)) {
+                b2 = headBranch;
+                for (String S: branches) {
+                    if (branchTocommitSHA.get(S).contains(p2SHA)) {
+                        b1 = S;
+                        break;
+                    }
+                }
+                System.out.println("Merge:" + p2SHA.substring(0, 7) + p1SHA.substring(0, 7));  //first is branch you were on second is merged in branch
+            }
         }
         System.out.println("Date:" + "add here" ); //do this shit later
+        if (c.parent2 != null) {
+            System.out.println("Merged " + b1 + " into " + b2 + ".");
 
-
+        }
+        System.out.println(IDtoMessage.get(new SHAconverter(c).SHA));
+        System.out.println();
 
     }
 
@@ -264,6 +304,7 @@ public class Git implements Serializable {
         Commit curr = head;
         while (curr != null) {
             commitPrinter(curr);
+            System.out.println();
             curr = curr.parent;
         }
 
@@ -275,15 +316,14 @@ public class Git implements Serializable {
         //java.util.Formatter
         //for merge commits (those that have 2 parents)- print first 7 digits of both parents commit IDs
 
-
-
-
-
     }
 
 
 
     public void globalLog() {
+        for (String SHA : SHAtoCommit.keySet()) {
+            commitPrinter(SHAtoCommit.get(SHA));
+        }
         //log of all commits but order does not mattere
         //strat: do log on all branches where SHA is different OR have a running list of all unique commits?
 
