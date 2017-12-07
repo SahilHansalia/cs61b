@@ -14,7 +14,7 @@ public class Git implements Serializable {
 //    static boolean prevGit = false; //could be an issue?
     HashMap<String, String> branchTocommit = new HashMap<>();
     String headBranch;
-    HashMap<String, String> messagetoID = new HashMap<>();
+    HashMap<String, HashSet<String>> messagetoID = new HashMap<>();
     HashMap<String, String> IDtoMessage = new HashMap<>();
     HashSet<String> stage = new HashSet<>();
     HashSet<String> branches = new HashSet<>();
@@ -51,11 +51,13 @@ public class Git implements Serializable {
         File git = new File(".gitlet");
         if (!git.exists()) {
             git.mkdir();
-            Commit first = new Commit("initial commit", true, null);
+            Commit first = new Commit("initial commit", true, null, null);
             String sha = new SHAconverter(first).SHA;
             branchTocommit.put("master", sha);
             headBranch = "master";
-            messagetoID.put("initial commit", sha);
+            HashSet<String> lst = new HashSet<>();
+            lst.add(sha);
+            messagetoID.put("initial commit", lst);
             IDtoMessage.put(sha, "initial commit");
             head = first;
 
@@ -121,7 +123,7 @@ public class Git implements Serializable {
 
 
 
-    public void commit(String message) {
+    public void commit(String message) { //big issue could be files changed after committing!!
 
         if (message.equals("")) {
             System.out.println("Please enter a commit message.");
@@ -132,16 +134,24 @@ public class Git implements Serializable {
             System.out.println("No changes added to the commit.");
             return;
         }
-        Commit toAdd = new Commit(message, false, head);
+        Commit toAdd = new Commit(message, false, head, null);
         String SHA = new SHAconverter(toAdd).SHA;
         branchTocommit.put(headBranch, message);
         IDtoMessage.put(SHA, message);
-        messagetoID.put(message, SHA);
-        
+        if (messagetoID.containsKey(message)) {
+            messagetoID.get(message).add(SHA);
+        }
+        else {
+            HashSet<String> lst = new HashSet<>();
+            lst.add(SHA);
+            messagetoID.put(message, lst);
+        }
+
+        stage.clear();
+        removedFiles.clear(); //does this go here?
 
 
-
-
+        //deal with new branches??
         head = toAdd;
 
         //what if commits have the same name?
