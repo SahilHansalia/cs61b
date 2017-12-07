@@ -11,11 +11,16 @@ import java.io.Serializable;
 public class Git implements Serializable {
 
 
-
+//    static boolean prevGit = false; //could be an issue?
     HashMap<String, String> branchTocommit = new HashMap<>();
     String headBranch;
     HashMap<String, String> messagetoID = new HashMap<>();
+    HashMap<String, String> IDtoMessage = new HashMap<>();
     HashSet<String> stage = new HashSet<>();
+    HashSet<String> branches = new HashSet<>();
+    HashSet<String> removedFiles = new HashSet<>();
+    Commit head;
+    private HashSet<String> deleteMarks = new HashSet<>();
 
     //pointer to branch/most recent commit (head)?
     //removed files
@@ -30,6 +35,18 @@ public class Git implements Serializable {
         //what info do we need? -- maybe dont need anything here
     }
 
+    public static void save() {
+   //serialize and write to file??
+        //name the file?
+
+
+    }
+
+    public static Git prevGit() {
+        // get from file that was previously written to
+        return new Git();
+    }
+
     public void init() {
         File git = new File(".gitlet");
         if (!git.exists()) {
@@ -39,6 +56,8 @@ public class Git implements Serializable {
             branchTocommit.put("master", sha);
             headBranch = "master";
             messagetoID.put("initial commit", sha);
+            IDtoMessage.put(sha, "initial commit");
+            head = first;
 
         } else {
             System.out.println("A gitlet version control system already exists in the current"
@@ -64,6 +83,33 @@ public class Git implements Serializable {
 
 
     public void add(String fileName) {
+        File check = new File(fileName);
+        if (!check.exists()) {
+            System.out.println("File does not exist.");
+            return;
+        }
+
+        if (Utils.sha1(check).equals(head.fileNameToContents.get(fileName))) {
+            System.out.println("file has not been modified since last stage");
+            if (stage.contains(fileName)) {
+                stage.remove(fileName);
+
+            }
+        }
+
+        if (deleteMarks.contains(fileName)) {
+            deleteMarks.remove(fileName);
+        }
+
+        else {
+            stage.add(fileName);   //do i need to add file object here?????? if so can i make stage a hashmap simply and add name with contents?
+            //maybe i add a blob here?
+
+        }
+
+
+
+
 
         //check if file exists
         //remove mark if marked
@@ -76,6 +122,35 @@ public class Git implements Serializable {
 
 
     public void commit(String message) {
+
+        if (message.equals("")) {
+            System.out.println("Please enter a commit message.");
+            return;
+        }
+
+        if (stage.isEmpty() && deleteMarks.isEmpty()) {
+            System.out.println("No changes added to the commit.");
+            return;
+        }
+        Commit toAdd = new Commit(message, false, head);
+        String SHA = new SHAconverter(toAdd).SHA;
+        branchTocommit.put(headBranch, message);
+        IDtoMessage.put(SHA, message);
+        messagetoID.put(message, SHA);
+        
+
+
+
+
+        head = toAdd;
+
+        //what if commits have the same name?
+
+
+
+
+
+
         //if no changes give error
         //add new commit which is new branch head
         //previous commit is commit's parent commit

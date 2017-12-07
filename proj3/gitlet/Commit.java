@@ -15,6 +15,7 @@ public class Commit implements Serializable {
     String name;
     Date date;
     Commit parent;
+    Commit parent2;
     HashMap<String, String> fileNameToContents = new HashMap<>();
     String id;
 

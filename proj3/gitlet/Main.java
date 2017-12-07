@@ -21,17 +21,27 @@ public class Main {
             return;
         }
         String command = args[0];
+//        if (Git.prevGit) {
+//            //Git gitlit =
+//
+//        }
+//        else {
+//            Git gitlit = new Git()
+//        }
         Git gitlit = new Git();   //could be onto something
         //LOAD previously saved by transferring info??
         //find out where i am
         //if not in working directory and not init command give error??????
-        if (!command.equals("init")) {
-            File a = new File(".gitlet"); //does this check direcoties too?
-            if (!a.exists()) {
-                System.out.println("gitlet directory does not exists.");   //can you call this from the main?
-                return;
-            }
-        }
+
+
+
+//        if (!command.equals("init")) {
+//            File a = new File(".gitlet"); //does this check direcoties too?
+//            if (!a.exists()) {
+//                System.out.println("gitlet directory does not exists.");   //can you call this from the main?
+//                return;
+//            }
+//        }
 
         switch(command) {
             case "init":
@@ -39,11 +49,7 @@ public class Main {
                     System.out.println("Incorrect operands.");
                     return;
                 }
-                File a = new File(".gitlet"); //does this check direcoties too?
-                if (a.exists()) {
-                    System.out.println("gitlet directory already exists.");
-                    return;
-                }
+
                 gitlit.init();  //this should work?
 
                 //do
@@ -153,9 +159,10 @@ public class Main {
 
             default:
                 System.out.println("No command with that name exists.");
-                return;
-                //do
+                break;
         }
+
+        Git.save();
 
         //save object?
 
