@@ -33,6 +33,7 @@ public class Commit implements Serializable {
 
 
 
+
         parent = Parent;
         parent2 = Parent2;
 
@@ -46,5 +47,7 @@ public class Commit implements Serializable {
 //node in the commit tree!!!!
     //contains date time it was made
     //
+
+
 
 }

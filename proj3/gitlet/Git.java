@@ -16,8 +16,8 @@ public class Git implements Serializable {
     String headBranch;
     HashMap<String, HashSet<String>> messagetoID = new HashMap<>();
     HashMap<String, String> IDtoMessage = new HashMap<>();
-//    HashSet<String> stage = new HashSet<>();
-    HashMap<String, String> stage = new HashMap<>();
+    HashSet<String> stage = new HashSet<>();
+    HashMap<String, String> stagetest = new HashMap<>();
     HashSet<String> branches = new HashSet<>();
     HashSet<String> removedFiles = new HashSet<>();
     Commit head;
@@ -49,7 +49,7 @@ public class Git implements Serializable {
     }
 
     public void init() {
-        File git = new File(".gitlet");
+        File git = new File(".gitlet"); //is it .gitlet/
         if (!git.exists()) {
             git.mkdir();
             Commit first = new Commit("initial commit", true, null, null);
@@ -94,7 +94,7 @@ public class Git implements Serializable {
 
         if (Utils.sha1(check).equals(head.fileNameToContents.get(fileName))) {
             System.out.println("file has not been modified since last stage");
-            if (stage.containsKey(fileName)) {
+            if (stage.contains(fileName)) {
                 stage.remove(fileName);
 
             }
@@ -105,8 +105,14 @@ public class Git implements Serializable {
         }
 
         else {
-            File toAdd = new File(fileName); //is this directory shit correct?
-            stage.put(fileName, Utils.readContentsAsString(toAdd));   //does this shit work?
+//            File toAdd = new File(fileName); //is this directory shit correct?
+            stage.add(fileName);   //does this shit work? //is this overcomplicated
+
+            //SO FAR 4 ways:
+            //1) map file name to sha as you stage and add that map to commit object- easiest if works
+            //2) map fileName to string contents using Utils and add that map to commit- might take up lots of memory but should work
+            //3) when you commit create new .gitlet/<commitSHA> directory and save files there
+            //4) im retarded and dont understand whats going on...
 
 
         }
@@ -121,7 +127,15 @@ public class Git implements Serializable {
 
 
 
-    public void commit(String message) { //big issue could be files changed after committing!!
+    private void saveCommit() {
+        //can i do this here without infinite recursion
+        //create .gitlet/commitSHA/fileName for all fileNames in commit
+
+    }
+
+
+
+    public void commit(String message) { //big issue could be files changed after staging*
 
         if (message.equals("")) {
             System.out.println("Please enter a commit message.");
@@ -152,8 +166,6 @@ public class Git implements Serializable {
         //deal with new branches??
         head = toAdd;
 
-        //what if commits have the same name?
-
 
 
 
@@ -172,12 +184,19 @@ public class Git implements Serializable {
 
 
     public void remove(String fileName) {
-        File toRemove = new File(fileName); //right path?
-        if (!stage.containsKey(fileName) && !head.Files.contains(fileName)) {
+        if (stage.contains(fileName)) {
+            stage.remove(fileName);
+        }
+        if (head.Files.contains(fileName)) {
+            deleteMarks.add(fileName);
+            Utils.restrictedDelete(fileName);
+
+        }
+        else if (!stage.contains(fileName) && !head.Files.contains(fileName)) {
             System.out.println("No reason to remove the file.");
             return;
         }
-        
+
 
 
 
@@ -196,6 +215,8 @@ public class Git implements Serializable {
 
 
     public void log() {
+
+
         //start with head (most recent commmit) and work backwards to initial parent on single branch
         //most recent on top
         //print out (commit SHA, date, and message)
