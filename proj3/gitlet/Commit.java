@@ -16,12 +16,12 @@ public class Commit implements Serializable {
     Date date;
     Commit parent;
     Commit parent2;
-    HashMap<String, String> fileNameToContents = new HashMap<>();
+    HashMap<String, String> fileNameToContents = new HashMap<>(); //need to know how to store files in a commit.
     String id;
     HashSet<String> Files = new HashSet<>();
 
 
-    Commit(String message, boolean first, Commit Parent, Commit Parent2) { //maybe add a stage?  //are the files in a commit = parents files + stage?
+    Commit(String message, boolean first, Commit Parent, Commit Parent2) {  //are the files in a commit = parents files + stage?
         this.name = message;
         if (first) {
             this.date = new Date(0); //is this all you need?
@@ -30,7 +30,7 @@ public class Commit implements Serializable {
             this.date = new Date();
         }
         Files.addAll(Parent.Files);
-        
+
 
 
         parent = Parent;

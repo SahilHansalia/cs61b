@@ -16,7 +16,8 @@ public class Git implements Serializable {
     String headBranch;
     HashMap<String, HashSet<String>> messagetoID = new HashMap<>();
     HashMap<String, String> IDtoMessage = new HashMap<>();
-    HashSet<String> stage = new HashSet<>();
+//    HashSet<String> stage = new HashSet<>();
+    HashMap<String, String> stage = new HashMap<>();
     HashSet<String> branches = new HashSet<>();
     HashSet<String> removedFiles = new HashSet<>();
     Commit head;
@@ -93,7 +94,7 @@ public class Git implements Serializable {
 
         if (Utils.sha1(check).equals(head.fileNameToContents.get(fileName))) {
             System.out.println("file has not been modified since last stage");
-            if (stage.contains(fileName)) {
+            if (stage.containsKey(fileName)) {
                 stage.remove(fileName);
 
             }
@@ -104,14 +105,11 @@ public class Git implements Serializable {
         }
 
         else {
-            stage.add(fileName);   //do i need to add file object here?????? if so can i make stage a hashmap simply and add name with contents?
-            //maybe i add a blob here?
+            File toAdd = new File(fileName); //is this directory shit correct?
+            stage.put(fileName, Utils.readContentsAsString(toAdd));   //does this shit work?
+
 
         }
-
-
-
-
 
         //check if file exists
         //remove mark if marked
@@ -174,6 +172,17 @@ public class Git implements Serializable {
 
 
     public void remove(String fileName) {
+        File toRemove = new File(fileName); //right path?
+        if (!stage.containsKey(fileName) && !head.Files.contains(fileName)) {
+            System.out.println("No reason to remove the file.");
+            return;
+        }
+        
+
+
+
+
+
         //remove from stage if staged
         //if in prev commit mark to not be commited in next one
         //remove file from working directory (only if it is tracked in current commit)
