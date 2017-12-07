@@ -116,7 +116,7 @@ public class Git implements Serializable {
             return;
         }
 
-        if (Utils.sha1(check).equals(head.fileNameToContents.get(fileName))) { //does this work????
+        if (Utils.sha1(check).equals(head.fileNameToContents.get(fileName))) { //Once commit file finder is implemented this is trivial
             if (stage.contains(fileName)) {
                 stage.remove(fileName);
 
@@ -161,9 +161,13 @@ public class Git implements Serializable {
 
     }
 
+    public File CommitFileFinder(Commit c, String fileName) {
+        return new File("");      //need to implement file storing first
+    }
 
 
-    public void commit(String message) { //big issue could be files changed after staging*
+
+    public void commit(String message) { //when changing files after staging how is it handled?
 
         if (message.equals("")) {
             System.out.println("Please enter a commit message.");
