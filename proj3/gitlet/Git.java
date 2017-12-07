@@ -364,13 +364,13 @@ public class Git implements Serializable {
 
         ArrayList<String> sorter3 = new ArrayList<>();
         sorter3.addAll(deleteMarks);
-        System.out.println("=== Files Marked For Removal ===");
+        System.out.println("=== Removed Files ===");
         for (String S : sorter3) {
             System.out.println(S);
         }
         System.out.println();
 
-        
+
 
 
 
