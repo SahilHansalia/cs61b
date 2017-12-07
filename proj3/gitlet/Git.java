@@ -19,6 +19,7 @@ public class Git implements Serializable {
     String headBranch;
     HashMap<String, HashSet<String>> messagetoID = new HashMap<>();
     HashMap<String, String> IDtoMessage = new HashMap<>();
+    HashMap<String, String> branchTocommitHeadSHA = new HashMap<>();
     HashSet<String> stage = new HashSet<>();
     HashMap<String, String> stagetest = new HashMap<>();
     HashSet<String> branches = new HashSet<>();
@@ -86,7 +87,9 @@ public class Git implements Serializable {
             String sha = new SHAconverter(first).SHA;
             HashSet<String> toAdd = new HashSet<>();
             toAdd.add(sha);
+            branches.add("master");
             branchTocommitSHA.put("master", toAdd);
+            branchTocommitHeadSHA.put("master", sha);
             headBranch = "master";
             HashSet<String> lst = new HashSet<>();
             lst.add(sha);
@@ -186,6 +189,7 @@ public class Git implements Serializable {
         }
         Commit toAdd = new Commit(message, false, head, null, stage);
         String SHA = new SHAconverter(toAdd).SHA;
+        branchTocommitHeadSHA.put(headBranch, SHA);
         if (branchTocommitSHA.containsKey(headBranch)) {
             branchTocommitSHA.get(headBranch).add(SHA);
         }
@@ -393,7 +397,7 @@ public class Git implements Serializable {
         else { //figure out how to read and write contents?
             String SHA = new SHAconverter(head).SHA;
             try {
-                Files.copy(Paths.get(".gitlet/" + SHA + "/" + fileName), Paths.get(fileName), REPLACE_EXISTING);
+                Files.copy(Paths.get(".gitlet/" + SHA + "/" + fileName), Paths.get(fileName), REPLACE_EXISTING); //could read and write contents if desot work>
             } catch (IOException e) {
                 System.out.println("IOException when trying to checkout " + fileName + " from commit");
                 return;
@@ -409,6 +413,43 @@ public class Git implements Serializable {
     }
 
     public void checkout2(String branchName) {
+        if (!branches.contains(branchName)) {
+            System.out.println("No such branch exists.");
+            return;
+        }
+        if (headBranch.equals(branchName)) {
+            System.out.println("No need to checkout the current branch. ");
+            return;
+        }
+
+        for (String fileName : Utils.plainFilenamesIn(".gitlet/")) {
+            if (!head.Files.contains(fileName)) {
+                System.out.println("There is an untracked file in the way; delete it or add it first.");
+                return;
+            }
+        }
+
+        String SHA = branchTocommitHeadSHA.get(branchName);
+        Commit c = SHAtoCommit.get(SHA);
+        for (String fileName : c.Files) {
+            try {
+                Files.copy(Paths.get(".gitlet/" + SHA + "/" + fileName), Paths.get(fileName), REPLACE_EXISTING); //could read and write contents if desot work>
+            } catch (IOException e) {
+                System.out.println("IOException when trying to checkout " + fileName + " from commit");
+                return;
+            }
+        }
+        for (String fileName : Utils.plainFilenamesIn(".gitlet/")) {
+            if (!c.Files.contains(fileName)) {
+                Utils.restrictedDelete(fileName);
+            }
+        }
+
+        headBranch = branchName;
+        head = SHAtoCommit.get(branchTocommitHeadSHA.get(branchName));
+        stage.clear();
+
+
         //failure if: branch is current branch,
         //takes all files in head of branch and puts in working directory
         //given branch now considered head branch
@@ -421,30 +462,43 @@ public class Git implements Serializable {
     public void checkout3(String commitID, String fileName) {
         int len = commitID.length();
         String SHAKey = "";
-        for (String S: SHAtoCommit.keySet()) {
+        for (String S : SHAtoCommit.keySet()) {
             if (S.substring(0, len).equals(commitID)) {
                 SHAKey = S;
                 break;
             }
         }
-        if(SHAKey.equals("")) {
+        if (SHAKey.equals("")) {
             System.out.println("No commit with that id exists.");
             return;
         }
         Commit c = SHAtoCommit.get(SHAKey);
         if (!c.Files.contains(fileName)) {
-
+            System.out.println("File does not exist in that commit.");
         }
 
-        //takes file from given commit and places it in working directory.
-        //failure if 1) file doesnt exist in commit 2) commit doesnt exist
-        //ID is first 6 digits of hash
+        try {
+            Files.copy(Paths.get(".gitlet/" + SHAKey + "/" + fileName), Paths.get(fileName), REPLACE_EXISTING); //could read and write contents if desot work>
+        } catch (IOException e) {
+            System.out.println("IOException when trying to checkout " + fileName + " from commit");
 
 
+            //takes file from given commit and places it in working directory.
+            //failure if 1) file doesnt exist in commit 2) commit doesnt exist
+            //ID is first 6 digits of hash
+
+
+        }
     }
 
 
     public void branch(String branchName) {
+        if (branches.contains(branchName)) {
+            System.out.println("A branch with that name already exists.");
+            return;
+        }
+
+
         //10 lines?
         //new branch pointing to current head node
         //branchName is name for refrence to SHA code for commit node it points to.
