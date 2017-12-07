@@ -1,8 +1,7 @@
 package gitlet;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 import java.io.File;
 
 /** class responsible for processing commands given to gitlet.
@@ -331,6 +330,13 @@ public class Git implements Serializable {
 
 
     public void find(String message) {
+        for (String S: messagetoID.get(message)) {
+            System.out.println(S);
+        }
+        if (!messagetoID.containsKey(message)) {
+            System.out.println("Found no commit with that message.");
+        }
+
         //prints out ID's of ALL commits with given message
 
 
@@ -338,6 +344,36 @@ public class Git implements Serializable {
     }
 
     public void status() {
+        ArrayList<String> sorter = new ArrayList<>();
+        sorter.addAll(branches);
+        Collections.sort(sorter);
+        sorter.set(sorter.indexOf(headBranch), "*" + headBranch);
+        System.out.println("=== Branches ===");
+        for (String S : sorter) {
+            System.out.println(S);
+        }
+        System.out.println();
+
+        ArrayList<String> sorter2 = new ArrayList<>();
+        sorter2.addAll(stage);
+        System.out.println("=== Staged Files ===");
+        for (String S : sorter2) {
+            System.out.println(S);
+        }
+        System.out.println();
+
+        ArrayList<String> sorter3 = new ArrayList<>();
+        sorter3.addAll(deleteMarks);
+        System.out.println("=== Files Marked For Removal ===");
+        for (String S : sorter3) {
+            System.out.println(S);
+        }
+        System.out.println();
+
+        
+
+
+
         //branches (with * by the current one) -- need list of branches
         //staged files
         //removed files
