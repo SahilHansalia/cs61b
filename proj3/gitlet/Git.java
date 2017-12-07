@@ -195,7 +195,7 @@ public class Git implements Serializable {
         removedFiles.clear(); //does this go here?
 
 
-        //deal with new branches??
+        //deal with new branches?? --later
         head = toAdd;
 
 
@@ -247,6 +247,12 @@ public class Git implements Serializable {
 
 
     public void log() {
+        Commit curr = head;
+        while (curr != null) {
+            System.out.println(curr.toString());
+            curr = curr.parent;
+
+        }
 
 
         //start with head (most recent commmit) and work backwards to initial parent on single branch
