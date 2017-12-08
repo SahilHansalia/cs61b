@@ -181,12 +181,14 @@ public class Git implements Serializable {
                 fromDir = ".gitlet/" + parentSHA + "/" + fileName;
             }
             File from = new File(fromDir);
+//            System.out.println(from.toPath().toString());
             File to = new File(".gitlet/" + SHA + "/" + fileName);
             try {
                 Files.copy(from.toPath(), to.toPath(), REPLACE_EXISTING);
             }
             catch (IOException e) {
-                System.out.println("IOException when trying to save file " + fileName + " in commit" + SHA.substring(0,6));
+                continue;
+//                System.out.println("IOException when trying to save file " + fileName + " in commit " + SHA.substring(0,6));
             }
 
 
