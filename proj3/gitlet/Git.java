@@ -199,11 +199,11 @@ public class Git implements Serializable {
 
     }
 
-    public File CommitFileFinder(Commit c, String fileName) {
-
-
-        return new File("");      //need to implement file storing first
-    }
+//    public File CommitFileFinder(Commit c, String fileName) {
+//
+//
+//        return new File("");      //need to implement file storing first
+//    }
 
 
 

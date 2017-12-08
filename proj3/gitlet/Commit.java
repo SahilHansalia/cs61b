@@ -36,7 +36,7 @@ public class Commit implements Serializable {
             }
         }
         if (!Stage.isEmpty()) {
-            Files.addAll(Stage); //properly add files here
+            Files.addAll(Stage);
         }
         if (Parent != null) {
             for (String fileName : parent.Files) {
