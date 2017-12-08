@@ -140,7 +140,7 @@ public class Git implements Serializable {
             File old = new File(".gitlet/" + SHAhead + "/" + fileName);
             File curr = new File(fileName);
             if (Utils.readContentsAsString(old).equals(Utils.readContentsAsString(curr))) {
-                System.out.println("file has not changed since last commmit.");
+//                System.out.println("file has not changed since last commmit.");
                 if (stage.contains(fileName)) {
                     stage.remove(fileName);
                 }
