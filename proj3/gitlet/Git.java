@@ -26,7 +26,6 @@ public class Git implements Serializable {
     HashSet<String> removedFiles = new HashSet<>();
     HashMap<String, Commit> SHAtoCommit = new HashMap<>();
     String SHAhead;
-    Commit head;
 //    String headSHA = new SHAconverter(head).SHA;
     private HashSet<String> deleteMarks = new HashSet<>();
 
@@ -82,7 +81,7 @@ public class Git implements Serializable {
     }
 
     public void init() {
-        File git = new File(".gitlet"); //is it .gitlet/
+        File git = new File(".gitlet/"); //is it .gitlet/
         if (!git.exists()) {
             git.mkdir();
             Commit first = new Commit("initial commit", true, null, null, stage);
@@ -99,6 +98,7 @@ public class Git implements Serializable {
             IDtoMessage.put(sha, "initial commit");
             SHAtoCommit.put(sha, first);
             SHAhead = sha;
+            saveCommit(first, sha);
 //            head = first;
 
         } else {
@@ -129,21 +129,21 @@ public class Git implements Serializable {
             return;
         }
 
-        if (Utils.sha1(check).equals(SHAtoCommit.get(SHAhead).fileNameToContents.get(fileName))) { //Once commit file finder is implemented this is trivial
-            if (stage.contains(fileName)) {
-                stage.remove(fileName);
-
-            }
-        }
-
         if (deleteMarks.contains(fileName)) {
             deleteMarks.remove(fileName);
         }
-
-        else {
-//            File toAdd = new File(fileName); //is this directory shit correct?
-            stage.add(fileName);   //does this shit work? //is this overcomplicated
-
+        if ((SHAtoCommit.get(SHAhead).Files.contains(fileName))){ //should be fixed
+            File old = new File(".gitlet/" + SHAhead + "/" + fileName);
+            File curr = new File(fileName);
+            if (Utils.readContentsAsString(old).equals(Utils.readContentsAsString(curr))) {
+                System.out.println("file has not changed since last commmit.");
+                if (stage.contains(fileName)) {
+                    stage.remove(fileName);
+                }
+                return;
+            }
+        }
+        stage.add(fileName);
             //SO FAR 4 ways:
             //1) map file name to sha as you stage and add that map to commit object- easiest if works
             //2) map fileName to string contents using Utils and add that map to commit- might take up lots of memory but should work
@@ -151,7 +151,7 @@ public class Git implements Serializable {
             //4) im retarded and dont understand whats going on...
 
 
-        }
+
 
         //check if file exists
         //remove mark if marked
@@ -163,7 +163,32 @@ public class Git implements Serializable {
 
 
 
-    private void saveCommit(Commit c) {
+    private void saveCommit(Commit c, String SHA) { //if you commit, change stuff but dont add, and commit again is the second commit files same as first?
+
+        File toAdd = new File(".gitlet/" + SHA + "/");
+        toAdd.mkdir();
+        String fromDir = "";
+        for (String fileName : c.Files) {
+            if (c.FilesfromStage.contains(fileName)) {
+                fromDir = fileName;
+            }
+            else {
+                String parentSHA = new SHAconverter(c).SHA;
+                fromDir = ".gitlet/" + parentSHA + "/" + fileName;
+            }
+            File from = new File(fromDir);
+            File to = new File(".gitlet/" + SHA + "/" + fileName);
+            try {
+                Files.copy(from.toPath(), to.toPath(), REPLACE_EXISTING);
+            }
+            catch (IOException e) {
+                System.out.println("IOException when trying to save file " + fileName + " in commit" + SHA.substring(0,6));
+            }
+
+
+        }
+
+
 
 
 
@@ -175,6 +200,8 @@ public class Git implements Serializable {
     }
 
     public File CommitFileFinder(Commit c, String fileName) {
+
+
         return new File("");      //need to implement file storing first
     }
 
@@ -212,12 +239,12 @@ public class Git implements Serializable {
             messagetoID.put(message, lst);
         }
         SHAtoCommit.put(SHA, toAdd); //is this ok?
+        IDtoMessage.put(SHA, message);
 
         stage.clear();
-        removedFiles.clear(); //does this go here?
-
-
+        deleteMarks.clear(); //does this go here?
         SHAhead = SHA;
+        saveCommit(toAdd, SHA);
 //        head = toAdd;
 
 
@@ -299,7 +326,7 @@ public class Git implements Serializable {
             }
         }
         System.out.println("Date:" + "add here" ); //do this shit later
-        if (c.parent2 != null) {
+        if (c.getParent2() != null) {
             System.out.println("Merged " + b1 + " into " + b2 + ".");
 
         }
@@ -316,7 +343,7 @@ public class Git implements Serializable {
         while (curr != null) {
             commitPrinter(curr);
             System.out.println();
-            curr = curr.parent;
+            curr = curr.getParent1();
         }
 
 
@@ -435,7 +462,7 @@ public class Git implements Serializable {
         Commit c = SHAtoCommit.get(SHA);
         for (String fileName : c.Files) {
             try {
-                Files.copy(Paths.get(".gitlet/" + SHA + "/" + fileName), Paths.get(fileName), REPLACE_EXISTING); //could read and write contents if desot work>
+                Files.copy(Paths.get(".gitlet/" + SHA + "/" + fileName), Paths.get(fileName), REPLACE_EXISTING); //could read and write contents if desot work> //.topath()?
             } catch (IOException e) {
                 System.out.println("IOException when trying to checkout " + fileName + " from commit");
                 return;

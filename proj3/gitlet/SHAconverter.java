@@ -1,8 +1,8 @@
 package gitlet;
 
 
-/**
- * Created by test on 12/4/2017.
+/** class to convert Commit object to SHA hash.
+ *  @author sahil
  */
 public class SHAconverter {
 

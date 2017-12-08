@@ -19,10 +19,12 @@ public class Commit implements Serializable {
     HashMap<String, String> fileNameToContents = new HashMap<>(); //need to know how to store files in a commit.
     String id;
     HashSet<String> Files = new HashSet<>();
+    HashSet<String> FilesfromStage = new HashSet<>();
 
 
     Commit(String message, boolean first, Commit Parent, Commit Parent2, HashSet<String> Stage) {  //are the files in a commit = parents files + stage?
         this.name = message;
+        FilesfromStage.addAll(Stage);
         if (first) {
             this.date = new Date(0); //is this all you need?
         } else {
@@ -54,7 +56,13 @@ public class Commit implements Serializable {
 
     }
 
-    public Commit getParent
+    public Commit getParent1() {
+        return parent;
+    }
+    public Commit getParent2() {
+        return parent2;
+    }
+
 
 
 

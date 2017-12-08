@@ -50,10 +50,9 @@ public class Main {
                     System.out.println("Incorrect operands.");
                     return;
                 }
+                gitlit.init();
 
-                gitlit.init();  //this should work?
 
-                //do
 
             case "add":
                 if (len != 2) {
@@ -61,7 +60,7 @@ public class Main {
                     return;
                 }
                 gitlit.add(args[1]);
-                //do
+
 
             case "commit":
                 if (len != 2) {
@@ -70,7 +69,7 @@ public class Main {
                 }
                 //if no messages error case
                 gitlit.commit(args[1]);
-                //do
+
 
             case "rm":
                 if (len != 2) {
@@ -78,7 +77,7 @@ public class Main {
                     return;
                 }
                 gitlit.remove(args[1]);
-                //do
+
 
             case "log":
                 if (len != 1) {
@@ -86,7 +85,7 @@ public class Main {
                     return;
                 }
                 gitlit.log();
-                //do
+
 
             case "global-log":
                 if (len != 1) {
@@ -94,7 +93,7 @@ public class Main {
                     return;
                 }
                 gitlit.globalLog();
-                //do
+
 
             case "find":
                 if (len != 2) {
@@ -102,7 +101,7 @@ public class Main {
                     return;
                 }
                 gitlit.find(args[1]);
-                //do
+
 
             case "status":
                 if (len != 1) {
@@ -110,7 +109,7 @@ public class Main {
                     return;
                 }
                 gitlit.status();
-                //do
+
 
             case "checkout":           //check the indicies and shit
                 if (len == 2) {
@@ -133,7 +132,6 @@ public class Main {
                     return;
                 }
                 gitlit.branch(args[1]);
-                //do
 
             case "rm-branch":
                 if (len != 2) {
@@ -141,7 +139,7 @@ public class Main {
                     return;
                 }
                 gitlit.rmBranch(args[1]);
-                //do
+
 
             case "reset":
                 if (len != 2) {
@@ -149,7 +147,7 @@ public class Main {
                     return;
                 }
                 gitlit.reset(args[1]);
-                //do
+
 
             case "merge":
                 if (len != 2) {
