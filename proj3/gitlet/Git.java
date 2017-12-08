@@ -25,8 +25,9 @@ public class Git implements Serializable {
     HashSet<String> branches = new HashSet<>();
     HashSet<String> removedFiles = new HashSet<>();
     HashMap<String, Commit> SHAtoCommit = new HashMap<>();
+    String SHAhead;
     Commit head;
-    String headSHA = new SHAconverter(head).SHA;
+//    String headSHA = new SHAconverter(head).SHA;
     private HashSet<String> deleteMarks = new HashSet<>();
 
 
@@ -96,7 +97,9 @@ public class Git implements Serializable {
             lst.add(sha);
             messagetoID.put("initial commit", lst);
             IDtoMessage.put(sha, "initial commit");
-            head = first;
+            SHAtoCommit.put(sha, first);
+            SHAhead = sha;
+//            head = first;
 
         } else {
             System.out.println("A Gitlet version-control system already exists in the current directory.");
@@ -126,7 +129,7 @@ public class Git implements Serializable {
             return;
         }
 
-        if (Utils.sha1(check).equals(head.fileNameToContents.get(fileName))) { //Once commit file finder is implemented this is trivial
+        if (Utils.sha1(check).equals(SHAtoCommit.get(SHAhead).fileNameToContents.get(fileName))) { //Once commit file finder is implemented this is trivial
             if (stage.contains(fileName)) {
                 stage.remove(fileName);
 
@@ -188,7 +191,7 @@ public class Git implements Serializable {
             System.out.println("No changes added to the commit.");
             return;
         }
-        Commit toAdd = new Commit(message, false, head, null, stage);
+        Commit toAdd = new Commit(message, false, SHAtoCommit.get(SHAhead), null, stage);
         String SHA = new SHAconverter(toAdd).SHA;
         branchTocommitHeadSHA.put(headBranch, SHA);
         if (branchTocommitSHA.containsKey(headBranch)) {
@@ -214,8 +217,8 @@ public class Git implements Serializable {
         removedFiles.clear(); //does this go here?
 
 
-        //deal with new branches?? --later
-        head = toAdd;
+        SHAhead = SHA;
+//        head = toAdd;
 
 
 
@@ -238,12 +241,12 @@ public class Git implements Serializable {
         if (stage.contains(fileName)) {
             stage.remove(fileName);
         }
-        if (head.Files.contains(fileName)) {
+        if (SHAtoCommit.get(SHAhead).Files.contains(fileName)) {
             deleteMarks.add(fileName);
             Utils.restrictedDelete(fileName);
 
         }
-        else if (!stage.contains(fileName) && !head.Files.contains(fileName)) {
+        else if (!stage.contains(fileName) && !SHAtoCommit.get(SHAhead).Files.contains(fileName)) {
             System.out.println("No reason to remove the file.");
             return;
         }
@@ -309,7 +312,7 @@ public class Git implements Serializable {
 
 
     public void log() {
-        Commit curr = head;
+        Commit curr = SHAtoCommit.get(SHAhead);
         while (curr != null) {
             commitPrinter(curr);
             System.out.println();
@@ -391,14 +394,13 @@ public class Git implements Serializable {
 
 
     public void checkout1(String fileName) {
-        if (!head.Files.contains(fileName)) {
+        if (!SHAtoCommit.get(SHAhead).Files.contains(fileName)) {
             System.out.println("File does not exist in that commit.");
             return;
         }
         else { //figure out how to read and write contents?
-            String SHA = new SHAconverter(head).SHA;
             try {
-                Files.copy(Paths.get(".gitlet/" + SHA + "/" + fileName), Paths.get(fileName), REPLACE_EXISTING); //could read and write contents if desot work>
+                Files.copy(Paths.get(".gitlet/" + SHAhead + "/" + fileName), Paths.get(fileName), REPLACE_EXISTING); //could read and write contents if desot work>
             } catch (IOException e) {
                 System.out.println("IOException when trying to checkout " + fileName + " from commit");
                 return;
@@ -424,7 +426,7 @@ public class Git implements Serializable {
         }
 
         for (String fileName : Utils.plainFilenamesIn(".gitlet/")) {
-            if (!head.Files.contains(fileName)) {
+            if (!SHAtoCommit.get(SHAhead).Files.contains(fileName)) {
                 System.out.println("There is an untracked file in the way; delete it or add it first.");
                 return;
             }
@@ -447,7 +449,7 @@ public class Git implements Serializable {
         }
 
         headBranch = branchName;
-        head = SHAtoCommit.get(branchTocommitHeadSHA.get(branchName));
+        SHAhead = branchTocommitHeadSHA.get(branchName);
         stage.clear();
 
 
@@ -499,7 +501,7 @@ public class Git implements Serializable {
             return;
         }
         branches.add(branchName);
-        branchTocommitHeadSHA.put(branchName, headSHA);
+        branchTocommitHeadSHA.put(branchName, SHAhead);
 
 
         //10 lines?
@@ -510,6 +512,19 @@ public class Git implements Serializable {
     }
 
     public void rmBranch(String branchName) {
+        if (branches.contains(branchName)) {
+            System.out.println("A branch with that name does not exists.");
+            return;
+        }
+        if (branchName.equals(headBranch)) {
+            System.out.println("Cannot remove the current branch");
+            return;
+        }
+        branches.remove(branchName);
+        branchTocommitHeadSHA.remove(branchName);
+
+
+
         //15 lines appx
         //removes pointer to branch with branchName
         //does NOT delete commit nodes
@@ -520,6 +535,33 @@ public class Git implements Serializable {
 
 
     public void reset(String commitID) {
+        int len = commitID.length();
+        String SHAKey = "";
+        for (String S : SHAtoCommit.keySet()) {
+            if (S.substring(0, len).equals(commitID)) {
+                SHAKey = S;
+                break;
+            }
+        }
+        if (SHAKey.equals("")) {
+            System.out.println("No commit with that id exists.");
+            return;
+        }
+
+        for (String fileName : Utils.plainFilenamesIn(".gitlet/")) {  //untracked files that are not modified??
+                if (!SHAtoCommit.get(SHAhead).Files.contains(fileName)) {
+                System.out.println("There is an untracked file in the way; delete it or add it first.");
+                return;
+            }
+        }
+
+        branchTocommitHeadSHA.put(headBranch, SHAKey);
+        SHAhead = SHAKey;
+
+
+
+
+
         //~10 lines
         //checks out all files in a given commit
         //removes tracked files not in that commit
