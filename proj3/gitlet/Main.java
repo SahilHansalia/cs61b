@@ -52,14 +52,14 @@ public class Main {
                 System.out.println("issue here");
                 System.exit(0);
             }
-
             switch (command) {
                 case "init":
                     if (len != 1) {
                         System.out.println("Incorrect operands.");
-                        return;
+                        System.exit(0);
                     }
                     gitlit.init();
+                    break;
 
 
                 case "add":
@@ -68,6 +68,7 @@ public class Main {
                         return;
                     }
                     gitlit.add(args[1]);
+                    break;
 
 
                 case "commit":
@@ -77,6 +78,7 @@ public class Main {
                     }
                     //if no messages error case
                     gitlit.commit(args[1]);
+                    break;
 
 
                 case "rm":
@@ -85,6 +87,7 @@ public class Main {
                         return;
                     }
                     gitlit.remove(args[1]);
+                    break;
 
 
                 case "log":
@@ -93,6 +96,7 @@ public class Main {
                         return;
                     }
                     gitlit.log();
+                    break;
 
 
                 case "global-log":
@@ -101,6 +105,7 @@ public class Main {
                         return;
                     }
                     gitlit.globalLog();
+                    break;
 
 
                 case "find":
@@ -109,6 +114,7 @@ public class Main {
                         return;
                     }
                     gitlit.find(args[1]);
+                    break;
 
 
                 case "status":
@@ -117,17 +123,21 @@ public class Main {
                         return;
                     }
                     gitlit.status();
+                    break;
 
 
                 case "checkout":           //check the indicies and shit
                     if (len == 2) {
                         gitlit.checkout2(args[1]);
+                        break;
                     }
                     if (len == 3) {
                         gitlit.checkout1(args[2]);
+                        break;
                     }
                     if (len == 4) {
                         gitlit.checkout3(args[1], args[3]);
+                        break;
                     } else {
                         System.out.println("Incorrect operands.");
                         return;
@@ -139,6 +149,7 @@ public class Main {
                         return;
                     }
                     gitlit.branch(args[1]);
+                    break;
 
                 case "rm-branch":
                     if (len != 2) {
@@ -146,6 +157,7 @@ public class Main {
                         return;
                     }
                     gitlit.rmBranch(args[1]);
+                    break;
 
 
                 case "reset":
@@ -154,6 +166,7 @@ public class Main {
                         return;
                     }
                     gitlit.reset(args[1]);
+                    break;
 
 
                 case "merge":
@@ -162,6 +175,7 @@ public class Main {
                         return;
                     }
                     gitlit.merge(args[1]);
+                    break;
 
                 default:
                     System.out.println("No command with that name exists.");

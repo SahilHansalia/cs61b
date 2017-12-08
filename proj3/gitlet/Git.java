@@ -3,6 +3,8 @@ package gitlet;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.time.ZoneId;
 import java.util.*;
 import java.io.File;
 
@@ -81,6 +83,7 @@ public class Git implements Serializable {
     }
 
     public void init() {
+//        System.out.println("what about here");
         File git = new File(".gitlet/"); //is it .gitlet/
         if (!git.exists()) {
             git.mkdir();
@@ -297,7 +300,7 @@ public class Git implements Serializable {
         String b1 = "";
         String b2 = "";
         System.out.println("===");
-        System.out.println("commit" + new SHAconverter(c).SHA);
+        System.out.println("commit " + new SHAconverter(c).SHA);
         if (c.parent2 != null) {
             String p1SHA = new SHAconverter(c.parent).SHA;
             String p2SHA = new SHAconverter(c.parent2).SHA;
@@ -325,13 +328,19 @@ public class Git implements Serializable {
                 System.out.println("Merge:" + p2SHA.substring(0, 7) + p1SHA.substring(0, 7));  //first is branch you were on second is merged in branch
             }
         }
-        System.out.println("Date:" + "add here" ); //do this shit later
+
+        SimpleDateFormat formatter= new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z");
+//        formatter.format(c.date);
+        System.out.println(formatter.format(c.date));
+//        formatter.setTimeZone(TimeZone.getTimeZone("PST"));
+//        String b = formatter.format(c.date);
+        System.out.println("Date: " + formatter.format(c.date)); //do this shit later
         if (c.getParent2() != null) {
             System.out.println("Merged " + b1 + " into " + b2 + ".");
 
         }
         System.out.println(IDtoMessage.get(new SHAconverter(c).SHA));
-        System.out.println();
+//        System.out.println();
 
     }
 
