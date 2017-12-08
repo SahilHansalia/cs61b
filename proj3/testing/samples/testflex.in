@@ -21,7 +21,5 @@ D ARBLINES "(?:(?:.|\n)*(?:\n|\Z)|\A|\Z)"
 <<<
 > rm f.txt
 <<<
-* f.txt
-+ f.txt wug.txt
-> add f.txt
+> commit "Removed f.txt"
 <<<
