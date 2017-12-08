@@ -336,7 +336,6 @@ public class Git implements Serializable {
             commitPrinter(SHAtoCommit.get(SHA));
         }
         //log of all commits but order does not mattere
-        //strat: do log on all branches where SHA is different OR have a running list of all unique commits?
 
     }
 

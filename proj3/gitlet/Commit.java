@@ -28,12 +28,22 @@ public class Commit implements Serializable {
         } else {
             this.date = new Date();
         }
-        if (!Parent.Files.isEmpty()) {
-            Files.addAll(Parent.Files);
+        if (Parent != null) {
+            if (!Parent.Files.isEmpty()) {
+                Files.addAll(Parent.Files);
+            }
         }
         if (!Stage.isEmpty()) {
             Files.addAll(Stage); //properly add files here
-            //deal with second parent files and branches here
+        }
+        if (Parent != null) {
+            for (String fileName : parent.Files) {
+                if (!Files.contains(fileName)) {
+                    Files.add(fileName);
+                }
+            }
+
+            //deal with second parent files
 
 
         parent = Parent;
@@ -43,6 +53,8 @@ public class Commit implements Serializable {
         }
 
     }
+
+    public Commit getParent
 
 
 
