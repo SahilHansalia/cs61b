@@ -331,8 +331,8 @@ public class Git implements Serializable {
 
         SimpleDateFormat formatter= new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z");
 //        formatter.format(c.date);
-        System.out.println(formatter.format(c.date));
-//        formatter.setTimeZone(TimeZone.getTimeZone("PST"));
+//        System.out.println(formatter.format(c.date));
+//        formatter.setTimeZonge(TimeZone.getTimeZone("PST"));
 //        String b = formatter.format(c.date);
         System.out.println("Date: " + formatter.format(c.date)); //do this shit later
         if (c.getParent2() != null) {
