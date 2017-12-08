@@ -375,6 +375,7 @@ public class Git implements Serializable {
     public void globalLog() {
         for (String SHA : SHAtoCommit.keySet()) {
             commitPrinter(SHAtoCommit.get(SHA));
+            System.out.println();
         }
         //log of all commits but order does not mattere
 

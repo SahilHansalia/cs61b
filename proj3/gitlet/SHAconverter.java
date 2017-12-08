@@ -9,7 +9,7 @@ public class SHAconverter {
     String SHA;
 
     SHAconverter(Commit a) {
-        SHA = Utils.sha1(a.dateStr);
+        SHA = Utils.sha1(a.dateStr + a.name);
     }
 
 }
