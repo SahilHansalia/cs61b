@@ -134,6 +134,7 @@ public class Git implements Serializable {
 
         if (deleteMarks.contains(fileName)) {
             deleteMarks.remove(fileName);
+            return;
         }
         if ((SHAtoCommit.get(SHAhead).Files.contains(fileName))){ //should be fixed
             File old = new File(".gitlet/" + SHAhead + "/" + fileName);
@@ -270,10 +271,12 @@ public class Git implements Serializable {
     public void remove(String fileName) {
         if (stage.contains(fileName)) {
             stage.remove(fileName);
+            return;
         }
         if (SHAtoCommit.get(SHAhead).Files.contains(fileName)) {
             deleteMarks.add(fileName);
             Utils.restrictedDelete(fileName);
+            return;
 
         }
         else if (!stage.contains(fileName) && !SHAtoCommit.get(SHAhead).Files.contains(fileName)) {
