@@ -11,26 +11,52 @@ D COMMIT_LOG "(===[ ]*\ncommit [a-f0-9]+[ ]*\n(?:Merge:\s+[0-9a-f]{7}\s+[0-9a-f]
 D ARBLINE "[^\n]*(?=\n|\Z)"
 # Zero or more arbitrary full lines of text.
 D ARBLINES "(?:(?:.|\n)*(?:\n|\Z)|\A|\Z)"
-> branch other
-<<<
 + f.txt wug.txt
+> status
+=== Branches ===
+*master
+
+=== Staged Files ===
+
+=== Removed Files ===
+
+=== Modifications Not Staged For Commit ===
+
+=== Untracked Files ===
+f.txt
+
+<<<
 > add f.txt
 <<<
-> commit "File f.txt"
+> commit "Add f"
 <<<
-> checkout other
++ f.txt notwug.txt
+> status
+=== Branches ===
+*master
+
+=== Staged Files ===
+
+=== Removed Files ===
+
+=== Modifications Not Staged For Commit ===
+f.txt (modified)
+
+=== Untracked Files ===
+
 <<<
-+ g.txt notwug.txt
-> add g.txt
+- f.txt
+> status
+=== Branches ===
+*master
+
+=== Staged Files ===
+
+=== Removed Files ===
+
+=== Modifications Not Staged For Commit ===
+f.txt (deleted)
+
+=== Untracked Files ===
+
 <<<
-> commit "File g.txt"
-<<<
-> checkout master
-<<<
-> rm-branch other
-<<<
-> checkout other
-No such branch exists.
-<<<
-* g.txt
-= f.txt wug.txt

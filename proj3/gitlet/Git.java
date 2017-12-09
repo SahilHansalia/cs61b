@@ -28,6 +28,7 @@ public class Git implements Serializable {
     String SHAhead;
     File currDir = new File("").getAbsoluteFile();
     private HashSet<String> deleteMarks = new HashSet<>();
+    HashSet<String> modsNotStaged = new HashSet<>();
 
 
     public Git() {
@@ -333,12 +334,40 @@ public class Git implements Serializable {
         }
         System.out.println();
         System.out.println("=== Modifications Not Staged For Commit ===");
+        if (Utils.plainFilenamesIn(currDir) != null) {
+            for (String fileName : Utils.plainFilenamesIn(currDir)) {
+                if (SHAtoCommit.get(SHAhead).Files.contains(fileName)) {
+                    System.out.println(fileName + " (modified");
+                    modsNotStaged.add(fileName);
+                }
+            }
+        }
+        if (SHAtoCommit.get(SHAhead).Files != null) {
+            for (String fileName : SHAtoCommit.get(SHAhead).Files) {
+                if (Utils.plainFilenamesIn(currDir) == null) {
+                    System.out.println(fileName + " (deleted)");
+                }
+                else {
+                    if (!Utils.plainFilenamesIn(currDir).contains(fileName)) {
+                        System.out.println(fileName + " (deleted)");
+                    }
+                }
+            }
+        }
+
         System.out.println();
         System.out.println("=== Untracked Files ===");
+        if (Utils.plainFilenamesIn(currDir) != null) {
+            for (String fileName : Utils.plainFilenamesIn(currDir)) {
+                if (!stage.contains(fileName) && !SHAtoCommit.get(SHAhead).Files.contains(fileName)) {
+                    System.out.println(fileName);
+                }
+            }
 
 
-        //modifications not staged for commmit (need to keep track of changed files? (EXTRA CREDIT)
-        //untracked = in directory but not staged or tracked (EXTRA CREDIT)
+            //modifications not staged for commmit (need to keep track of changed files? (EXTRA CREDIT)
+            //untracked = in directory but not staged or tracked (EXTRA CREDIT)
+        }
     }
 
 
