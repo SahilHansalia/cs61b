@@ -4,7 +4,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.time.ZoneId;
 import java.util.*;
 import java.io.File;
 
@@ -16,7 +15,6 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 public class Git implements Serializable {
 
 
-//    static boolean prevGit = false; //could be an issue?
     HashMap<String, HashSet<String>> branchTocommitSHA = new HashMap<>();
     String headBranch;
     HashMap<String, HashSet<String>> messagetoID = new HashMap<>();
@@ -28,21 +26,11 @@ public class Git implements Serializable {
     HashSet<String> removedFiles = new HashSet<>();
     HashMap<String, Commit> SHAtoCommit = new HashMap<>();
     String SHAhead;
-//    String headSHA = new SHAconverter(head).SHA;
+    File currDir = new File("").getAbsoluteFile();
     private HashSet<String> deleteMarks = new HashSet<>();
 
 
-    //pointer to branch/most recent commit (head)?
-    //removed files
-    //staged files
-    //list of branches'
-    //list of marks (to not commit)
-    //mapping from ID to messages
-    //map from branch name to commit
-
     public Git() {
-        //create new Git instance
-        //what info do we need? -- maybe dont need anything here
     }
 
     public static void saveGit(Git toSave) {
@@ -56,8 +44,6 @@ public class Git implements Serializable {
         } catch (IOException e) {
             System.out.println("IOException when trying to save Gitlet.");
         }
-   //serialize and write to file??
-        //name the file?
     }
 
     public static Git prevGit() {
@@ -102,26 +88,10 @@ public class Git implements Serializable {
             SHAtoCommit.put(sha, first);
             SHAhead = sha;
             saveCommit(first, sha);
-//            head = first;
 
         } else {
             System.out.println("A Gitlet version-control system already exists in the current directory.");
         }
-
-
-        //add serialized commit to hash map with master branch
-
-
-
-
-
-
-
-
-        //new tree
-        //initial commit (has no files) - single branch master points to initial commimt; master is also current branch
-        //initial commit timestamp is given
-
     }
 
 
@@ -140,7 +110,6 @@ public class Git implements Serializable {
             File old = new File(".gitlet/" + SHAhead + "/" + fileName);
             File curr = new File(fileName);
             if (Utils.readContentsAsString(old).equals(Utils.readContentsAsString(curr))) {
-//                System.out.println("file has not changed since last commmit.");
                 if (stage.contains(fileName)) {
                     stage.remove(fileName);
                 }
@@ -153,21 +122,10 @@ public class Git implements Serializable {
             //2) map fileName to string contents using Utils and add that map to commit- might take up lots of memory but should work
             //3) when you commit create new .gitlet/<commitSHA> directory and save files there
             //4) im retarded and dont understand whats going on...
-
-
-
-
-        //check if file exists
-        //remove mark if marked
-        //if identical to version in current commit- do not stage and remove from stage if there..??
-
-        //stage a blob
-
     }
 
 
-
-    private void saveCommit(Commit c, String SHA) { //if you commit, change stuff but dont add, and commit again is the second commit files same as first?
+    private void saveCommit(Commit c, String SHA) {
 
         File toAdd = new File(".gitlet/" + SHA + "/");
         toAdd.mkdir();
@@ -181,39 +139,18 @@ public class Git implements Serializable {
                 fromDir = ".gitlet/" + parentSHA + "/" + fileName;
             }
             File from = new File(fromDir);
-//            System.out.println(from.toPath().toString());
             File to = new File(".gitlet/" + SHA + "/" + fileName);
             try {
                 Files.copy(from.toPath(), to.toPath(), REPLACE_EXISTING);
             }
             catch (IOException e) {
                 continue;
-//                System.out.println("IOException when trying to save file " + fileName + " in commit " + SHA.substring(0,6));
             }
-
-
         }
-
-
-
-
-
-
-        //can i do this here without infinite recursion
-        //create .gitlet/commitSHA/fileName for all fileNames in commit
-        //for strings in c.files, somehow save them??? fml
-
     }
 
-//    public File CommitFileFinder(Commit c, String fileName) {
-//
-//
-//        return new File("");      //need to implement file storing first
-//    }
 
-
-
-    public void commit(String message) { //when changing files after staging how is it handled?
+    public void commit(String message) {
 
         if (message.equals("")) {
             System.out.println("Please enter a commit message.");
@@ -244,28 +181,13 @@ public class Git implements Serializable {
             lst.add(SHA);
             messagetoID.put(message, lst);
         }
-        SHAtoCommit.put(SHA, toAdd); //is this ok?
+        SHAtoCommit.put(SHA, toAdd);
         IDtoMessage.put(SHA, message);
 
         stage.clear();
-        deleteMarks.clear(); //does this go here?
+        deleteMarks.clear();
         SHAhead = SHA;
         saveCommit(toAdd, SHA);
-//        head = toAdd;
-
-
-
-
-
-
-        //if no changes give error
-        //add new commit which is new branch head
-        //previous commit is commit's parent commit
-        //commit must log date/time and string message AND SHA-1 ID. (abstrat away for now)
-        //clear staging area
-
-
-
     }
 
 
@@ -285,23 +207,9 @@ public class Git implements Serializable {
             System.out.println("No reason to remove the file.");
             System.exit(0);
         }
-
-
-
-
-
-
-        //remove from stage if staged
-        //if in prev commit mark to not be commited in next one
-        //remove file from working directory (only if it is tracked in current commit)
-        //use utils delete
-        //if file not staged or not tracked by head commit then error
-
-
-
     }
 
-    private void commitPrinter(Commit c) { //note: branch management is poor but fix when i get to branch commands?
+    private void commitPrinter(Commit c) {
         String b1 = "";
         String b2 = "";
         System.out.println("===");
@@ -345,7 +253,7 @@ public class Git implements Serializable {
 
         }
         System.out.println(IDtoMessage.get(new SHAconverter(c).SHA));
-//        System.out.println();
+
 
     }
 
@@ -383,12 +291,14 @@ public class Git implements Serializable {
 
 
     public void find(String message) {
+        if (!messagetoID.containsKey(message)) {
+            System.out.println("Found no commit with that message.");
+            return;
+        }
         for (String S: messagetoID.get(message)) {
             System.out.println(S);
         }
-        if (!messagetoID.containsKey(message)) {
-            System.out.println("Found no commit with that message.");
-        }
+
 
         //prints out ID's of ALL commits with given message
 
@@ -437,7 +347,7 @@ public class Git implements Serializable {
     public void checkout1(String fileName) {
         if (!SHAtoCommit.get(SHAhead).Files.contains(fileName)) {
             System.out.println("File does not exist in that commit.");
-            System.exit(0);
+            return;
         }
         else { //figure out how to read and write contents?
             try {
@@ -457,6 +367,8 @@ public class Git implements Serializable {
     }
 
     public void checkout2(String branchName) {
+        File currDir = new File("").getAbsoluteFile();
+//        System.out.println(Utils.plainFilenamesIn(currDir).toString());
         if (!branches.contains(branchName)) {
             System.out.println("No such branch exists.");
             System.exit(0);
@@ -465,16 +377,32 @@ public class Git implements Serializable {
             System.out.println("No need to checkout the current branch. ");
             System.exit(0);
         }
+        if (Utils.plainFilenamesIn(currDir) != null) {
 
-        for (String fileName : Utils.plainFilenamesIn(".gitlet/")) {
-            if (!SHAtoCommit.get(SHAhead).Files.contains(fileName)) {
+        for (String fileName : Utils.plainFilenamesIn(currDir)) {
+            if (fileName.equals("savedgit.ser")) {
+                continue;
+            }
+            if (!SHAtoCommit.get(SHAhead).Files.contains(fileName) && !stage.contains(fileName)) {
                 System.out.println("There is an untracked file in the way; delete it or add it first.");
                 System.exit(0);
             }
         }
+        }
 
         String SHA = branchTocommitHeadSHA.get(branchName);
         Commit c = SHAtoCommit.get(SHA);
+
+        if (Utils.plainFilenamesIn(currDir) != null) {
+        for (String fileName : Utils.plainFilenamesIn(currDir)) {
+            if (fileName.equals("savedgit.ser")) {
+                continue;
+            }
+            if (!c.Files.contains(fileName)) {
+                Utils.restrictedDelete(fileName);
+            }
+        }
+        }
         for (String fileName : c.Files) {
             try {
                 Files.copy(Paths.get(".gitlet/" + SHA + "/" + fileName), Paths.get(fileName), REPLACE_EXISTING); //could read and write contents if desot work> //.topath()?
@@ -483,11 +411,7 @@ public class Git implements Serializable {
                 System.exit(0);
             }
         }
-        for (String fileName : Utils.plainFilenamesIn(".gitlet/")) {
-            if (!c.Files.contains(fileName)) {
-                Utils.restrictedDelete(fileName);
-            }
-        }
+
 
         headBranch = branchName;
         SHAhead = branchTocommitHeadSHA.get(branchName);
@@ -519,12 +443,13 @@ public class Git implements Serializable {
         Commit c = SHAtoCommit.get(SHAKey);
         if (!c.Files.contains(fileName)) {
             System.out.println("File does not exist in that commit.");
+            return;
         }
 
         try {
             Files.copy(Paths.get(".gitlet/" + SHAKey + "/" + fileName), Paths.get(fileName), REPLACE_EXISTING); //could read and write contents if desot work>
         } catch (IOException e) {
-            System.out.println("IOException when trying to checkout " + fileName + " from commit");
+            return;
 
 
             //takes file from given commit and places it in working directory.
@@ -588,14 +513,15 @@ public class Git implements Serializable {
             System.out.println("No commit with that id exists.");
             System.exit(0);
         }
-
-        for (String fileName : Utils.plainFilenamesIn(".gitlet/")) {  //untracked files that are not modified??
-            if (fileName.equals("savedgit.ser")) {
-                continue;
-            }
+        if (Utils.plainFilenamesIn(currDir) != null) {
+            for (String fileName : Utils.plainFilenamesIn(currDir)) {  //untracked files that are not modified??
+                if (fileName.equals("savedgit.ser")) {
+                    continue;
+                }
                 if (!SHAtoCommit.get(SHAhead).Files.contains(fileName) && !stage.contains(fileName)) {
-                System.out.println("There is an untracked file in the way; delete it or add it first.");
+                    System.out.println("There is an untracked file in the way; delete it or add it first.");
                     System.exit(0);
+                }
             }
         }
 

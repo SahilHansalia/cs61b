@@ -11,55 +11,34 @@ D COMMIT_LOG "(===[ ]*\ncommit [a-f0-9]+[ ]*\n(?:Merge:\s+[0-9a-f]{7}\s+[0-9a-f]
 D ARBLINE "[^\n]*(?=\n|\Z)"
 # Zero or more arbitrary full lines of text.
 D ARBLINES "(?:(?:.|\n)*(?:\n|\Z)|\A|\Z)"
+> branch other
+<<<
 + f.txt wug.txt
 + g.txt notwug.txt
 > add g.txt
 <<<
 > add f.txt
 <<<
-> commit "Two files"
+> commit "Main two files"
 <<<
-> rm f.txt
+E f.txt
+E g.txt
+> checkout other
 <<<
-> commit "Remove one file"
-<<<
+* f.txt
+* g.txt
 + f.txt notwug.txt
 > add f.txt
 <<<
-> commit "Two files"
+> commit "Alternative file"
 <<<
-> log
-===
-${COMMIT_HEAD}
-Two files
-
-===
-${COMMIT_HEAD}
-Remove one file
-
-===
-${COMMIT_HEAD}
-Two files
-
-===
-${COMMIT_HEAD}
-initial commit
-
-<<<*
-# UID of initial version
-D UID1 "${4}"
-# UID of second version
-D UID2 "${3}"
-# UID of third version
-D UID3 "${2}"
-# UID of current version
-D UID4 "${1}"
-> find "Two files"
-(${UID4}\n${UID2}|${UID2}\n${UID4})
-<<<*
-> find "initial commit"
-${UID1}
+= f.txt notwug.txt
+* g.txt
+> checkout master
 <<<
-> find "Remove one file"
-${UID3}
+= f.txt wug.txt
+= g.txt notwug.txt
+> checkout other
 <<<
+= f.txt notwug.txt
+* g.txt

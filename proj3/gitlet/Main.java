@@ -132,10 +132,18 @@ public class Main {
                         break;
                     }
                     if (len == 3) {
+                        if (!args[1].equals("--")) {
+                            System.out.println("Incorrect operands.");
+                            return;
+                        }
                         gitlit.checkout1(args[2]);
                         break;
                     }
                     if (len == 4) {
+                        if (!args[2].equals("--")) {
+                            System.out.println("Incorrect operands.");
+                            return;
+                        }
                         gitlit.checkout3(args[1], args[3]);
                         break;
                     } else {
