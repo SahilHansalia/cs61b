@@ -1,11 +1,19 @@
 package gitlet;
 
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.*;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -21,9 +29,7 @@ public class Git implements Serializable {
     HashMap<String, String> IDtoMessage = new HashMap<>();
     HashMap<String, String> branchTocommitHeadSHA = new HashMap<>();
     HashSet<String> stage = new HashSet<>();
-    HashMap<String, String> stagetest = new HashMap<>();
     HashSet<String> branches = new HashSet<>();
-    HashSet<String> removedFiles = new HashSet<>();
     HashMap<String, Commit> SHAtoCommit = new HashMap<>();
     String SHAhead;
     File currDir = new File("").getAbsoluteFile();
@@ -70,8 +76,7 @@ public class Git implements Serializable {
     }
 
     public void init() {
-//        System.out.println("what about here");
-        File git = new File(".gitlet/"); //is it .gitlet/
+        File git = new File(".gitlet/");
         if (!git.exists()) {
             git.mkdir();
             Commit first = new Commit("initial commit", true, null, null, stage, deleteMarks);
@@ -102,12 +107,11 @@ public class Git implements Serializable {
             System.out.println("File does not exist.");
             System.exit(0);
         }
-
         if (deleteMarks.contains(fileName)) {
             deleteMarks.remove(fileName);
             return;
         }
-        if ((SHAtoCommit.get(SHAhead).Files.contains(fileName))){ //should be fixed
+        if ((SHAtoCommit.get(SHAhead).Files.contains(fileName))){
             File old = new File(".gitlet/" + SHAhead + "/" + fileName);
             File curr = new File(fileName);
             if (Utils.readContentsAsString(old).equals(Utils.readContentsAsString(curr))) {
@@ -228,7 +232,7 @@ public class Git implements Serializable {
                         break;
                     }
                 }
-                System.out.println("Merge:" + p1SHA.substring(0, 7) + p2SHA.substring(0, 7));  //first is branch you were on second is merged in branch
+                System.out.println("Merge:" + p1SHA.substring(0, 7) + p2SHA.substring(0, 7));
 
 
             } else if (branchTocommitSHA.get(headBranch).contains(p2SHA)) {
@@ -239,25 +243,16 @@ public class Git implements Serializable {
                         break;
                     }
                 }
-                System.out.println("Merge:" + p2SHA.substring(0, 7) + p1SHA.substring(0, 7));  //first is branch you were on second is merged in branch
+                System.out.println("Merge:" + p2SHA.substring(0, 7) + p1SHA.substring(0, 7));
             }
         }
-
         SimpleDateFormat formatter= new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z");
-//        formatter.format(c.date);
-//        System.out.println(formatter.format(c.date));
-//        formatter.setTimeZonge(TimeZone.getTimeZone("PST"));
-//        String b = formatter.format(c.date);
-        System.out.println("Date: " + formatter.format(c.date)); //do this shit later
+        System.out.println("Date: " + formatter.format(c.date));
         if (c.getParent2() != null) {
             System.out.println("Merged " + b1 + " into " + b2 + ".");
-
         }
         System.out.println(IDtoMessage.get(new SHAconverter(c).SHA));
-
-
     }
-
 
 
 
@@ -268,15 +263,6 @@ public class Git implements Serializable {
             System.out.println();
             curr = curr.getParent1();
         }
-
-
-        //start with head (most recent commmit) and work backwards to initial parent on single branch
-        //most recent on top
-        //print out (commit SHA, date, and message)
-        //use java.util.Date
-        //java.util.Formatter
-        //for merge commits (those that have 2 parents)- print first 7 digits of both parents commit IDs
-
     }
 
 
@@ -286,8 +272,6 @@ public class Git implements Serializable {
             commitPrinter(SHAtoCommit.get(SHA));
             System.out.println();
         }
-        //log of all commits but order does not mattere
-
     }
 
 
@@ -299,12 +283,6 @@ public class Git implements Serializable {
         for (String S: messagetoID.get(message)) {
             System.out.println(S);
         }
-
-
-        //prints out ID's of ALL commits with given message
-
-
-
     }
 
     public void status() {
@@ -336,7 +314,7 @@ public class Git implements Serializable {
         System.out.println("=== Modifications Not Staged For Commit ===");
         if (Utils.plainFilenamesIn(currDir) != null) {
             for (String fileName : Utils.plainFilenamesIn(currDir)) {
-                if (SHAtoCommit.get(SHAhead).Files.contains(fileName)) {
+                if (SHAtoCommit.get(SHAhead).Files.contains(fileName) && SHAtoCommit.get(SHAhead).Files.size() == 1) {
                     System.out.println(fileName + " (modified");
                     modsNotStaged.add(fileName);
                 }
@@ -344,11 +322,11 @@ public class Git implements Serializable {
         }
         if (SHAtoCommit.get(SHAhead).Files != null) {
             for (String fileName : SHAtoCommit.get(SHAhead).Files) {
-                if (Utils.plainFilenamesIn(currDir) == null) {
+                if (Utils.plainFilenamesIn(currDir) == null && SHAtoCommit.get(SHAhead).Files.size() == 1) {
                     System.out.println(fileName + " (deleted)");
                 }
                 else {
-                    if (!Utils.plainFilenamesIn(currDir).contains(fileName)) {
+                    if (!Utils.plainFilenamesIn(currDir).contains(fileName) && SHAtoCommit.get(SHAhead).Files.size() == 1) {
                         System.out.println(fileName + " (deleted)");
                     }
                 }
@@ -363,10 +341,6 @@ public class Git implements Serializable {
                     System.out.println(fileName);
                 }
             }
-
-
-            //modifications not staged for commmit (need to keep track of changed files? (EXTRA CREDIT)
-            //untracked = in directory but not staged or tracked (EXTRA CREDIT)
         }
     }
 
@@ -377,27 +351,17 @@ public class Git implements Serializable {
         if (!SHAtoCommit.get(SHAhead).Files.contains(fileName)) {
             System.out.println("File does not exist in that commit.");
             return;
-        }
-        else { //figure out how to read and write contents?
+        } else {
             try {
                 Files.copy(Paths.get(".gitlet/" + SHAhead + "/" + fileName), Paths.get(fileName), REPLACE_EXISTING); //could read and write contents if desot work>
             } catch (IOException e) {
                 System.out.println("IOException when trying to checkout " + fileName + " from commit");
                 System.exit(0);
             }
-            }
-
-        //~15 lines
-        //takes file as it is in head commit and puts it in working directory, overwriting if already there
-        //new version not staged (remove if it is staged?)
-        //print failure if file doesnt exist
-
-
+        }
     }
 
     public void checkout2(String branchName) {
-//        File currDir = new File("").getAbsoluteFile();
-//        System.out.println(Utils.plainFilenamesIn(currDir).toString());
         if (!branches.contains(branchName)) {
             System.out.println("No such branch exists.");
             System.exit(0);
@@ -434,25 +398,15 @@ public class Git implements Serializable {
         }
         for (String fileName : c.Files) {
             try {
-                Files.copy(Paths.get(".gitlet/" + SHA + "/" + fileName), Paths.get(fileName), REPLACE_EXISTING); //could read and write contents if desot work> //.topath()?
+                Files.copy(Paths.get(".gitlet/" + SHA + "/" + fileName), Paths.get(fileName), REPLACE_EXISTING);
             } catch (IOException e) {
                 System.out.println("IOException when trying to checkout " + fileName + " from commit");
                 System.exit(0);
             }
         }
-
-
         headBranch = branchName;
         SHAhead = branchTocommitHeadSHA.get(branchName);
         stage.clear();
-
-
-        //failure if: branch is current branch,
-        //takes all files in head of branch and puts in working directory
-        //given branch now considered head branch
-        //Any files that are tracked in the current branch but are not present in the checked-out branch are deleted
-        //stage is cleared
-
     }
 
 
@@ -476,16 +430,9 @@ public class Git implements Serializable {
         }
 
         try {
-            Files.copy(Paths.get(".gitlet/" + SHAKey + "/" + fileName), Paths.get(fileName), REPLACE_EXISTING); //could read and write contents if desot work>
+            Files.copy(Paths.get(".gitlet/" + SHAKey + "/" + fileName), Paths.get(fileName), REPLACE_EXISTING);
         } catch (IOException e) {
             return;
-
-
-            //takes file from given commit and places it in working directory.
-            //failure if 1) file doesnt exist in commit 2) commit doesnt exist
-            //ID is first 6 digits of hash
-
-
         }
     }
 
@@ -497,13 +444,6 @@ public class Git implements Serializable {
         }
         branches.add(branchName);
         branchTocommitHeadSHA.put(branchName, SHAhead);
-
-
-        //10 lines?
-        //new branch pointing to current head node
-        //branchName is name for refrence to SHA code for commit node it points to.
-        //if branchNme already exists error
-
     }
 
     public void rmBranch(String branchName) {
@@ -517,15 +457,6 @@ public class Git implements Serializable {
         }
         branches.remove(branchName);
         branchTocommitHeadSHA.remove(branchName);
-
-
-
-        //15 lines appx
-        //removes pointer to branch with branchName
-        //does NOT delete commit nodes
-        //fails if branchName DNE or branchName is current branch
-
-
     }
 
 
@@ -543,7 +474,7 @@ public class Git implements Serializable {
             System.exit(0);
         }
         if (Utils.plainFilenamesIn(currDir) != null) {
-            for (String fileName : Utils.plainFilenamesIn(currDir)) {  //untracked files that are not modified??
+            for (String fileName : Utils.plainFilenamesIn(currDir)) {
                 if (fileName.equals("savedgit.ser")) {
                     continue;
                 }
@@ -556,17 +487,6 @@ public class Git implements Serializable {
 
         branchTocommitHeadSHA.put(headBranch, SHAKey);
         SHAhead = SHAKey;
-
-
-
-
-
-        //~10 lines
-        //checks out all files in a given commit
-        //removes tracked files not in that commit
-        //moves current branch's head to that commit node
-        //clears staging
-
     }
 
 

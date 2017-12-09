@@ -2,9 +2,7 @@ package gitlet;
 
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 
 /** class representing commits which can be thought of as
@@ -12,32 +10,25 @@ import java.util.HashSet;
  *  @author sahil
  */
 public class Commit implements Serializable {
-    //what files it contains
 
     String name;
     Date date;
     String dateStr;
     Commit parent;
     Commit parent2;
-    HashMap<String, String> fileNameToContents = new HashMap<>(); //need to know how to store files in a commit.
-    String id;
     HashSet<String> Files = new HashSet<>();
     HashSet<String> FilesfromStage = new HashSet<>();
 
 
-    Commit(String message, boolean first, Commit Parent, Commit Parent2, HashSet<String> Stage, HashSet<String> deleteMarks) {  //are the files in a commit = parents files + stage?
+    Commit(String message, boolean first, Commit Parent, Commit Parent2, HashSet<String> Stage, HashSet<String> deleteMarks) {
         this.name = message;
         FilesfromStage.addAll(Stage);
-        SimpleDateFormat formatter;
         if (first) {
-//            formatter = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss z", );
             date = new Date(0);
             dateStr = date.toString();
-//            .format(new Date(0), "yyyy-MM-dd HH:mm:SS"); //is this all you need?
         } else {
             date = new Date();
             dateStr = date.toString();
-//            .format(new Date(), "yyyy-MM-dd HH:mm:SS");
         }
         if (Parent != null) {
             if (!Parent.Files.isEmpty()) {
@@ -55,9 +46,6 @@ public class Commit implements Serializable {
                     }
                 }
             }
-
-            //deal with second parent files
-
         }
         for (String fileName : deleteMarks) {
             Files.remove(fileName);
@@ -66,7 +54,6 @@ public class Commit implements Serializable {
 
         parent = Parent;
         parent2 = Parent2;
-
 
     }
 
