@@ -79,8 +79,9 @@ public class Git implements Serializable {
         File git = new File(".gitlet/");
         if (!git.exists()) {
             git.mkdir();
-            Commit first = new Commit("initial commit", true, null, null, stage, deleteMarks);
-            String sha = new SHAconverter(first).SHA;
+            Commit first = new Commit("initial commit", true,
+                    null, null, stage, deleteMarks);
+            String sha = SHAconverter.converter(first);
             HashSet<String> toAdd = new HashSet<>();
             toAdd.add(sha);
             branches.add("master");
@@ -96,7 +97,8 @@ public class Git implements Serializable {
             saveCommit(first, sha);
 
         } else {
-            System.out.println("A Gitlet version-control system already exists in the current directory.");
+            System.out.println("A Gitlet version-control " +
+                    "system already exists in the current directory.");
         }
     }
 
@@ -111,7 +113,7 @@ public class Git implements Serializable {
             deleteMarks.remove(fileName);
             return;
         }
-        if ((SHAtoCommit.get(SHAhead).Files.contains(fileName))){
+        if ((SHAtoCommit.get(SHAhead).getFiles().contains(fileName))){
             File old = new File(".gitlet/" + SHAhead + "/" + fileName);
             File curr = new File(fileName);
             if (Utils.readContentsAsString(old).equals(Utils.readContentsAsString(curr))) {
@@ -122,11 +124,6 @@ public class Git implements Serializable {
             }
         }
         stage.add(fileName);
-            //SO FAR 4 ways:
-            //1) map file name to sha as you stage and add that map to commit object- easiest if works
-            //2) map fileName to string contents using Utils and add that map to commit- might take up lots of memory but should work
-            //3) when you commit create new .gitlet/<commitSHA> directory and save files there
-            //4) im retarded and dont understand whats going on...
     }
 
 
@@ -135,12 +132,12 @@ public class Git implements Serializable {
         File toAdd = new File(".gitlet/" + SHA + "/");
         toAdd.mkdir();
         String fromDir = "";
-        for (String fileName : c.Files) {
-            if (c.FilesfromStage.contains(fileName)) {
+        for (String fileName : c.getFiles()) {
+            if (c.getFilesFromStage().contains(fileName)) {
                 fromDir = fileName;
             }
             else {
-                String parentSHA = new SHAconverter(c).SHA;
+                String parentSHA = SHAconverter.converter(c);
                 fromDir = ".gitlet/" + parentSHA + "/" + fileName;
             }
             File from = new File(fromDir);
@@ -166,8 +163,9 @@ public class Git implements Serializable {
             System.out.println("No changes added to the commit.");
             System.exit(0);
         }
-        Commit toAdd = new Commit(message, false, SHAtoCommit.get(SHAhead), null, stage, deleteMarks);
-        String SHA = new SHAconverter(toAdd).SHA;
+        Commit toAdd = new Commit(message, false, SHAtoCommit.get(SHAhead),
+                null, stage, deleteMarks);
+        String SHA = SHAconverter.converter(toAdd);
         branchTocommitHeadSHA.put(headBranch, SHA);
         if (branchTocommitSHA.containsKey(headBranch)) {
             branchTocommitSHA.get(headBranch).add(SHA);
@@ -202,13 +200,13 @@ public class Git implements Serializable {
             stage.remove(fileName);
             return;
         }
-        if (SHAtoCommit.get(SHAhead).Files.contains(fileName)) {
+        if (SHAtoCommit.get(SHAhead).getFiles().contains(fileName)) {
             deleteMarks.add(fileName);
             Utils.restrictedDelete(fileName);
             return;
 
         }
-        else if (!stage.contains(fileName) && !SHAtoCommit.get(SHAhead).Files.contains(fileName)) {
+        else if (!stage.contains(fileName) && !SHAtoCommit.get(SHAhead).getFiles().contains(fileName)) {
             System.out.println("No reason to remove the file.");
             System.exit(0);
         }
@@ -218,10 +216,10 @@ public class Git implements Serializable {
         String b1 = "";
         String b2 = "";
         System.out.println("===");
-        System.out.println("commit " + new SHAconverter(c).SHA);
-        if (c.parent2 != null) {
-            String p1SHA = new SHAconverter(c.parent).SHA;
-            String p2SHA = new SHAconverter(c.parent2).SHA;
+        System.out.println("commit " + SHAconverter.converter(c));
+        if (c.getParent2() != null) {
+            String p1SHA = SHAconverter.converter(c.getParent1());
+            String p2SHA = SHAconverter.converter(c.getParent2());
 
 
             if (branchTocommitSHA.get(headBranch).contains(p1SHA)) {
@@ -246,12 +244,12 @@ public class Git implements Serializable {
                 System.out.println("Merge:" + p2SHA.substring(0, 7) + p1SHA.substring(0, 7));
             }
         }
-        SimpleDateFormat formatter= new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z");
-        System.out.println("Date: " + formatter.format(c.date));
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z");
+        System.out.println("Date: " + formatter.format(c.getDate()));
         if (c.getParent2() != null) {
             System.out.println("Merged " + b1 + " into " + b2 + ".");
         }
-        System.out.println(IDtoMessage.get(new SHAconverter(c).SHA));
+        System.out.println(IDtoMessage.get(SHAconverter.converter(c)));
     }
 
 
@@ -314,19 +312,22 @@ public class Git implements Serializable {
         System.out.println("=== Modifications Not Staged For Commit ===");
         if (Utils.plainFilenamesIn(currDir) != null) {
             for (String fileName : Utils.plainFilenamesIn(currDir)) {
-                if (SHAtoCommit.get(SHAhead).Files.contains(fileName) && SHAtoCommit.get(SHAhead).Files.size() == 1) {
+                if (SHAtoCommit.get(SHAhead).getFiles().contains(fileName) &&
+                        SHAtoCommit.get(SHAhead).getFiles().size() == 1 && SHAtoCommit.get(SHAhead).getParent1().getName().equals("initial commit")) {
                     System.out.println(fileName + " (modified");
                     modsNotStaged.add(fileName);
                 }
             }
         }
-        if (SHAtoCommit.get(SHAhead).Files != null) {
-            for (String fileName : SHAtoCommit.get(SHAhead).Files) {
-                if (Utils.plainFilenamesIn(currDir) == null && SHAtoCommit.get(SHAhead).Files.size() == 1) {
+        if (SHAtoCommit.get(SHAhead).getFiles() != null) {
+            for (String fileName : SHAtoCommit.get(SHAhead).getFiles()) {
+                if (Utils.plainFilenamesIn(currDir) == null &&
+                        SHAtoCommit.get(SHAhead).getFiles().size() == 1 && SHAtoCommit.get(SHAhead).getParent1().getName().equals("initial commit")) {
                     System.out.println(fileName + " (deleted)");
                 }
                 else {
-                    if (!Utils.plainFilenamesIn(currDir).contains(fileName) && SHAtoCommit.get(SHAhead).Files.size() == 1) {
+                    if (!Utils.plainFilenamesIn(currDir).contains(fileName) &&
+                            SHAtoCommit.get(SHAhead).getFiles().size() == 1) {
                         System.out.println(fileName + " (deleted)");
                     }
                 }
@@ -337,7 +338,8 @@ public class Git implements Serializable {
         System.out.println("=== Untracked Files ===");
         if (Utils.plainFilenamesIn(currDir) != null) {
             for (String fileName : Utils.plainFilenamesIn(currDir)) {
-                if (!stage.contains(fileName) && !SHAtoCommit.get(SHAhead).Files.contains(fileName)) {
+                if (!stage.contains(fileName) &&
+                        !SHAtoCommit.get(SHAhead).getFiles().contains(fileName)) {
                     System.out.println(fileName);
                 }
             }
@@ -348,14 +350,16 @@ public class Git implements Serializable {
 
 
     public void checkout1(String fileName) {
-        if (!SHAtoCommit.get(SHAhead).Files.contains(fileName)) {
+        if (!SHAtoCommit.get(SHAhead).getFiles().contains(fileName)) {
             System.out.println("File does not exist in that commit.");
             return;
         } else {
             try {
-                Files.copy(Paths.get(".gitlet/" + SHAhead + "/" + fileName), Paths.get(fileName), REPLACE_EXISTING); //could read and write contents if desot work>
+                Files.copy(Paths.get(".gitlet/" + SHAhead + "/" + fileName),
+                        Paths.get(fileName), REPLACE_EXISTING);
             } catch (IOException e) {
-                System.out.println("IOException when trying to checkout " + fileName + " from commit");
+                System.out.println("IOException when trying to checkout "
+                        + fileName + " from commit");
                 System.exit(0);
             }
         }
@@ -376,8 +380,10 @@ public class Git implements Serializable {
                 if (fileName.equals("savedgit.ser")) {
                     continue;
                 }
-                if (!SHAtoCommit.get(SHAhead).Files.contains(fileName) && !stage.contains(fileName)) {
-                    System.out.println("There is an untracked file in the way; delete it or add it first.");
+                if (!SHAtoCommit.get(SHAhead).getFiles().contains(fileName)
+                        && !stage.contains(fileName)) {
+                    System.out.println("There is an untracked file in the way; " +
+                            "delete it or add it first.");
                     System.exit(0);
                 }
             }
@@ -391,16 +397,18 @@ public class Git implements Serializable {
                 if (fileName.equals("savedgit.ser")) {
                     continue;
                 }
-                if (!c.Files.contains(fileName)) {
+                if (!c.getFiles().contains(fileName)) {
                     Utils.restrictedDelete(fileName);
                 }
             }
         }
-        for (String fileName : c.Files) {
+        for (String fileName : c.getFiles()) {
             try {
-                Files.copy(Paths.get(".gitlet/" + SHA + "/" + fileName), Paths.get(fileName), REPLACE_EXISTING);
+                Files.copy(Paths.get(".gitlet/" + SHA + "/" + fileName),
+                        Paths.get(fileName), REPLACE_EXISTING);
             } catch (IOException e) {
-                System.out.println("IOException when trying to checkout " + fileName + " from commit");
+                System.out.println("IOException when trying to checkout "
+                        + fileName + " from commit");
                 System.exit(0);
             }
         }
@@ -424,13 +432,14 @@ public class Git implements Serializable {
             System.exit(0);
         }
         Commit c = SHAtoCommit.get(SHAKey);
-        if (!c.Files.contains(fileName)) {
+        if (!c.getFiles().contains(fileName)) {
             System.out.println("File does not exist in that commit.");
             return;
         }
 
         try {
-            Files.copy(Paths.get(".gitlet/" + SHAKey + "/" + fileName), Paths.get(fileName), REPLACE_EXISTING);
+            Files.copy(Paths.get(".gitlet/" + SHAKey + "/" + fileName),
+                    Paths.get(fileName), REPLACE_EXISTING);
         } catch (IOException e) {
             return;
         }
@@ -478,8 +487,10 @@ public class Git implements Serializable {
                 if (fileName.equals("savedgit.ser")) {
                     continue;
                 }
-                if (!SHAtoCommit.get(SHAhead).Files.contains(fileName) && !stage.contains(fileName)) {
-                    System.out.println("There is an untracked file in the way; delete it or add it first.");
+                if (!SHAtoCommit.get(SHAhead).getFiles().contains(fileName) &&
+                        !stage.contains(fileName)) {
+                    System.out.println("There is an untracked file in the way; " +
+                            "delete it or add it first.");
                     System.exit(0);
                 }
             }

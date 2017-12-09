@@ -1,21 +1,24 @@
 package gitlet;
 
 
-/** class to convert Commit object to SHA hash.
+/** class to convert Commit object to sha hash.
  *  @author sahil
  */
 public class SHAconverter {
 
-    String SHA;
-
-    SHAconverter(Commit a) {
+    /** method to convert Commit object to sha hash.
+     * @return sha
+     * @param a is commit*/
+    static String converter(Commit a) {
+        String sha = "";
         String offset = "";
         String offset2 = "";
-        if (a.parent != null) {
-            offset = a.parent.dateStr;
-            offset2 = a.parent.name;
+        if (a.getParent1() != null) {
+            offset = a.getParent1().getDateStr();
+            offset2 = a.getParent1().getName();
         }
-        SHA = Utils.sha1(a.dateStr + a.name + offset + offset2);
+        sha = Utils.sha1(a.getDateStr() + a.getName() + offset + offset2);
+        return sha;
     }
 
 }

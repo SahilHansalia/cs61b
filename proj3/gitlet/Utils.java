@@ -10,7 +10,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -24,16 +23,16 @@ import java.util.List;
  */
 class Utils {
 
-    /* SHA-1 HASH VALUES. */
+    /* sha-1 HASH VALUES. */
 
-    /** The length of a complete SHA-1 UID as a hexadecimal numeral. */
+    /** The length of a complete sha-1 UID as a hexadecimal numeral. */
     static final int UID_LENGTH = 40;
 
-    /** Returns the SHA-1 hash of the concatenation of VALS, which may
+    /** Returns the sha-1 hash of the concatenation of VALS, which may
      *  be any mixture of byte arrays and Strings. */
     static String sha1(Object... vals) {
         try {
-            MessageDigest md = MessageDigest.getInstance("SHA-1");
+            MessageDigest md = MessageDigest.getInstance("sha-1");
             for (Object val : vals) {
                 if (val instanceof byte[]) {
                     md.update((byte[]) val);
@@ -49,11 +48,11 @@ class Utils {
             }
             return result.toString();
         } catch (NoSuchAlgorithmException excp) {
-            throw new IllegalArgumentException("System does not support SHA-1");
+            throw new IllegalArgumentException("System does not support sha-1");
         }
     }
 
-    /** Returns the SHA-1 hash of the concatenation of the strings in
+    /** Returns the sha-1 hash of the concatenation of the strings in
      *  VALS. */
     static String sha1(List<Object> vals) {
         return sha1(vals.toArray(new Object[vals.size()]));
@@ -185,20 +184,6 @@ class Utils {
     }
 
     /* OTHER FILE UTILITIES */
-
-//    /** Return the concatentation of FIRST and OTHERS into a File designator,
-//     *  analogous to the {@link java.nio.file.Paths.#get(String, String[])}
-//     *  method. */
-//    static File join(String first, String... others) {
-//        return Paths.get(first, others).toFile();
-//    }
-//
-//    /** Return the concatentation of FIRST and OTHERS into a File designator,
-//     *  analogous to the {@link java.nio.file.Paths.#get(String, String[])}
-//     *  method. */
-//    static File join(File first, String... others) {
-//        return Paths.get(first.getPath(), others).toFile();
-//    }
 
 
     /* SERIALIZATION UTILITIES */

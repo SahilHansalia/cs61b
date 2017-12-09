@@ -11,18 +11,20 @@ import java.util.HashSet;
  */
 public class Commit implements Serializable {
 
-    String name;
-    Date date;
-    String dateStr;
-    Commit parent;
-    Commit parent2;
-    HashSet<String> Files = new HashSet<>();
-    HashSet<String> FilesfromStage = new HashSet<>();
+    private String name;
+    private Date date;
+    private String dateStr;
+    private Commit parent;
+    private Commit parent2;
+    private HashSet<String> files = new HashSet<>();
+    private HashSet<String> filesFromStage = new HashSet<>();
 
 
-    Commit(String message, boolean first, Commit Parent, Commit Parent2, HashSet<String> Stage, HashSet<String> deleteMarks) {
+    Commit(String message, boolean first, Commit parentOne, Commit parentTwo, HashSet<String> Stage, HashSet<String> deleteMarks) {
+        parent = parentOne;
+        parent2 = parentTwo;
         this.name = message;
-        FilesfromStage.addAll(Stage);
+        filesFromStage.addAll(Stage);
         if (first) {
             date = new Date(0);
             dateStr = date.toString();
@@ -30,30 +32,27 @@ public class Commit implements Serializable {
             date = new Date();
             dateStr = date.toString();
         }
-        if (Parent != null) {
-            if (!Parent.Files.isEmpty()) {
-                Files.addAll(Parent.Files);
+        if (parent != null) {
+            if (!parent.files.isEmpty()) {
+                files.addAll(parent.files);
             }
         }
         if (!Stage.isEmpty()) {
-            Files.addAll(Stage);
+            files.addAll(Stage);
         }
-        if (Parent != null) {
-            if (Parent.Files != null) {
-                for (String fileName : Parent.Files) {
-                    if (!Files.contains(fileName)) {
-                        Files.add(fileName);
+        if (parent != null) {
+            if (parent.files != null) {
+                for (String fileName : parent.files) {
+                    if (!files.contains(fileName)) {
+                        files.add(fileName);
                     }
                 }
             }
         }
         for (String fileName : deleteMarks) {
-            Files.remove(fileName);
+            files.remove(fileName);
         }
 
-
-        parent = Parent;
-        parent2 = Parent2;
 
     }
 
@@ -63,6 +62,25 @@ public class Commit implements Serializable {
     public Commit getParent2() {
         return parent2;
     }
+
+    public String getName() {
+        return name;
+    }
+    public Date getDate() {
+        return date;
+    }
+    public String getDateStr() {
+        return dateStr;
+    }
+    public HashSet<String> getFiles() {
+        return files;
+    }
+    public HashSet<String> getFilesFromStage() {
+        return filesFromStage;
+    }
+
+
+
 
 
 
