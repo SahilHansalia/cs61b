@@ -535,7 +535,60 @@ public class Git implements Serializable {
     /** Git merger.
      * @param branchName string */
     public void merge(String branchName) {
+        if (!stage.isEmpty() && !deleteMarks.isEmpty()) {
+            System.out.println("You have uncommitted changes.");
+            return;
+        }
+        if (!branches.contains(branchName)) {
+            System.out.println("A branch with that name does not exist.");
+            return;
+        }
+        if (branchName.equals(headBranch)) {
+            System.out.println("Cannot merge a branch with itself.");
+            return;
+        }
+        for (String fileName : Utils.plainFilenamesIn(currDir)) {
+            if (!shatoCommit.get(shaHead).getFiles().contains(fileName)) {
+                System.out.println("There is an untracked file in the way; delete it or add it first.");   //not sure if this works
+            }
+        }
 
+
+
+
+
+
+    }
+
+
+    /** Splitpoint helper.
+     * @param branchName string
+     * @return len of commit chain*/
+    public int branchLen(String branchName) {
+        Commit c = shatoCommit.get(branchTocommitHeadSHA.get(branchName));
+        int len = 0;
+        while (c != null) {
+            len = len + 1;
+            c = c.getParent1();
+        }
+        return len;
+    }
+
+    public String splitpointSHA(String branchName) {
+        String longer = "";
+        String shorter = "";
+        if (branchLen(branchName) > branchLen(headBranch)) {
+            longer = branchName;
+            shorter = headBranch;
+
+        }
+        else {
+            longer = headBranch;
+            shorter = branchName;
+        }
+        for (int i = 0; i < (branchLen(longer) - branchLen(shorter)); i++) {
+            
+        }
     }
 
 
