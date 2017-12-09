@@ -367,7 +367,7 @@ public class Git implements Serializable {
     }
 
     public void checkout2(String branchName) {
-        File currDir = new File("").getAbsoluteFile();
+//        File currDir = new File("").getAbsoluteFile();
 //        System.out.println(Utils.plainFilenamesIn(currDir).toString());
         if (!branches.contains(branchName)) {
             System.out.println("No such branch exists.");
@@ -379,29 +379,29 @@ public class Git implements Serializable {
         }
         if (Utils.plainFilenamesIn(currDir) != null) {
 
-        for (String fileName : Utils.plainFilenamesIn(currDir)) {
-            if (fileName.equals("savedgit.ser")) {
-                continue;
+            for (String fileName : Utils.plainFilenamesIn(currDir)) {
+                if (fileName.equals("savedgit.ser")) {
+                    continue;
+                }
+                if (!SHAtoCommit.get(SHAhead).Files.contains(fileName) && !stage.contains(fileName)) {
+                    System.out.println("There is an untracked file in the way; delete it or add it first.");
+                    System.exit(0);
+                }
             }
-            if (!SHAtoCommit.get(SHAhead).Files.contains(fileName) && !stage.contains(fileName)) {
-                System.out.println("There is an untracked file in the way; delete it or add it first.");
-                System.exit(0);
-            }
-        }
         }
 
         String SHA = branchTocommitHeadSHA.get(branchName);
         Commit c = SHAtoCommit.get(SHA);
 
         if (Utils.plainFilenamesIn(currDir) != null) {
-        for (String fileName : Utils.plainFilenamesIn(currDir)) {
-            if (fileName.equals("savedgit.ser")) {
-                continue;
+            for (String fileName : Utils.plainFilenamesIn(currDir)) {
+                if (fileName.equals("savedgit.ser")) {
+                    continue;
+                }
+                if (!c.Files.contains(fileName)) {
+                    Utils.restrictedDelete(fileName);
+                }
             }
-            if (!c.Files.contains(fileName)) {
-                Utils.restrictedDelete(fileName);
-            }
-        }
         }
         for (String fileName : c.Files) {
             try {
@@ -478,7 +478,7 @@ public class Git implements Serializable {
     }
 
     public void rmBranch(String branchName) {
-        if (branches.contains(branchName)) {
+        if (!branches.contains(branchName)) {
             System.out.println("A branch with that name does not exists.");
             System.exit(0);
         }
