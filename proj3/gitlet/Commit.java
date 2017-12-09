@@ -25,7 +25,7 @@ public class Commit implements Serializable {
     HashSet<String> FilesfromStage = new HashSet<>();
 
 
-    Commit(String message, boolean first, Commit Parent, Commit Parent2, HashSet<String> Stage) {  //are the files in a commit = parents files + stage?
+    Commit(String message, boolean first, Commit Parent, Commit Parent2, HashSet<String> Stage, HashSet<String> deleteMarks) {  //are the files in a commit = parents files + stage?
         this.name = message;
         FilesfromStage.addAll(Stage);
         SimpleDateFormat formatter;
@@ -58,12 +58,15 @@ public class Commit implements Serializable {
 
             //deal with second parent files
 
+        }
+        for (String fileName : deleteMarks) {
+            Files.remove(fileName);
+        }
+
 
         parent = Parent;
         parent2 = Parent2;
 
-
-        }
 
     }
 

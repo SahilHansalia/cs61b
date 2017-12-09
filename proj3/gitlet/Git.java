@@ -87,7 +87,7 @@ public class Git implements Serializable {
         File git = new File(".gitlet/"); //is it .gitlet/
         if (!git.exists()) {
             git.mkdir();
-            Commit first = new Commit("initial commit", true, null, null, stage);
+            Commit first = new Commit("initial commit", true, null, null, stage, deleteMarks);
             String sha = new SHAconverter(first).SHA;
             HashSet<String> toAdd = new HashSet<>();
             toAdd.add(sha);
@@ -224,7 +224,7 @@ public class Git implements Serializable {
             System.out.println("No changes added to the commit.");
             System.exit(0);
         }
-        Commit toAdd = new Commit(message, false, SHAtoCommit.get(SHAhead), null, stage);
+        Commit toAdd = new Commit(message, false, SHAtoCommit.get(SHAhead), null, stage, deleteMarks);
         String SHA = new SHAconverter(toAdd).SHA;
         branchTocommitHeadSHA.put(headBranch, SHA);
         if (branchTocommitSHA.containsKey(headBranch)) {
@@ -590,7 +590,10 @@ public class Git implements Serializable {
         }
 
         for (String fileName : Utils.plainFilenamesIn(".gitlet/")) {  //untracked files that are not modified??
-                if (!SHAtoCommit.get(SHAhead).Files.contains(fileName)) {
+            if (fileName.equals("savedgit.ser")) {
+                continue;
+            }
+                if (!SHAtoCommit.get(SHAhead).Files.contains(fileName) && !stage.contains(fileName)) {
                 System.out.println("There is an untracked file in the way; delete it or add it first.");
                     System.exit(0);
             }

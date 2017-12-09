@@ -19,28 +19,47 @@ D ARBLINES "(?:(?:.|\n)*(?:\n|\Z)|\A|\Z)"
 <<<
 > commit "Two files"
 <<<
-# Kludge starts.
-D DATE1 "Date: \w\w\w \w\w\w \d+ \d\d:\d\d:\d\d \d\d\d\d"
-D COMMIT_LOG "(===[ ]*\ncommit [a-f0-9]+[ ]*\n(?:Merge:\s+[0-9a-f]{7}\s+[0-9a-f]{7}[ ]*\n)?${DATE1}) [-+](\d\d\d\d[ ]*\n(?:.|\n)*?(?=\Z|\n===))"
-+ h.txt wug.txt
-> add h.txt
+> rm f.txt
 <<<
-> commit "Add h"
+> commit "Remove one file"
+<<<
++ f.txt notwug.txt
+> add f.txt
+<<<
+> commit "Two files"
 <<<
 > log
-${COMMIT_LOG}
-${COMMIT_LOG}
-${COMMIT_LOG}
+===
+${COMMIT_HEAD}
+Two files
+
+===
+${COMMIT_HEAD}
+Remove one file
+
+===
+${COMMIT_HEAD}
+Two files
+
+===
+${COMMIT_HEAD}
+initial commit
+
 <<<*
-D L1 "${1} [-+]${2}"
-D L2 "${3} [-+]${4}"
-D L3 "${5} [-+]${6}"
-> global-log
-${ARBLINES}${L1}?${ARBLINES}
+# UID of initial version
+D UID1 "${4}"
+# UID of second version
+D UID2 "${3}"
+# UID of third version
+D UID3 "${2}"
+# UID of current version
+D UID4 "${1}"
+> find "Two files"
+(${UID4}\n${UID2}|${UID2}\n${UID4})
 <<<*
-> global-log
-${ARBLINES}${L2}?${ARBLINES}
-<<<*
-> global-log
-${ARBLINES}${L3}${ARBLINES}
-<<<*
+> find "initial commit"
+${UID1}
+<<<
+> find "Remove one file"
+${UID3}
+<<<
