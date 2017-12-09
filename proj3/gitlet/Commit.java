@@ -11,20 +11,36 @@ import java.util.HashSet;
  */
 public class Commit implements Serializable {
 
+
+    /** Commit String. */
     private String name;
+    /** Commit Date. */
     private Date date;
+    /** Commit datestring. */
     private String dateStr;
+    /** Commit parent1. */
     private Commit parent;
+    /** COmmit partne2. */
     private Commit parent2;
+    /** files. */
     private HashSet<String> files = new HashSet<>();
+    /** files from stage. */
     private HashSet<String> filesFromStage = new HashSet<>();
 
-
-    Commit(String message, boolean first, Commit parentOne, Commit parentTwo, HashSet<String> Stage, HashSet<String> deleteMarks) {
+    /** method to convert Commit object to sha hash.
+     * @param message is commit
+     * @param first is commit
+     * @param parentOne is commit
+     * @param parentTwo is commit
+     * @param stage is commit
+     * @param deleteMarks is commit
+     * */
+    Commit(String message, boolean first, Commit parentOne, Commit parentTwo,
+           HashSet<String> stage, HashSet<String> deleteMarks) {
         parent = parentOne;
         parent2 = parentTwo;
         this.name = message;
-        filesFromStage.addAll(Stage);
+        filesFromStage.addAll(stage);
         if (first) {
             date = new Date(0);
             dateStr = date.toString();
@@ -37,8 +53,8 @@ public class Commit implements Serializable {
                 files.addAll(parent.files);
             }
         }
-        if (!Stage.isEmpty()) {
-            files.addAll(Stage);
+        if (!stage.isEmpty()) {
+            files.addAll(stage);
         }
         if (parent != null) {
             if (parent.files != null) {
@@ -56,25 +72,39 @@ public class Commit implements Serializable {
 
     }
 
+
+    /** @return commit */
     public Commit getParent1() {
         return parent;
     }
+
+
+    /** @return commit */
     public Commit getParent2() {
         return parent2;
     }
 
+    /** @return String */
     public String getName() {
         return name;
     }
+
+    /**  @return date */
     public Date getDate() {
         return date;
     }
+
+    /** @return String */
     public String getDateStr() {
         return dateStr;
     }
+
+    /** @return hashset */
     public HashSet<String> getFiles() {
         return files;
     }
+
+    /** @return hashset */
     public HashSet<String> getFilesFromStage() {
         return filesFromStage;
     }
