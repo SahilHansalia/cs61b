@@ -52,8 +52,9 @@ Merged other into master\.
 
 ${ARBLINES}
 <<<*
+> status
 === Branches ===
-\*master
+*master
 
 === Staged Files ===
 
@@ -62,4 +63,7 @@ ${ARBLINES}
 === Modifications Not Staged For Commit ===
 
 === Untracked Files ===
+
+<<<
+
 

@@ -26,6 +26,8 @@ public class Commit implements Serializable {
     private HashSet<String> files = new HashSet<>();
     /** files from stage. */
     private HashSet<String> filesFromStage = new HashSet<>();
+    /** merged bool. */
+    private boolean merged;
 
     /** method to convert Commit object to sha hash.
      * @param message is commit
@@ -34,9 +36,11 @@ public class Commit implements Serializable {
      * @param parentTwo is commit
      * @param stage is commit
      * @param deleteMarks is commit
+     * @param merged2 is merged
      * */
     Commit(String message, boolean first, Commit parentOne, Commit parentTwo,
-           HashSet<String> stage, HashSet<String> deleteMarks) {
+           HashSet<String> stage, HashSet<String> deleteMarks, boolean merged2) {
+        merged = merged2;
         parent = parentOne;
         parent2 = parentTwo;
         this.name = message;
@@ -107,6 +111,11 @@ public class Commit implements Serializable {
     /** @return hashset */
     public HashSet<String> getFilesFromStage() {
         return filesFromStage;
+    }
+
+    /** @return merged bool */
+    public boolean getMerged() {
+        return merged;
     }
 
 

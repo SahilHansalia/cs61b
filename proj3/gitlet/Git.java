@@ -10,10 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -48,6 +45,10 @@ public class Git implements Serializable {
     private HashSet<String> deleteMarks = new HashSet<>();
     /** Git Hashset. */
     private HashSet<String> modsNotStaged = new HashSet<>();
+    /** Git bool. */
+    private boolean merged = false;
+    /** Git string. */
+    private String parent2 = "";
 
     /** Git constructor. */
     public Git() {
@@ -98,7 +99,7 @@ public class Git implements Serializable {
         if (!git.exists()) {
             git.mkdir();
             Commit first = new Commit("initial commit", true,
-                    null, null, stage, deleteMarks);
+                    null, null, stage, deleteMarks, false);
             String sha = SHAconverter.converter(first);
             HashSet<String> toAdd = new HashSet<>();
             toAdd.add(sha);
@@ -152,20 +153,27 @@ public class Git implements Serializable {
     private void saveCommit(Commit c, String sha) {
 
         File toAdd = new File(".gitlet/" + sha + "/");
-        toAdd.mkdir();
+        toAdd.mkdirs();
         String fromDir = "";
         for (String fileName : c.getFiles()) {
             if (c.getFilesFromStage().contains(fileName)) {
                 fromDir = fileName;
             } else {
-                String parentSHA = SHAconverter.converter(c);
+                String parentSHA = SHAconverter.converter(c.getParent1());
                 fromDir = ".gitlet/" + parentSHA + "/" + fileName;
             }
             File from = new File(fromDir);
             File to = new File(".gitlet/" + sha + "/" + fileName);
+//            to.mkdir();
             try {
                 Files.copy(from.toPath(), to.toPath(), REPLACE_EXISTING);
             } catch (IOException e) {
+                System.out.println("oops");
+//                System.out.println(from.toPath());
+//                System.out.println(to.toPath());
+//                System.out.println(c.getFiles().toString());
+//                System.out.println(Utils.plainFilenamesIn(currDir).toString());
+//                System.out.println("error here");
                 continue;
             }
         }
@@ -184,9 +192,19 @@ public class Git implements Serializable {
             System.out.println("No changes added to the commit.");
             System.exit(0);
         }
-        Commit toAdd = new Commit(message,
-                false, shatoCommit.get(shaHead),
-                null, stage, deleteMarks);
+        Commit toAdd;
+        if (merged) {
+            toAdd = new Commit(message,
+                    false, shatoCommit.get(shaHead),
+                    shatoCommit.get(branchTocommitHeadSHA.get(parent2)),
+                    stage, deleteMarks, true);
+        } else {
+            toAdd = new Commit(message,
+                    false, shatoCommit.get(shaHead),
+                    null, stage, deleteMarks, false);
+        }
+        parent2 = "";
+        merged = false;
         String sha = SHAconverter.converter(toAdd);
         branchTocommitHeadSHA.put(headBranch, sha);
         if (branchTocommitSHA.containsKey(headBranch)) {
@@ -252,8 +270,8 @@ public class Git implements Serializable {
                         break;
                     }
                 }
-                System.out.println("Merge:" + p1SHA.substring(0, 7)
-                        + p2SHA.substring(0, 7));
+                System.out.println("Merge: " + p1SHA.substring(0, 7)
+                        + " " + p2SHA.substring(0, 7));
 
 
             } else if (branchTocommitSHA.get(headBranch).contains(p2SHA)) {
@@ -265,14 +283,14 @@ public class Git implements Serializable {
                     }
                 }
                 System.out.println("Merge:" + p2SHA.substring(0, 7)
-                        + p1SHA.substring(0, 7));
+                        + " " + p1SHA.substring(0, 7));
             }
         }
         SimpleDateFormat formatter = new
                 SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z");
         System.out.println("Date: " + formatter.format(c.getDate()));
         if (c.getParent2() != null) {
-            System.out.println("Merged " + b1 + " into " + b2 + ".");
+//            System.out.println("Merged " + b1 + " into " + b2 + ".");
         }
         System.out.println(idtoMessage.get(SHAconverter.converter(c)));
     }
@@ -367,6 +385,7 @@ public class Git implements Serializable {
                     System.out.println(fileName);
                 }
             }
+
         }
     }
 
@@ -429,14 +448,38 @@ public class Git implements Serializable {
             }
         }
         for (String fileName : c.getFiles()) {
-            try {
-                Files.copy(Paths.get(".gitlet/" + sha + "/" + fileName),
-                        Paths.get(fileName), REPLACE_EXISTING);
-            } catch (IOException e) {
-                System.out.println("IOException when trying to checkout "
-                        + fileName + " from commit");
-                System.exit(0);
+//            File f = new File(fileName);
+//            if (f.exists()) {
+////                System.out.println("exists");
+//            }
+            File to = new File(fileName);
+            if (!to.exists()) {
+                try {to.createNewFile(); }
+                catch (IOException e) {
+                    System.out.println("fml");
+                }
             }
+            File from = new File(".gitlet/" + sha + "/" + fileName);
+            try {
+                Files.copy(from.toPath(), to.toPath(), REPLACE_EXISTING);
+//                System.out.println("completes once");
+            } catch (IOException e) {
+//                System.out.println(c.getFiles().toString());
+//                System.out.println(Utils.plainFilenamesIn(currDir).toString());
+//                System.out.println("IOException when trying to checkout "
+//                        + fileName + " from commit");
+                continue;
+            }
+//            try {
+//                Files.copy(Paths.get(".gitlet/" + sha + "/" + fileName),
+//                        Paths.get(fileName), REPLACE_EXISTING);
+//            } catch (IOException e) {
+//                System.out.println(c.getFiles().toString());
+//                System.out.println(Utils.plainFilenamesIn(currDir).toString());
+//                System.out.println("IOException when trying to checkout "
+//                        + fileName + " from commit");
+//                System.exit(0);
+//            }
         }
         headBranch = branchName;
         shaHead = branchTocommitHeadSHA.get(branchName);
@@ -466,7 +509,7 @@ public class Git implements Serializable {
         }
 
         try {
-            Files.copy(Paths.get(".gitlet/" + shaKey + "/" + fileName),
+            Files.copy(Paths.get(".gitlet/" + shaKey + "/" + fileName), //what if file was removed?
                     Paths.get(fileName), REPLACE_EXISTING);
         } catch (IOException e) {
             return;
@@ -549,15 +592,101 @@ public class Git implements Serializable {
         }
         for (String fileName : Utils.plainFilenamesIn(currDir)) {
             if (!shatoCommit.get(shaHead).getFiles().contains(fileName)) {
-                System.out.println("There is an untracked file in the way; delete it or add it first.");   //not sure if this works
+                System.out.println("There is an untracked file in the way; delete it or add it first.");   //not sure if this works- consider stage too?
+                return;
+            }
+        }
+        String splitSHA = splitpointSHA(branchName);
+
+        if (splitSHA.equals(branchTocommitHeadSHA.get(branchName))) {
+            System.out.println("Given branch is an ancestor of the current branch.");
+            return;
+        }
+        if (splitSHA.equals(shaHead)) {
+            branchTocommitHeadSHA.put(headBranch, branchTocommitHeadSHA.get(branchName));
+            System.out.println("Current branch fast-forwarded.");
+            return;
+        }
+        String mergeBranchSHA = branchTocommitHeadSHA.get(branchName);
+        HashSet<String> filesInSplit = shatoCommit.get(splitSHA).getFiles();
+        HashSet<String> filesInCurr = shatoCommit.get(shaHead).getFiles();
+        HashSet<String> filesInGiven = shatoCommit.get(mergeBranchSHA).getFiles();
+        HashSet<String> inEither = new HashSet<>();
+        inEither.addAll(filesInCurr);
+        inEither.addAll(filesInGiven);
+        inEither.addAll(filesInSplit);
+        List<String> filesInDir = Utils.plainFilenamesIn(currDir);
+        String mergedmessage = ("Merged " + branchName + " into " + headBranch + ".");
+        merged = true;
+        parent2 = branchName;
+
+//        System.out.println(inEither.toString());
+//        System.out.println(filesInCurr.toString());
+//        System.out.println(filesInSplit.toString());
+
+        for (String fileName : inEither) {
+
+            if (!filesInSplit.contains(fileName)) {
+                if (filesInCurr.contains(fileName) && !filesInGiven.contains(fileName)) {
+//                    System.out.println(fileName);
+                    continue;
+                }
+                if (filesInGiven.contains(fileName) && !filesInCurr.contains(fileName)) {
+//                    System.out.println(fileName);
+                    checkout3(mergeBranchSHA, fileName);
+                    stage.add(fileName); //use ADD if deletemarks issues
+                    continue;
+                }
+                if (!fileComparer(shaHead, mergeBranchSHA, fileName)) {
+                    //merge conflict
+                }
+            }
+            else {
+                if (fileComparer(mergeBranchSHA, shaHead, fileName) | (!filesInCurr.contains(fileName) && !filesInGiven.contains(fileName))) {
+//                    System.out.println(fileName);
+                    continue;
+                }
+//                System.out.println(fileComparer(splitSHA, shaHead, fileName) + fileName);
+//                System.out.println(!filesInGiven.contains(fileName) + fileName);
+
+                if (fileComparer(splitSHA, shaHead, fileName) && !filesInGiven.contains(fileName)) {
+//                    System.out.println(fileName);
+                    remove(fileName);
+                    continue;
+                }
+                if (fileComparer(splitSHA, mergeBranchSHA, fileName) && !filesInCurr.contains(fileName)) {
+                    continue;
+                }
+                if (!fileComparer(mergeBranchSHA, splitSHA, fileName) && fileComparer(shaHead, splitSHA, fileName)) {
+                    checkout3(mergeBranchSHA, fileName);
+                    stage.add(fileName);  //manual stage ok?
+                    continue;
+                }
+
             }
         }
 
+        commit(mergedmessage);
 
 
 
 
+    }
 
+
+    boolean fileComparer(String sha1, String sha2, String fileName) {
+        if(!shatoCommit.get(sha1).getFiles().contains(fileName) | !shatoCommit.get(sha2).getFiles().contains(fileName)) {
+            return false;
+        }
+        try {
+        File one = new File(".gitlet/" + sha1 + "/" + fileName);
+        File two = new File(".gitlet/" + sha2 + "/" + fileName);
+//            System.out.println(Utils.plainFilenamesIn(".gitlet/" + sha1 + "/"));
+//            System.out.println(Utils.plainFilenamesIn(".gitlet/" + sha2 + "/"));
+        return Utils.readContentsAsString(one).equals(Utils.readContentsAsString(two)); }
+        catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
 
@@ -586,9 +715,26 @@ public class Git implements Serializable {
             longer = headBranch;
             shorter = branchName;
         }
+//        System.out.println(branchLen(longer));
+//        System.out.println(branchLen(shorter));
+        Commit cLong = shatoCommit.get(branchTocommitHeadSHA.get(longer));
         for (int i = 0; i < (branchLen(longer) - branchLen(shorter)); i++) {
-            
+            cLong = cLong.getParent1();
         }
+        Commit cShort = shatoCommit.get(branchTocommitHeadSHA.get(shorter));
+
+        while (!SHAconverter.converter(cLong).equals(SHAconverter.converter(cShort))) {
+//            System.out.println(SHAconverter.converter(cLong));
+//            System.out.println(SHAconverter.converter(cShort));
+//            System.out.println(cLong.getFiles());
+            cLong = cLong.getParent1();
+//            System.out.println(cLong.getFiles());
+//            System.out.println(cShort.getFiles());
+            cShort = cShort.getParent1();
+
+        }
+//        System.out.println(cLong.getFiles());
+        return SHAconverter.converter(cLong);
     }
 
 
