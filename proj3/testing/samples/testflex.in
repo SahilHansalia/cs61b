@@ -26,45 +26,33 @@ D ARBLINES "(?:(?:.|\n)*(?:\n|\Z)|\A|\Z)"
 <<<
 > rm g.txt
 <<<
-+ f.txt wug2.txt
-> add f.txt
-<<<
-> commit "Add h.txt, remove g.txt, and change f.txt"
+> commit "Add h.txt and remove g.txt"
 <<<
 > checkout other
 <<<
-+ f.txt notwug.txt
-> add f.txt
+> merge other
+Cannot merge a branch with itself.
+<<<
+> rm f.txt
 <<<
 + k.txt wug3.txt
 > add k.txt
 <<<
-> commit "Add k.txt and modify f.txt"
+> commit "Add k.txt and remove f.txt"
 <<<
 > checkout master
 <<<
-> log
-===
-${COMMIT_HEAD}
-${ARBLINES}
-<<<*
-D MASTER_HEAD "${1}"
-> merge other
-Encountered a merge conflict.
+> merge foobar
+A branch with that name does not exist.
 <<<
-* g.txt
-= h.txt wug2.txt
-= k.txt wug3.txt
-= f.txt conflict1.txt
-> log
-${COMMIT_LOG}
-===
-commit ${MASTER_HEAD}
-${ARBLINES}
-<<<*
++ k.txt wug.txt
+> merge other
+There is an untracked file in the way; delete it or add it first.
+<<<
+- k.txt
 > status
 === Branches ===
-\*master
+*master
 other
 
 === Staged Files ===
@@ -75,4 +63,27 @@ other
 
 === Untracked Files ===
 
-<<<*
+<<<
++ k.txt wug.txt
+> add k.txt
+<<<
+> merge other
+You have uncommitted changes.
+<<<
+> rm k.txt
+<<<
+- k.txt
+> status
+=== Branches ===
+*master
+other
+
+=== Staged Files ===
+
+=== Removed Files ===
+
+=== Modifications Not Staged For Commit ===
+
+=== Untracked Files ===
+
+<<<

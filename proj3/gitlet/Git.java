@@ -578,7 +578,7 @@ public class Git implements Serializable {
     /** Git merger.
      * @param branchName string */
     public void merge(String branchName) {
-        if (!stage.isEmpty() && !deleteMarks.isEmpty()) {
+        if (!stage.isEmpty() | !deleteMarks.isEmpty()) {
             System.out.println("You have uncommitted changes.");
             return;
         }
@@ -698,10 +698,22 @@ public class Git implements Serializable {
      * @param mergeHead string
      * @param fileName string*/
     private void conflictMerger(String currHead, String mergeHead, String fileName) {
-        File curr = new File(".gitlet/" + currHead + "/" + fileName);
-        File given = new File(".gitlet/" + mergeHead + "/" + fileName);
-        String currConents = Utils.readContentsAsString(curr);
-        String givenContents = Utils.readContentsAsString(given);
+        String currConents = "";
+        String givenContents = "";
+        if (shatoCommit.get(currHead).getFiles().contains(fileName)) {
+            File curr = new File(".gitlet/" + currHead + "/" + fileName);
+            currConents = Utils.readContentsAsString(curr);
+        }
+        if (shatoCommit.get(mergeHead).getFiles().contains(fileName)) {
+            File given = new File(".gitlet/" + mergeHead + "/" + fileName);
+            givenContents = Utils.readContentsAsString(given);
+        }
+//        System.out.println(currConents);
+//        System.out.println(givenContents);
+//        File curr = new File(".gitlet/" + currHead + "/" + fileName);
+//        File given = new File(".gitlet/" + mergeHead + "/" + fileName);
+//        String currConents = Utils.readContentsAsString(curr);
+//        String givenContents = Utils.readContentsAsString(given);
         String contents = ("<<<<<<< HEAD\n" + currConents + "=======\n" + givenContents + ">>>>>>>\n");
         File f = new File(fileName);
         Utils.writeContents(f, contents);
