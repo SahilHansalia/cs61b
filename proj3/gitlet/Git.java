@@ -378,14 +378,11 @@ public class Git implements Serializable {
         }
         System.out.println(); System.out.println("=== Untracked Files ===");
         if (Utils.plainFilenamesIn(currDir) != null) {
-            List<String> a = Utils.plainFilenamesIn(currDir);
-            Collections.shuffle(a);
-            for (String fileName : a) {
+            for (String fileName : Utils.plainFilenamesIn(currDir)) {
                 if (!stage.contains(fileName)
-                        && untracked(fileName)) {
+                        && !shatoCommit.get(shaHead).
+                        getFiles().contains(fileName)) {
                     System.out.println(fileName);
-//                    break;
-
                 }
             }
 
@@ -428,9 +425,9 @@ public class Git implements Serializable {
                 if (fileName.equals("savedgit.ser")) {
                     continue;
                 }
-                if (untracked(fileName)
-                        && !stage.contains(fileName) && shatoCommit.get(branchTocommitHeadSHA.get(branchName)).getFiles().contains(fileName)) {
-                    System.out.println("There is an untracked file in the way; " + fileName
+                if (!shatoCommit.get(shaHead).getFiles().contains(fileName)
+                        && !stage.contains(fileName)) {
+                    System.out.println("There is an untracked file in the way; "
                             + "delete it or add it first.");
                     System.exit(0);
                 }
@@ -548,8 +545,6 @@ public class Git implements Serializable {
     /** Git reseter.
      * @param commitID string */
     public void reset(String commitID) {
-
-
         int len = commitID.length();
         String shaKey = "";
         for (String S : shatoCommit.keySet()) {
@@ -567,7 +562,7 @@ public class Git implements Serializable {
                 if (fileName.equals("savedgit.ser")) {
                     continue;
                 }
-                if ((!shatoCommit.get(shaKey).getFiles().contains(fileName) && !shatoCommit.get(shaHead).getFiles().contains(fileName)) //changed here
+                if (!shatoCommit.get(shaHead).getFiles().contains(fileName)
                         && !stage.contains(fileName)) {
                     System.out.println("There is an untracked file in the way; "
                             + "delete it or add it first.");
@@ -575,7 +570,7 @@ public class Git implements Serializable {
                 }
             }
         }
-        stage.clear();
+
         branchTocommitHeadSHA.put(headBranch, shaKey);
         shaHead = shaKey;
     }
@@ -795,20 +790,6 @@ public class Git implements Serializable {
         }
 //        System.out.println(cLong.getFiles());
         return SHAconverter.converter(cLong);
-    }
-
-
-    private boolean untracked(String fileName) {
-        for (String S: shatoCommit.keySet()) {
-            if (shatoCommit.get(S).getFiles().contains(fileName)) {
-                File one = new File(".gitlet/" + S + "/" + fileName);
-                File two = new File(fileName);
-                if (Utils.readContentsAsString(one).equals(Utils.readContentsAsString(two))) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 
 

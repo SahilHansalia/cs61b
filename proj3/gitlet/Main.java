@@ -20,11 +20,13 @@ public class Main {
             gitlit = Git.prevGit();
         } else {
             gitlit = new Git();
+            if (!args[0].equals("init")) {
+                System.out.println("Not in an initialized Gitlet directory.");
+                System.exit(0);
+            }
         }
-        if (gitlit == null) {
-            System.out.println("issue here");
-            System.exit(0);
-        }
+
+
         switcher(gitlit, args, len);
         Git.saveGit(gitlit);
     }
