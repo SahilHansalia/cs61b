@@ -619,7 +619,7 @@ public class Git implements Serializable {
         String mergedmessage = ("Merged " + branchName + " into " + headBranch + ".");
         merged = true;
         parent2 = branchName;
-
+        boolean conflict = false;
 //        System.out.println(inEither.toString());
 //        System.out.println(filesInCurr.toString());
 //        System.out.println(filesInSplit.toString());
@@ -638,6 +638,9 @@ public class Git implements Serializable {
                     continue;
                 }
                 if (!fileComparer(shaHead, mergeBranchSHA, fileName)) {
+                    conflict = true;
+                    conflictMerger(shaHead, mergeBranchSHA, fileName);
+                    continue;
                     //merge conflict
                 }
             }
@@ -662,8 +665,25 @@ public class Git implements Serializable {
                     stage.add(fileName);  //manual stage ok?
                     continue;
                 }
+                if ((filesInCurr.contains(fileName) && filesInGiven.contains(fileName))
+                        && (!fileComparer(mergeBranchSHA, shaHead, fileName))
+                        && (!fileComparer(splitSHA, shaHead, fileName))
+                        && (!fileComparer(mergeBranchSHA, splitSHA, fileName))) {
+                    conflict = true;
+                    conflictMerger(shaHead, mergeBranchSHA, fileName);
+                    continue;
+                }
+                if ((!fileComparer(splitSHA, mergeBranchSHA, fileName) && !filesInCurr.contains(fileName))
+                        | (!fileComparer(splitSHA, shaHead, fileName) && !filesInGiven.contains(fileName))) {
+                    conflict = true;
+                    conflictMerger(shaHead, mergeBranchSHA, fileName);
+                    continue;
+                }
 
             }
+        }
+        if (conflict) {
+            System.out.println("Encountered a merge conflict.");
         }
 
         commit(mergedmessage);
@@ -673,7 +693,29 @@ public class Git implements Serializable {
 
     }
 
+    /** Splitpoint helper.
+     * @param currHead string
+     * @param mergeHead string
+     * @param fileName string*/
+    private void conflictMerger(String currHead, String mergeHead, String fileName) {
+        File curr = new File(".gitlet/" + currHead + "/" + fileName);
+        File given = new File(".gitlet/" + mergeHead + "/" + fileName);
+        String currConents = Utils.readContentsAsString(curr);
+        String givenContents = Utils.readContentsAsString(given);
+        String contents = ("<<<<<<< HEAD\n" + currConents + "=======\n" + givenContents + ">>>>>>>\n");
+        File f = new File(fileName);
+        Utils.writeContents(f, contents);
+    }
 
+
+
+
+
+    /** Splitpoint helper.
+     * @param sha1 string
+     * @param sha2 string
+     * @param fileName string
+     * @return whether files are same*/
     boolean fileComparer(String sha1, String sha2, String fileName) {
         if(!shatoCommit.get(sha1).getFiles().contains(fileName) | !shatoCommit.get(sha2).getFiles().contains(fileName)) {
             return false;
@@ -685,6 +727,7 @@ public class Git implements Serializable {
 //            System.out.println(Utils.plainFilenamesIn(".gitlet/" + sha2 + "/"));
         return Utils.readContentsAsString(one).equals(Utils.readContentsAsString(two)); }
         catch (IllegalArgumentException e) {
+            System.out.println("errors oops");
             return false;
         }
     }
