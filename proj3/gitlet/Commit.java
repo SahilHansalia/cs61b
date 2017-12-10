@@ -36,11 +36,11 @@ public class Commit implements Serializable {
      * @param parentTwo is commit
      * @param stage is commit
      * @param deleteMarks is commit
-     * @param merged2 is merged
+     * @param m2 is merged
      * */
     Commit(String message, boolean first, Commit parentOne, Commit parentTwo,
-           HashSet<String> stage, HashSet<String> deleteMarks, boolean merged2) {
-        merged = merged2;
+           HashSet<String> stage, HashSet<String> deleteMarks, boolean m2) {
+        merged = m2;
         parent = parentOne;
         parent2 = parentTwo;
         this.name = message;
