@@ -303,7 +303,6 @@ class Game {
         _commands.put(LOAD, this::doLoad);
         _commands.put(QUIT, this::doQuit);
         _commands.put(ERROR, this::doError);
-        //_commands.put(TEST, this::doSeed);
         _commands.put(EOF, this::doQuit);
     }
 
